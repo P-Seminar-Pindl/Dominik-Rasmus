@@ -1,6 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://dynr3kkd2rgd0"]
+[gd_scene load_steps=3 format=3 uid="uid://dynr3kkd2rgd0"]
 
 [ext_resource type="Script" uid="uid://dm2odqcv0iqgn" path="res://gamemanager.gd" id="1_wbfu4"]
 
+[sub_resource type="MeshLibrary" id="MeshLibrary_wbfu4"]
+
 [node name="Game" type="Node3D"]
 script = ExtResource("1_wbfu4")
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = SubResource("MeshLibrary_wbfu4")
+metadata/_editor_floor_ = Vector3(0, 4, 0)
