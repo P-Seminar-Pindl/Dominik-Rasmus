@@ -1,8 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://dynr3kkd2rgd0"]
+[gd_scene load_steps=9 format=3 uid="uid://dynr3kkd2rgd0"]
 
-[ext_resource type="Script" path="res://world_gen.gd" id="2_xkndl"]
+[ext_resource type="PackedScene" uid="uid://du52k5qaw45hm" path="res://Player.tscn" id="2_u44n3"]
+[ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://world_gen.gd" id="2_xkndl"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wbfu4"]
+albedo_color = Color(0, 1, 1, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_wbfu4"]
+material = SubResource("StandardMaterial3D_wbfu4")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xkndl"]
+albedo_color = Color(0.07963706, 0.42761055, 9.62615e-08, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_u44n3"]
+material = SubResource("StandardMaterial3D_xkndl")
 
 [sub_resource type="MeshLibrary" id="MeshLibrary_wbfu4"]
 item/0/name = "Test"
@@ -12,13 +23,23 @@ item/0/mesh_cast_shadow = 1
 item/0/shapes = []
 item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item/0/navigation_layers = 1
+item/1/name = ""
+item/1/mesh = SubResource("PlaneMesh_u44n3")
+item/1/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/mesh_cast_shadow = 1
+item/1/shapes = []
+item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/navigation_layers = 1
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_xkndl"]
 
 [node name="Game" type="Node3D"]
 script = ExtResource("2_xkndl")
 
 [node name="GridMap" type="GridMap" parent="."]
 mesh_library = SubResource("MeshLibrary_wbfu4")
+physics_material = SubResource("PhysicsMaterial_xkndl")
 metadata/_editor_floor_ = Vector3(0, 4, 0)
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(-0.87636137, 0.18091361, -0.4463866, -0.021989694, 0.9107837, 0.4122976, 0.48115182, 0.37113768, -0.7941975, 0, 20.432402, -22.165813)
+[node name="Player" parent="." instance=ExtResource("2_u44n3")]
+transform = Transform3D(-0.75920326, 0, -0.6508537, 0, 1, 0, 0.6508537, 0, -0.75920326, 4.612299, 34.34149, 2.9576845)
