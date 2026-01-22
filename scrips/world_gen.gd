@@ -30,25 +30,24 @@ func remove_map():
 func _process(delta: float) -> void:
 	var dirx = Input.get_axis("ui_left","ui_right")
 	var diry = Input.get_axis("ui_up","ui_down")
-	print(dirx)
 	if dirx >= 0:
 		move.x -=1
-		print(move.x)
+		
 		remove_map()
 		generate_map(mapSize.x,mapSize.y,move.x,move.y)
 	if dirx <= 0:
 		move.x +=1
-		print(move.x)
+		
 		remove_map()
 		generate_map(mapSize.x,mapSize.y,move.x,move.y)
 	if diry >= 0:
 		move.y -=1
-		print(move.y)
+		
 		remove_map()
 		generate_map(mapSize.x,mapSize.y,move.x,move.y)
 	if diry <= 0:
 		move.y +=1
-		print(move.y)
+		
 		remove_map()
 		generate_map(mapSize.x,mapSize.y,move.x,move.y)
 	
