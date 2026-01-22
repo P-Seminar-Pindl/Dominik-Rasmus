@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://dynr3kkd2rgd0"]
+[gd_scene load_steps=9 format=3 uid="uid://dynr3kkd2rgd0"]
 
 [ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://scrips/world_gen.gd" id="1_qbsmt"]
 [ext_resource type="PackedScene" uid="uid://du52k5qaw45hm" path="res://scenes/Player.tscn" id="2_cpr0p"]
+[ext_resource type="PackedScene" uid="uid://by0xeadgrsfnh" path="res://scenes/GUI.tscn" id="3_cpr0p"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wbfu4"]
 albedo_color = Color(0, 1, 1, 1)
@@ -40,3 +41,5 @@ metadata/_editor_floor_ = Vector3(0, 4, 0)
 
 [node name="Player" parent="." instance=ExtResource("2_cpr0p")]
 transform = Transform3D(-0.75920326, 0, -0.6508537, 0, 1, 0, 0.6508537, 0, -0.75920326, 4.612299, 34.34149, 2.9576845)
+
+[node name="Gui" parent="." instance=ExtResource("3_cpr0p")]
