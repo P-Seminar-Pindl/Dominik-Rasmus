@@ -1,14 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dynr3kkd2rgd0"]
+[gd_scene load_steps=7 format=3 uid="uid://dynr3kkd2rgd0"]
 
 [ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://scrips/world_gen.gd" id="1_qbsmt"]
-[ext_resource type="PackedScene" uid="uid://du52k5qaw45hm" path="res://scenes/Player.tscn" id="2_cpr0p"]
+[ext_resource type="ArrayMesh" uid="uid://bfqa5sff3cqk4" path="res://models/stoneLarge.obj" id="2_78awf"]
 [ext_resource type="PackedScene" uid="uid://by0xeadgrsfnh" path="res://scenes/GUI.tscn" id="3_cpr0p"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wbfu4"]
-albedo_color = Color(0, 1, 1, 1)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_wbfu4"]
-material = SubResource("StandardMaterial3D_wbfu4")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xkndl"]
 albedo_color = Color(0.07963706, 0.42761055, 9.62615e-08, 1)
@@ -17,13 +11,6 @@ albedo_color = Color(0.07963706, 0.42761055, 9.62615e-08, 1)
 material = SubResource("StandardMaterial3D_xkndl")
 
 [sub_resource type="MeshLibrary" id="MeshLibrary_wbfu4"]
-item/0/name = "Test"
-item/0/mesh = SubResource("PlaneMesh_wbfu4")
-item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-item/0/mesh_cast_shadow = 1
-item/0/shapes = []
-item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-item/0/navigation_layers = 1
 item/1/name = ""
 item/1/mesh = SubResource("PlaneMesh_u44n3")
 item/1/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -31,6 +18,13 @@ item/1/mesh_cast_shadow = 1
 item/1/shapes = []
 item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item/1/navigation_layers = 1
+item/2/name = "StoneLarge"
+item/2/mesh = ExtResource("2_78awf")
+item/2/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/mesh_cast_shadow = 1
+item/2/shapes = []
+item/2/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/navigation_layers = 1
 
 [node name="Game" type="Node3D"]
 script = ExtResource("1_qbsmt")
@@ -39,7 +33,11 @@ script = ExtResource("1_qbsmt")
 mesh_library = SubResource("MeshLibrary_wbfu4")
 metadata/_editor_floor_ = Vector3(0, 4, 0)
 
-[node name="Player" parent="." instance=ExtResource("2_cpr0p")]
-transform = Transform3D(-0.75920326, 0, -0.6508537, 0, 1, 0, 0.6508537, 0, -0.75920326, 4.612299, 34.34149, 2.9576845)
-
 [node name="Gui" parent="." instance=ExtResource("3_cpr0p")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-0.45724636, -0.037343934, 0.88855577, 0.03116657, 0.9978314, 0.057974704, -0.8887937, 0.054201946, -0.45509088, 164.86703, 20.783539, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 99.31196, 0)
+light_energy = 3.666
