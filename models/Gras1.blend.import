@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://ytc21bnpicic"
-path="res://.godot/imported/building.blend-69a430285a0c861c7e9af6dd2108f986.scn"
+uid="uid://x6ptnu2cvec6"
+path="res://.godot/imported/Gras1.blend-845c0a7902a36ebe65b59e4bba7c0d91.scn"
 
 [deps]
 
-source_file="res://models/building.blend"
-dest_files=["res://.godot/imported/building.blend-69a430285a0c861c7e9af6dd2108f986.scn"]
+source_file="res://models/Gras1.blend"
+dest_files=["res://.godot/imported/Gras1.blend-845c0a7902a36ebe65b59e4bba7c0d91.scn"]
 
 [params]
 
