@@ -3,7 +3,8 @@
 [ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://scrips/world_gen.gd" id="1_qbsmt"]
 [ext_resource type="ArrayMesh" uid="uid://bfqa5sff3cqk4" path="res://models/stoneLarge.obj" id="2_78awf"]
 [ext_resource type="PackedScene" uid="uid://by0xeadgrsfnh" path="res://scenes/GUI.tscn" id="3_cpr0p"]
-[ext_resource type="Script" uid="uid://bgsla80g7hwsp" path="res://scrips/Player.gd" id="4_cvtgk"]
+[ext_resource type="Script" uid="uid://bgsla80g7hwsp" path="res://scrips/player.gd" id="4_cvtgk"]
+[ext_resource type="Script" uid="uid://b1ghyuggaptq0" path="res://scrips/assetInit.gd" id="4_s0nni"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xkndl"]
 albedo_color = Color(0.0796371, 0.427611, 9.62615e-08, 1)
@@ -32,6 +33,7 @@ script = ExtResource("1_qbsmt")
 
 [node name="GridMap" type="GridMap" parent="." unique_id=1029213430]
 mesh_library = SubResource("MeshLibrary_wbfu4")
+script = ExtResource("4_s0nni")
 metadata/_editor_floor_ = Vector3(0, 4, 0)
 
 [node name="Gui" parent="." unique_id=1910069876 instance=ExtResource("3_cpr0p")]

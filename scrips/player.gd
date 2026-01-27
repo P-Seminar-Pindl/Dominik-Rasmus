@@ -5,6 +5,7 @@ extends MeshInstance3D
 @onready var camRot = 0
 @onready var camPos = Vector3(0,position.y,0)
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
@@ -18,6 +19,5 @@ func _process(delta):
 	camPos.x =sin(camRot) + camPos.x
 	camPos.z =cos(camRot) + camPos.z
 	position = camPos
-	print(camPos)
 	rotation.y = camRot
 	pass
