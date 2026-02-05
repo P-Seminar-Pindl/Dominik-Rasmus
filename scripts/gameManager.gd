@@ -23,3 +23,9 @@ func _process(delta: float) -> void:
 
 	else: frame + 1
 	pass
+
+func LoadScene():
+	
+	pass
+func UnloadScene():
+	pass
