@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://b8cyq5nwsepbe"]
 
+[ext_resource type="Script" uid="uid://n58gpwbv0su2" path="res://scripts/main_menu.gd" id="1_yqorp"]
+
 [node name="MainMenu" type="Node2D" unique_id=89619172]
+script = ExtResource("1_yqorp")
 
 [node name="Start_Button" type="Button" parent="." unique_id=1651684090]
 offset_left = 480.0
@@ -24,3 +27,7 @@ offset_right = 660.0
 offset_bottom = 381.0
 text = "Options
 "
+
+[connection signal="pressed" from="Start_Button" to="." method="_on_start_button_pressed"]
+[connection signal="button_down" from="Quit_Button" to="." method="_on_quit_button_button_down"]
+[connection signal="pressed" from="Quit_Button" to="." method="_on_quit_button_pressed"]
