@@ -1,12 +1,11 @@
 extends Node
 
 func _ready() -> void:
-	print("1")
+	var MainMenu = preload("res://scenes/Game.tscn")
 
 
 func _on_start_button_pressed() :
 	get_tree().change_scene_to_file("res://scenes/Game.tscn")
-	
 	pass # Replace with function body.
 
 

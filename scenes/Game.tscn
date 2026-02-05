@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dynr3kkd2rgd0"]
+[gd_scene load_steps=6 format=3 uid="uid://dynr3kkd2rgd0"]
 
 [ext_resource type="Script" uid="uid://dm2odqcv0iqgn" path="res://scripts/gameManager.gd" id="1_78awf"]
 [ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://scripts/world_gen.gd" id="1_qbsmt"]
@@ -10,23 +10,23 @@ point_count = 3
 
 [sub_resource type="MeshLibrary" id="MeshLibrary_cpr0p"]
 
-[node name="Game" type="Node3D" unique_id=905016245]
+[node name="Game" type="Node3D"]
 script = ExtResource("1_78awf")
 distribution_curve = SubResource("Curve_cpr0p")
 
-[node name="GridMap" type="GridMap" parent="." unique_id=1029213430]
+[node name="GridMap" type="GridMap" parent="."]
 mesh_library = SubResource("MeshLibrary_cpr0p")
 script = ExtResource("1_qbsmt")
 metadata/_editor_floor_ = Vector3(0, -11, 0)
 
-[node name="Gui" parent="." unique_id=1910069876 instance=ExtResource("3_cpr0p")]
+[node name="Gui" parent="." instance=ExtResource("3_cpr0p")]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=660431207]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 31.980667, 0)
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=397907159]
+[node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-0.7071068, 0.2785591, -0.64992684, 0, 0.91913533, 0.39394206, 0.7071068, 0.2785591, -0.64992684, -3.0997467, 73.1402, -94.72438)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=891079490]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-2.48164e-07, 5.67733, 0, -5.67733, -2.48164e-07, 0, 0, 0, 5.67733, 12.483, 67.2991, 14.38)
 skeleton = NodePath("")
