@@ -18,3 +18,11 @@ func _on_quit_button_button_down() -> void:
 	pass # Replace with function body.
 	
 	pass # Replace with function body.
+	
+	
+
+
+func _on_options_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/Options.tscn")
+	
+	pass # Replace with function body.
