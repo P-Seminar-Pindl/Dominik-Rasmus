@@ -1,18 +1,18 @@
-[gd_scene format=3 uid="uid://b8cyq5nwsepbe"]
+[gd_scene load_steps=2 format=3 uid="uid://b8cyq5nwsepbe"]
 
 [ext_resource type="Script" uid="uid://n58gpwbv0su2" path="res://scripts/main_menu.gd" id="1_yqorp"]
 
-[node name="MainMenu" type="Node2D" unique_id=89619172]
+[node name="MainMenu" type="Node2D"]
 script = ExtResource("1_yqorp")
 
-[node name="Start_Button" type="Button" parent="." unique_id=1651684090]
+[node name="Start_Button" type="Button" parent="."]
 offset_left = 480.0
 offset_top = 160.0
 offset_right = 660.0
 offset_bottom = 221.0
 text = "Start"
 
-[node name="Quit_Button" type="Button" parent="." unique_id=447416587]
+[node name="Quit_Button" type="Button" parent="."]
 offset_left = 480.0
 offset_top = 240.0
 offset_right = 660.0
@@ -20,7 +20,7 @@ offset_bottom = 301.0
 text = "Quit
 "
 
-[node name="Options_Button" type="Button" parent="." unique_id=799308991]
+[node name="Options_Button" type="Button" parent="."]
 offset_left = 480.0
 offset_top = 320.0
 offset_right = 660.0
