@@ -11,7 +11,7 @@ func _ready() -> void:
 	LibraryManager.PopulateLibrary(grid)
 #World Generation
 	
-	WorldGen.generate_map(grid,mapSize.x,mapSize.y, offset.x,offset.y,distribution_curve)
+	WorldGen.generate_map(grid, offset.x,offset.y,distribution_curve,100)
 
 #HudManager
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -19,7 +19,7 @@ func _process(delta: float) -> void:
 	var grid = $GridMap
 	if frame == 100:
 		grid.clear()
-		WorldGen.generate_map(grid,mapSize.x,mapSize.y, offset.x,offset.y,distribution_curve)
+		WorldGen.generate_map(grid, offset.x,offset.y,distribution_curve,100)
 
 	else: frame + 1
 	pass
