@@ -8,9 +8,9 @@ func _ready() -> void:
 	
 	pass # Replace with function body.
 	
-static func generate_map(grid: GridMap, offsetx,offsety, distribution_curve, renderDistance :int):
+static func generate_map(grid: GridMap, offsetx,offsety, distribution_curve, renderDistance :int, PlayerPos: Vector3):
 	#Variable Space
-	var center = Vector2i(100,100)
+	var center = Vector2(PlayerPos.x,PlayerPos.y)
 	var coords = cords_in_radius(renderDistance,center)
 	var noise = FastNoiseLite.new()
 	var cell_pos = Vector3i(0,0,0)
@@ -32,8 +32,6 @@ static func generate_map(grid: GridMap, offsetx,offsety, distribution_curve, ren
 			grid.set_cell_item(cell_pos,Tile["Forest"])
 		elif nNoise < 1:
 			grid.set_cell_item(cell_pos,Tile["Stone"])
-static func LoadChunks():
-	var RenderDistance = 360
 static func cords_in_radius(radius: int, center: Vector2i) -> Array[Vector2i]:
 	var results: Array[Vector2i] = []
 
@@ -46,5 +44,9 @@ static func cords_in_radius(radius: int, center: Vector2i) -> Array[Vector2i]:
 	return results
 static func remove_map(map: GridMap):
 	map.clear()
+static func LoadChunks():
+	pass
+static func UnloadChunks():
+	pass
 	
 	
