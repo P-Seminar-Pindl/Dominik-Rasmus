@@ -3,35 +3,25 @@ class_name WorldGen
 @onready var map = $"."
 var move = Vector2i(0,0)
 var mapSize= Vector2i(100,100)
+static var RequiredTiles = []
+static var LoadedTiles = []
 # Called when the node enters the scene tree for the first time.
+static var noise = FastNoiseLite.new()
+static var cell_pos = Vector3i(0,0,0)
+static var grid: GridMap
 func _ready() -> void:
 	
 	pass # Replace with function body.
 	
-static func generate_map(grid: GridMap, offsetx,offsety, distribution_curve, renderDistance :int, PlayerPos: Vector3):
+static func generate_map(grid,offsetx,offsety,distribution_curve, renderDistance :int, PlayerPos: Vector3):
 	#Variable Space
 	var center = Vector2(PlayerPos.x,PlayerPos.y)
 	var coords = cords_in_radius(renderDistance,center)
-	var noise = FastNoiseLite.new()
-	var cell_pos = Vector3i(0,0,0)
 	noise.offset.x = offsetx
 	noise.offset.y = offsety
 	for i in coords.size():
-		var coordinate = coords[i]
-		var nNoise = (noise.get_noise_2d(coords[i].x, coords[i].y) + 1.0) * 0.5
-		nNoise = distribution_curve.sample(nNoise)
-		var Tile = LibraryManager.Tiles
-		cell_pos = Vector3i(coords[i].x,0,coords[i].y)
-		if nNoise < 0.2:
-			grid.set_cell_item(cell_pos, Tile["Water"])
-		elif nNoise < 0.4:
-			grid.set_cell_item(cell_pos,Tile["Sand"])
-		elif nNoise < 0.6:
-			grid.set_cell_item(cell_pos,Tile["Grass"])
-		elif nNoise < 0.8:
-			grid.set_cell_item(cell_pos,Tile["Forest"])
-		elif nNoise < 1:
-			grid.set_cell_item(cell_pos,Tile["Stone"])
+		LoadTile(grid,coords[i],distribution_curve,i)
+		
 static func cords_in_radius(radius: int, center: Vector2i) -> Array[Vector2i]:
 	var results: Array[Vector2i] = []
 
@@ -44,7 +34,30 @@ static func cords_in_radius(radius: int, center: Vector2i) -> Array[Vector2i]:
 	return results
 static func remove_map(map: GridMap):
 	map.clear()
-static func LoadChunks():
+
+static func MapStream(RenderDistance, center):
+	#VariableSpace
+	pass
+	
+static func LoadTile(grid,coordinate,distribution_curve,index):
+	var nNoise = (noise.get_noise_2d(coordinate.x, coordinate.y) + 1.0) * 0.5
+	nNoise = distribution_curve.sample(nNoise)
+	var Tile = LibraryManager.Tiles
+	cell_pos = Vector3i(coordinate.x,0,coordinate.y)
+	if nNoise < 0.2:
+		grid.set_cell_item(cell_pos, Tile["Water"])
+	elif nNoise < 0.4:
+		grid.set_cell_item(cell_pos,Tile["Sand"])
+	elif nNoise < 0.6:
+		grid.set_cell_item(cell_pos,Tile["Grass"])
+	elif nNoise < 0.8:
+		grid.set_cell_item(cell_pos,Tile["Forest"])
+	elif nNoise < 1:
+		grid.set_cell_item(cell_pos,Tile["Stone"])
+	LoadedTiles.append([])
+	LoadedTiles[index].append(true)
+	
+	
 	pass
 static func UnloadChunks():
 	pass
