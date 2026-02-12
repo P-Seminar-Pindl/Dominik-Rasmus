@@ -35,15 +35,26 @@ static func cords_in_radius(radius: int, center: Vector2i) -> Array[Vector2i]:
 static func remove_map(map: GridMap):
 	map.clear()
 
-static func MapStream(RenderDistance, center):
-	#VariableSpace
+static func MapStream(RenderDistance, Center, distribution_curve):
+	var MissingTiles = GetTilesToLoad(RenderDistance, Center)
+	for coords in MissingTiles.size():
+		LoadTile(grid, MissingTiles[coords], distribution_curve,coords)
+		
 	pass
+static func GetTilesToLoad(RenderDistance, Center) -> Array:
+	var RequiredTiles = cords_in_radius(RenderDistance, Center)
+	var TilesToLoad = []
+	for tile in RequiredTiles:
+		if not tile in LoadedTiles:
+			TilesToLoad.append(tile)
+	return TilesToLoad
 	
 static func LoadTile(grid,coordinate,distribution_curve,index):
 	var nNoise = (noise.get_noise_2d(coordinate.x, coordinate.y) + 1.0) * 0.5
 	nNoise = distribution_curve.sample(nNoise)
 	var Tile = LibraryManager.Tiles
 	cell_pos = Vector3i(coordinate.x,0,coordinate.y)
+	LoadedTiles.append(coordinate)
 	if nNoise < 0.2:
 		grid.set_cell_item(cell_pos, Tile["Water"])
 	elif nNoise < 0.4:
@@ -54,10 +65,6 @@ static func LoadTile(grid,coordinate,distribution_curve,index):
 		grid.set_cell_item(cell_pos,Tile["Forest"])
 	elif nNoise < 1:
 		grid.set_cell_item(cell_pos,Tile["Stone"])
-	LoadedTiles.append([])
-	LoadedTiles[index].append(true)
-	
-	
 	pass
 static func UnloadChunks():
 	pass

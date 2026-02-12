@@ -18,6 +18,7 @@ func _ready() -> void:
 #HudManager
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	WorldGen.MapStream(RD.value,Vector2(1,1),distribution_curve)
 	pass
 
 func LoadScene():
