@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://cburg7w0mkw6i"]
+
+[ext_resource type="Texture2D" uid="uid://5u4yp2vxr2gp" path="res://textures/blue_concrete.png" id="1_n05xt"]
+[ext_resource type="Texture2D" uid="uid://bxwsubj0a3kkx" path="res://textures/dirt.png" id="2_87y07"]
+
+[node name="SidebarTest" type="Node2D" unique_id=1882443557]
+
+[node name="Button" type="Button" parent="." unique_id=1706832674]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1409868234]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 11.0
+offset_right = 40.0
+offset_bottom = 8.0
+grow_vertical = 2
+
+[node name="TextureButton" type="TextureButton" parent="HBoxContainer" unique_id=1037568606]
+layout_mode = 2
+texture_normal = ExtResource("1_n05xt")
+
+[node name="TextureButton2" type="TextureButton" parent="HBoxContainer" unique_id=1823025227]
+layout_mode = 2
+texture_normal = ExtResource("2_87y07")
