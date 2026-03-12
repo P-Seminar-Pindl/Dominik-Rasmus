@@ -32,8 +32,7 @@ static func addBuildingFromTexture(
 	name: String,
 	grid: GridMap,
 	texture: String,
-	data: Dictionary
-) -> Dictionary:
+	data: Dictionary) -> Dictionary:
 
 	# Mesh
 	var plane = PlaneMesh.new()
