@@ -10,7 +10,11 @@ var frame= 0
 func _ready() -> void:
 #Variable Space
 	
+	
 	LibraryManager.PopulateLibrary(grid)
+	var testSideBar = SideBar.AddSideBar("test", LibraryManager.Tiles, Vector2(1,1))
+	get_tree().root.add_child(testSideBar) 
+	LibraryManager.PopulateBuildings(grid)
 #World Generation
 	
 	WorldGen.generate_map(grid,offset.x,offset.y,distribution_curve,300,Vector3(100,0,100))
