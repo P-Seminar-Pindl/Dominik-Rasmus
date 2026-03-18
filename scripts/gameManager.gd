@@ -3,28 +3,32 @@ extends Node3D
 var LibraryManager = load("res://scripts/LibraryManager.gd").new()
 var mapSize = Vector2i(1000,1000)
 var offset = Vector2i(0,0)
+#
+@onready var Sidebar = $Sidebar
 @onready var RD = $Camera3D/RenderDistance
 @onready var grid = $GridMap
+
 @export var distribution_curve : Curve
 var frame= 0
 func _ready() -> void:
+	add_to_group("game_manager")
 #Variable Space
-	
-	
 	LibraryManager.PopulateLibrary(grid)
-	var canvas = CanvasLayer.new()
-	add_child(canvas)
-	var testSideBar = SideBar.AddSideBar("test", LibraryManager.Tiles, Vector2(0,0),func(name):print("selected: ", name))
-	canvas.add_child(testSideBar) 
-	print(testSideBar)
 	LibraryManager.PopulateBuildings(grid)
 #World Generation
-	
 	WorldGen.generate_map(grid,offset.x,offset.y,distribution_curve,300,Vector3(100,0,100))
-
-#HudManager
+#UIManager
+	Sidebar.populate(LibraryManager.Tiles)
+	Sidebar.item_selected.connect(func(name):
+		Global.selected_building = name
+		print(Global.selected_building)
+	)
+	
+var x=0
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	
 	pass
 
 func LoadScene():
