@@ -12,8 +12,11 @@ func _ready() -> void:
 	
 	
 	LibraryManager.PopulateLibrary(grid)
-	var testSideBar = SideBar.AddSideBar("test", LibraryManager.Tiles, Vector2(1,1))
-	get_tree().root.add_child(testSideBar) 
+	var canvas = CanvasLayer.new()
+	add_child(canvas)
+	var testSideBar = SideBar.AddSideBar("test", LibraryManager.Tiles, Vector2(0,0))
+	canvas.add_child(testSideBar) 
+	print(testSideBar)
 	LibraryManager.PopulateBuildings(grid)
 #World Generation
 	

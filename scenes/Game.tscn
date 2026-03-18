@@ -9,14 +9,14 @@
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.99999, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="MeshLibrary" id="MeshLibrary_cpr0p"]
+[sub_resource type="MeshLibrary" id="MeshLibrary_78awf"]
 
 [node name="Game" type="Node3D" unique_id=277753161]
 script = ExtResource("1_78awf")
 distribution_curve = SubResource("Curve_cpr0p")
 
 [node name="GridMap" type="GridMap" parent="." unique_id=2074967818]
-mesh_library = SubResource("MeshLibrary_cpr0p")
+mesh_library = SubResource("MeshLibrary_78awf")
 script = ExtResource("1_qbsmt")
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 
