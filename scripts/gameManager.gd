@@ -14,7 +14,7 @@ func _ready() -> void:
 	LibraryManager.PopulateLibrary(grid)
 	var canvas = CanvasLayer.new()
 	add_child(canvas)
-	var testSideBar = SideBar.AddSideBar("test", LibraryManager.Tiles, Vector2(0,0))
+	var testSideBar = SideBar.AddSideBar("test", LibraryManager.Tiles, Vector2(0,0),func(name):print("selected: ", name))
 	canvas.add_child(testSideBar) 
 	print(testSideBar)
 	LibraryManager.PopulateBuildings(grid)

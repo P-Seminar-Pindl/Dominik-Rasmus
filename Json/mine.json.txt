@@ -1,5 +1,10 @@
 {
+	space: Buildings
+	assets:{
+		texture:
+		mesh:
 	
+	}
 	
 	
 }
