@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://mw2mwfmhcoje"]
+[gd_scene load_steps=2 format=3 uid="uid://mw2mwfmhcoje"]
 
 [ext_resource type="Script" uid="uid://dyq2bkk4h3xjx" path="res://scripts/Sidebar.gd" id="1_ib1ys"]
 
-[node name="Sidebar" type="Panel" unique_id=2044650050]
+[node name="Sidebar" type="Panel"]
 script = ExtResource("1_ib1ys")

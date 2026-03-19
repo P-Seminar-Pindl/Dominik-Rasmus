@@ -1,11 +1,11 @@
-[gd_scene format=3 uid="uid://biy7st87oubxk"]
+[gd_scene load_steps=2 format=3 uid="uid://biy7st87oubxk"]
 
 [ext_resource type="Script" uid="uid://crr2c2t14xetf" path="res://scripts/camera_3d.gd" id="1_a3ute"]
 
-[node name="Player" type="Camera3D" unique_id=1690824770]
+[node name="Player" type="Camera3D"]
 script = ExtResource("1_a3ute")
 
-[node name="RenderDistance" type="HSlider" parent="." unique_id=1475435038]
+[node name="RenderDistance" type="HSlider" parent="."]
 offset_right = 438.0
 offset_bottom = 16.0
 max_value = 500.0
