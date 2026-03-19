@@ -1,0 +1,24 @@
+{
+	"space": "Buildings",
+	"assets": {
+		"texture": "res://textures/backery.png",
+		"mesh": ""
+	},
+	"buildings": [
+		{
+			"name": "Backery",
+			"workforce": 3,
+			"costs": {
+				"wood": 5,
+				"coins": 15,
+				"stone": 30
+			},
+			"input": {
+				"water": 7.5
+			},
+			"output": {
+				"bread": 5
+				}
+		}
+	]
+}

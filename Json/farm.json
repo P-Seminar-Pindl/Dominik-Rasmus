@@ -1,0 +1,20 @@
+{
+	"space": "Buildings",
+	"assets": {
+		"texture": "res://textures/farm.png",
+		"mesh": ""
+	},
+	"buildings": [
+		{
+			"name": "Farm",
+			"workforce": 2,
+			"costs": {
+				"wood": 30,
+				"coins": 15
+			},
+			"input": {
+				"water": 7.5
+			}
+		}
+	]
+}
