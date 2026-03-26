@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://c46o6phri4hpp"]
-
-[ext_resource type="Script" uid="uid://dyq2bkk4h3xjx" path="res://scripts/sidebar.gd" id="1_qebxu"]
-
-[node name="SidebarTest" type="Node2D"]
-script = ExtResource("1_qebxu")

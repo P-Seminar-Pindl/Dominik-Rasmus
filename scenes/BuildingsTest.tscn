@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://c46o6phri4hpp"]
+
+[ext_resource type="Script" uid="uid://cb8i2blh0f2kv" path="res://scripts/sidebar_test.gd" id="1_4o3g3"]
+[ext_resource type="PackedScene" uid="uid://biy7st87oubxk" path="res://scenes/Camera.tscn" id="2_komws"]
+[ext_resource type="Texture2D" uid="uid://ccghhuwivqosm" path="res://textures/FlaticonBuildings/008-bakery-shop.png" id="2_s7mej"]
+[ext_resource type="PackedScene" uid="uid://mw2mwfmhcoje" path="res://scenes/Sidebar.tscn" id="3_s7mej"]
+[ext_resource type="Texture2D" uid="uid://dp1t8cphavn2q" path="res://textures/kloofendal_48d_partly_cloudy_puresky.jpg" id="4_komws"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s7mej"]
+transparency = 1
+albedo_texture = ExtResource("2_s7mej")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_offset = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_eoar8"]
+material = SubResource("StandardMaterial3D_s7mej")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="MeshLibrary" id="MeshLibrary_n05xt"]
+item/0/name = "Backery"
+item/0/mesh = SubResource("BoxMesh_eoar8")
+item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/mesh_cast_shadow = 1
+item/0/shapes = []
+item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/navigation_layers = 1
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_s7mej"]
+panorama = ExtResource("4_komws")
+
+[sub_resource type="Sky" id="Sky_400sg"]
+sky_material = SubResource("PanoramaSkyMaterial_s7mej")
+
+[sub_resource type="Environment" id="Environment_eoar8"]
+background_mode = 2
+sky = SubResource("Sky_400sg")
+
+[node name="orchestrator" type="Node3D" unique_id=569288504]
+script = ExtResource("1_4o3g3")
+
+[node name="GridMap" type="GridMap" parent="." unique_id=1357587545]
+mesh_library = SubResource("MeshLibrary_n05xt")
+data = {
+"cells": PackedInt32Array(65535, 0, 0)
+}
+
+[node name="Player" parent="." unique_id=22336474 instance=ExtResource("2_komws")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
+
+[node name="Sidebar" parent="." unique_id=1373566311 instance=ExtResource("3_s7mej")]
+
+[node name="Sidebar2" parent="." unique_id=1568331691 instance=ExtResource("3_s7mej")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+grow_horizontal = 2
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2039678872]
+environment = SubResource("Environment_eoar8")

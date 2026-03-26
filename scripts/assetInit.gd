@@ -36,13 +36,24 @@ static func addBuildingFromTexture(
 	grid: GridMap,
 	texture: String,
 	data: Dictionary) -> Dictionary:
-
+	
 	# Mesh
 	var plane = BoxMesh.new()
-	plane.size = Vector3(1,1,1)
+	plane.size = Vector3(2,2,2)
 	# Material
 	var mat = StandardMaterial3D.new()
-	mat.albedo_texture = load(texture)
+	var tex = load(texture)
+	print(tex)
+	if tex == null:
+		push_error("Failed to load texture: " + texture)
+		return data
+	mat.albedo_texture = tex
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.uv1_scale = Vector3(0.5, 0.5, 0.5)
+	mat.uv1_offset = Vector3(0.5, 0.5, 0.5)
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST  # optional, good for pixel art icons
+	mat.uv1_triplanar = true
+	mat.uv1_triplanar_sharpness = 1.0
 	plane.surface_set_material(0, mat)
 
 	# Library

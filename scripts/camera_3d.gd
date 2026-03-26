@@ -45,9 +45,9 @@ func _input(event):
 			get_viewport().set_input_as_handled()
 
 	# --- Middle click: start/stop orbit drag ---
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_MIDDLE:
 		dragging = event.pressed
-
+		print("test")
 	# --- Mouse motion: orbit around Anchor ---
 	if event is InputEventMouseMotion and dragging:
 		var delta = event.relative
@@ -62,4 +62,8 @@ func _input(event):
 func PlaceBuilding(position: Vector3):
 	if Global.selected_building == null:
 		return
-	grid.set_cell_item(position, LibraryManager.Tiles.get(Global.selected_building))
+	var item = LibraryManager.Tiles.get(Global.selected_building, -1)
+	if item == -1:
+		item = LibraryManager.Buildings.get(Global.selected_building, {}).get("id", -1)
+	if item != -1:
+		grid.set_cell_item(position, item)

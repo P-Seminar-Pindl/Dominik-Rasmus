@@ -15,7 +15,6 @@ func _ready() -> void:
 	add_to_group("game_manager")
 #Variable Space
 	LibraryManager.PopulateLibrary(grid)
-	LibraryManager.PopulateBuildings(grid)
 #World Generation
 	WorldGen.generate_island_centers(5, 400.0, randi())
 	WorldGen.generate_map(grid,offset.x,offset.y,distribution_curve,300,Vector3(100,0,100),HeightModifier)
@@ -29,7 +28,7 @@ func _ready() -> void:
 var x=0
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	x = x+1
+	#x = x+1
 	if(x==60):
 		x=0
 		WorldGen.remove_map(grid)
