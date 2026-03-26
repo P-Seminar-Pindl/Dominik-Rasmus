@@ -16,7 +16,7 @@ func LookAtAnchor():
 
 var zoom_speed = 0.1  # fraction of current distance per scroll tick
 var zoom_min = 2.0    # minimum distance from anchor
-var zoom_max = 100.0  # maximum distance from anchor
+var zoom_max = 1000.0  # maximum distance from anchor
 
 func _input(event):
 	# --- Left click: place building ---
@@ -45,7 +45,7 @@ func _input(event):
 			get_viewport().set_input_as_handled()
 
 	# --- Middle click: start/stop orbit drag ---
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_MIDDLE:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		dragging = event.pressed
 
 	# --- Mouse motion: orbit around Anchor ---

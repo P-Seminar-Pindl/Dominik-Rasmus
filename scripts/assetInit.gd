@@ -2,7 +2,8 @@ extends Node
 class_name assetInit
 static func addTileFromTexture(name: String,grid : GridMap, texture) -> int:
 	#mesh
-	var plane=PlaneMesh.new()
+	var plane=BoxMesh.new()
+	plane.size= Vector3(2,2,2)
 	#material
 	var mat = StandardMaterial3D.new()
 	mat.albedo_texture = load(texture)
@@ -35,8 +36,8 @@ static func addBuildingFromTexture(
 	data: Dictionary) -> Dictionary:
 
 	# Mesh
-	var plane = PlaneMesh.new()
-
+	var plane = BoxMesh.new()
+	plane.size = Vector3(1,1,1)
 	# Material
 	var mat = StandardMaterial3D.new()
 	mat.albedo_texture = load(texture)

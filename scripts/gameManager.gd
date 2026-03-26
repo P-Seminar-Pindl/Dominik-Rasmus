@@ -1,13 +1,13 @@
 extends Node3D
 
 var LibraryManager = load("res://scripts/LibraryManager.gd").new()
-var mapSize = Vector2i(1000,1000)
+var mapSize = Vector2i(10000,10000)
 var offset = Vector2i(0,0)
 #
 @onready var Sidebar = $Sidebar
 @onready var RD = $Camera3D/RenderDistance
 @onready var grid = $GridMap
-
+@export var HeightModifier = 0
 @export var distribution_curve : Curve
 var frame= 0
 func _ready() -> void:
@@ -16,7 +16,8 @@ func _ready() -> void:
 	LibraryManager.PopulateLibrary(grid)
 	LibraryManager.PopulateBuildings(grid)
 #World Generation
-	WorldGen.generate_map(grid,offset.x,offset.y,distribution_curve,300,Vector3(100,0,100))
+	WorldGen.generate_island_centers(5, 400.0, randi())
+	WorldGen.generate_map(grid,offset.x,offset.y,distribution_curve,300,Vector3(100,0,100),HeightModifier)
 #UIManager
 	Sidebar.populate(LibraryManager.Tiles)
 	Sidebar.item_selected.connect(func(name):
@@ -40,5 +41,5 @@ func UnloadScene():
 
 func _on_render_distance_value_changed(value: float) -> void:
 	WorldGen.remove_map(grid)
-	WorldGen.generate_map(grid,0,0,distribution_curve,RD.value,Vector3(100,0,100))
+	WorldGen.generate_map(grid,0,0,distribution_curve,RD.value,Vector3(100,0,100),HeightModifier)
 	pass # Replace with function body.
