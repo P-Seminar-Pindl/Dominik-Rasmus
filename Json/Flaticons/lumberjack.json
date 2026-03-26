@@ -1,0 +1,15 @@
+{
+	"id": "lumberjack",
+	"assets": {
+		"texture": "res://textures/FlaticonBuildings/003-axe.png",
+		"mesh": ""
+	},
+	"workforce": 2,
+	"costs": {
+		"wood": 5
+	},
+	"input": {},
+	"output": {
+		"wood": 8
+	}
+}

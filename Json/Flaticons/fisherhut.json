@@ -1,0 +1,15 @@
+{
+	"id": "fisherhut",
+	"assets": {
+		"texture": "res://textures/FlaticonBuildings/005-fisherman.png",
+		"mesh": ""
+	},
+	"workforce": 2,
+	"costs": {
+		"wood": 8
+	},
+	"input": {},
+	"output": {
+		"fish": 7
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"id": "house",
+	"assets": {
+		"texture": "res://textures/FlaticonBuildings/002-neighborhood.png",
+		"mesh": ""
+	},
+	"workforce": 0,
+	"costs": {
+		"wood": 10,
+		"stone": 5
+	},
+	"input": {},
+	"output": {
+		"population": 5
+	}
+}

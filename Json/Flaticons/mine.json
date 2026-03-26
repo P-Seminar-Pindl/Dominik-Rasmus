@@ -1,0 +1,16 @@
+{
+	"id": "mine",
+	"assets": {
+		"texture": "res://textures/FlaticonBuildings/004-pickaxe.png",
+		"mesh": ""
+	},
+	"workforce": 3,
+	"costs": {
+		"wood": 5,
+		"stone": 15
+	},
+	"input": {},
+	"output": {
+		"stone": 8
+	}
+}
