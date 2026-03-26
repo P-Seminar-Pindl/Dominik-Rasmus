@@ -6,9 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://biy7st87oubxk" path="res://scenes/Camera.tscn" id="4_78awf"]
 [ext_resource type="PackedScene" uid="uid://mw2mwfmhcoje" path="res://scenes/Sidebar.tscn" id="5_s0nni"]
 [ext_resource type="Texture2D" uid="uid://cfxpfw31vtght" path="res://textures/citrus_orchard_road_puresky.webp" id="6_aug50"]
+[ext_resource type="Shader" uid="uid://cayg02mtnui0n" path="res://Shader/pixelate.gdshader" id="7_kiw3p"]
 
 [sub_resource type="Curve" id="Curve_cpr0p"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.99999, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.19651055, 0.16710436), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="MeshLibrary" id="MeshLibrary_78awf"]
@@ -23,16 +24,30 @@ sky_material = SubResource("PanoramaSkyMaterial_kiw3p")
 background_mode = 2
 sky = SubResource("Sky_400sg")
 
+<<<<<<< Updated upstream
 [node name="Game" type="Node3D" unique_id=626942313]
+=======
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_400sg"]
+shader = ExtResource("7_kiw3p")
+shader_parameter/pixel_size = 1.0
+
+[node name="Game" type="Node3D" unique_id=1285071726]
+>>>>>>> Stashed changes
 script = ExtResource("1_78awf")
 HeightModifier = 40
 distribution_curve = SubResource("Curve_cpr0p")
+HeightMultiplier = 25
 
+<<<<<<< Updated upstream
 [node name="GridMap" type="GridMap" parent="." unique_id=586813831]
+=======
+[node name="GridMap" type="GridMap" parent="." unique_id=677668730]
+>>>>>>> Stashed changes
 mesh_library = SubResource("MeshLibrary_78awf")
 script = ExtResource("2_s0nni")
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 
+<<<<<<< Updated upstream
 [node name="Gui" parent="." unique_id=602720198 instance=ExtResource("3_cpr0p")]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=553599803]
@@ -48,4 +63,33 @@ skeleton = NodePath("")
 [node name="Sidebar" parent="." unique_id=1131279563 instance=ExtResource("5_s0nni")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=431337895]
+=======
+[node name="Gui" parent="." unique_id=223137702 instance=ExtResource("3_cpr0p")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1135785725]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 31.980667, 0)
+
+[node name="Camera3D" parent="." unique_id=1754714316 instance=ExtResource("4_78awf")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 100, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=101835108]
+transform = Transform3D(-2.48164e-07, 5.67733, 0, -5.67733, -2.48164e-07, 0, 0, 0, 5.67733, 12.483, 67.2991, 14.38)
+skeleton = NodePath("")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2047011059]
+>>>>>>> Stashed changes
 environment = SubResource("Environment_g4kob")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=240111751]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1263572009]
+material = SubResource("ShaderMaterial_400sg")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sidebar" parent="CanvasLayer/ColorRect" unique_id=1512951542 instance=ExtResource("5_s0nni")]
+visibility_layer = 3
+layout_mode = 0

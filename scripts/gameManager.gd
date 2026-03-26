@@ -4,11 +4,12 @@ var LibraryManager = load("res://scripts/LibraryManager.gd").new()
 var mapSize = Vector2i(10000,10000)
 var offset = Vector2i(0,0)
 #
-@onready var Sidebar = $Sidebar
+@onready var Sidebar = $CanvasLayer/ColorRect/Sidebar
 @onready var RD = $Camera3D/RenderDistance
 @onready var grid = $GridMap
 @export var HeightModifier = 0
 @export var distribution_curve : Curve
+@export var HeightMultiplier = 0
 var frame= 0
 func _ready() -> void:
 	add_to_group("game_manager")
@@ -28,8 +29,12 @@ func _ready() -> void:
 var x=0
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	
-	
+	x = x+1
+	if(x==60):
+		x=0
+		WorldGen.remove_map(grid)
+		WorldGen.generate_map(grid,offset.x,offset.y,distribution_curve,300,Vector3(100,0,100),HeightMultiplier)
+		
 	pass
 
 func LoadScene():
