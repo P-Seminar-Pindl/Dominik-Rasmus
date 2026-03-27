@@ -4,12 +4,11 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://m52w8hr3wkej"
-path="res://.godot/imported/tile.blend-c2c76dafa6d56974af218fe7291225d0.scn"
+valid=false
 
 [deps]
 
 source_file="res://models/tile.blend"
-dest_files=["res://.godot/imported/tile.blend-c2c76dafa6d56974af218fe7291225d0.scn"]
 
 [params]
 

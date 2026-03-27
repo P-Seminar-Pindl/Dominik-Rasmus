@@ -27,7 +27,11 @@ func _input(event):
 		var intersection = ground_plane.intersects_ray(origin, normal)
 		if intersection:
 			Anchor = intersection
-			PlaceBuilding(grid.local_to_map(intersection))
+			var grid_pos = grid.local_to_map(intersection)
+			var item = LibraryManager.Buildings.get(Global.selected_building, {}).get("id", -1)
+			if item != -1:
+				grid.set_cell_item(grid_pos, item)
+				Global.PlaceBuilding(grid_pos, Global.selected_building)
 
 	# --- Scroll wheel: zoom ---
 	if event is InputEventMouseButton and event.pressed:
