@@ -15,18 +15,20 @@ func _ready() -> void:
 	Global.distribution_curve = distribution_curve
 	Global.cell_size = grid.cell_size
 	Global.grid = grid
-	
+
+
 	add_to_group("game_manager")
+	
 	#Library Manager
 	library_manager.populate_library(grid)
 	library_manager.populate_buildings(grid)
-	
-	# ✅ Must call init() first to configure noise!
-	WorldGen.init(WorldGen.cfg)
+
 
 	# First generation pass
+	WorldGen.init(WorldGen.cfg)
 	WorldGen.stream_chunks(grid, Global.distribution_curve, Vector2(0, 0))
-
+	
+	
 	# Add UI-elements
 	sidebar.populate(library_manager.buildings)
 	sidebar.item_selected.connect(func(name: String) -> void:

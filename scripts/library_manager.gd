@@ -1,17 +1,59 @@
 extends Node
 class_name LibraryManager
 
+# Each biome maps to an Array[int] of mesh library IDs (one per variant).
+# Single-texture biomes just have an array of one entry.
 static var tiles: Dictionary = {}
 static var buildings: Dictionary = {}
 
 
 func populate_library(grid: GridMap) -> void:
-	tiles.Dirt   = AssetInit.add_tile_from_texture("Dirt",   grid, "res://textures/dirt.png")
-	tiles.Water  = AssetInit.add_tile_from_texture("Water",  grid, "res://textures/blue_concrete.png")
-	tiles.Grass  = AssetInit.add_tile_from_texture("Grass",  grid, "res://textures/lime_concrete.png")
-	tiles.Forest = AssetInit.add_tile_from_texture("Forest", grid, "res://textures/green_concrete_powder.png")
-	tiles.Sand   = AssetInit.add_tile_from_texture("Sand",   grid, "res://textures/sand.png")
-	tiles.Stone  = AssetInit.add_tile_from_texture("Stone",  grid, "res://textures/stone.png")
+	# ── Single-variant tiles ──────────────────────────────────────────────────
+	tiles["Water"]  = [AssetInit.add_tile_from_texture("Water",  grid, "res://textures/blue_concrete.png")]
+	tiles["Sand"]   = [AssetInit.add_tile_from_texture("Sand",   grid, "res://textures/sand.png")]
+	tiles["Stone"]  = [AssetInit.add_tile_from_texture("Stone",  grid, "res://textures/stone.png")]
+
+	# ── Multi-variant tiles ───────────────────────────────────────────────────
+	# Each array entry is a texture path. Add more paths to get more variety.
+	# Right now all biomes share the placeholder textures you already have —
+	# replace paths here when you have proper art.
+
+	tiles["Grass"] = AssetInit.add_tile_variants("Grass", grid, [
+		"res://textures/lime_concrete.png",       # plain grass
+		"res://textures/lime_concrete.png",       # TODO: replace with grassland_flowers.png
+		"res://textures/lime_concrete.png",       # TODO: replace with grassland_rocky.png
+	])
+
+	tiles["Forest"] = AssetInit.add_tile_variants("Forest", grid, [
+		"res://textures/green_concrete_powder.png",   # dense forest floor
+		"res://textures/green_concrete_powder.png",   # TODO: forest_sparse.png
+	])
+
+	tiles["Desert"] = AssetInit.add_tile_variants("Desert", grid, [
+		"res://textures/sand.png",                # flat sand
+		"res://textures/sand.png",                # TODO: desert_dunes.png
+		"res://textures/stone.png",               # TODO: desert_rock.png
+	])
+
+	tiles["Savanna"] = AssetInit.add_tile_variants("Savanna", grid, [
+		"res://textures/sand.png",                # dry grass
+		"res://textures/lime_concrete.png",       # TODO: savanna_grass.png
+	])
+
+	tiles["Jungle"] = AssetInit.add_tile_variants("Jungle", grid, [
+		"res://textures/green_concrete_powder.png",   # jungle floor
+		"res://textures/green_concrete_powder.png",   # TODO: jungle_dense.png
+	])
+
+	tiles["Taiga"] = AssetInit.add_tile_variants("Taiga", grid, [
+		"res://textures/stone.png",               # taiga ground
+		"res://textures/lime_concrete.png",       # TODO: taiga_snow_grass.png
+	])
+
+	tiles["Tundra"] = AssetInit.add_tile_variants("Tundra", grid, [
+		"res://textures/stone.png",       # frozen ground
+		"res://textures/stone.png",               # TODO: tundra_rock.png
+	])
 
 
 func populate_buildings(grid: GridMap, folder: String = "res://json/Flaticons/") -> void:

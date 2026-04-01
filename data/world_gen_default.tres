@@ -1,12 +1,20 @@
 [gd_resource type="Resource" script_class="WorldGenConfig" format=3 uid="uid://d1njabrvf77gx"]
 
-[ext_resource type="Script" uid="uid://cne0lfobpwup6" path="res://scripts/world_gen_config.gd" id="1_vkuja"]
+[ext_resource type="Script" uid="uid://cne0lfobpwup6" path="res://scripts/Templates/world_gen_config.gd" id="1_vkuja"]
 
 [resource]
 script = ExtResource("1_vkuja")
-seed = 44
-island_radius = 80.0
-noise_freq = 2.0
-warp_strength = 0.0
-chunk_render_dist = 32
+seed = 139
+island_count = 5
+island_radius = 150.0
+mask_inner = 0.215
+warp_freq = 0.075
+fbm_octaves = 3
+temp_octaves = 4
+temp_altitude_drop = 0.29
+threshold_lowland = 0.7
+threshold_highland = 0.97
+height_modifier = 12
+chunk_size = 16
+chunk_render_dist = 16
 metadata/_custom_type_script = "uid://cne0lfobpwup6"

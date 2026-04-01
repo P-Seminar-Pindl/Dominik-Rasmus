@@ -8,7 +8,7 @@ static func _add_box_collision(library: MeshLibrary, index: int, size: Vector3) 
 	library.set_item_shapes(index, [shape, Transform3D.IDENTITY])
 
 
-static func add_tile_from_texture(name: String, grid: GridMap, texture) -> int:
+static func add_tile_from_texture(name: String, grid: GridMap, texture: String) -> int:
 	var cell_size := Vector3(2, 2, 2)
 	var plane = BoxMesh.new()
 	plane.size = cell_size
@@ -25,7 +25,17 @@ static func add_tile_from_texture(name: String, grid: GridMap, texture) -> int:
 	return index
 
 
-static func add_tile_from_mesh(name: String, grid: GridMap, mesh: Mesh, texture) -> int:
+# Register multiple texture variants for one biome.
+# Returns an Array[int] of mesh library indices.
+static func add_tile_variants(biome: String, grid: GridMap, textures: Array[String]) -> Array[int]:
+	var ids: Array[int] = []
+	for i in textures.size():
+		var variant_name := biome + "_" + str(i)
+		ids.append(add_tile_from_texture(variant_name, grid, textures[i]))
+	return ids
+
+
+static func add_tile_from_mesh(name: String, grid: GridMap, mesh: Mesh, texture: String) -> int:
 	var mat = StandardMaterial3D.new()
 	mat.albedo_texture = load(texture)
 	mesh.surface_set_material(0, mat)

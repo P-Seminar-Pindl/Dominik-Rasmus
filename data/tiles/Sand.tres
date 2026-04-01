@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TileResource" format=3 uid="uid://d267sqsa8jycw"]
+
+[ext_resource type="Script" uid="uid://buh0r7nfw5aja" path="res://scripts/Templates/tile_resource.gd" id="1_j1els"]
+[ext_resource type="Texture2D" uid="uid://bgjvv36yskmoo" path="res://textures/sand.png" id="2_067li"]
+
+[resource]
+script = ExtResource("1_j1els")
+name = "Sand"
+textures = Array[Texture2D]([ExtResource("2_067li")])
+metadata/_custom_type_script = "uid://buh0r7nfw5aja"
