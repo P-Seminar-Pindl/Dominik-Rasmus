@@ -1,7 +1,10 @@
 [gd_resource type="Resource" script_class="TileResource" format=3 uid="uid://bvk62dt2cc16g"]
 
 [ext_resource type="Script" uid="uid://buh0r7nfw5aja" path="res://scripts/Templates/tile_resource.gd" id="1_8rjr5"]
+[ext_resource type="Texture2D" uid="uid://cmiq7ejelm8v6" path="res://textures/lime_concrete.png" id="2_5vbfi"]
 
 [resource]
 script = ExtResource("1_8rjr5")
+name = "Grass"
+texture = ExtResource("2_5vbfi")
 metadata/_custom_type_script = "uid://buh0r7nfw5aja"

@@ -6,5 +6,5 @@
 [resource]
 script = ExtResource("1_j1els")
 name = "Sand"
-textures = Array[Texture2D]([ExtResource("2_067li")])
+texture = ExtResource("2_067li")
 metadata/_custom_type_script = "uid://buh0r7nfw5aja"

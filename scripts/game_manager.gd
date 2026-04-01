@@ -20,10 +20,9 @@ func _ready() -> void:
 	add_to_group("game_manager")
 	
 	#Library Manager
-	library_manager.populate_library(grid)
-	library_manager.populate_buildings(grid)
-
-
+	library_manager.populate_tiles_from_folder(grid,"res://data/tiles/")
+	library_manager.populate_buildings_from_folder(grid,"res://data/buildings/")
+	print(LibraryManager.tiles)
 	# First generation pass
 	WorldGen.init(WorldGen.cfg)
 	WorldGen.stream_chunks(grid, Global.distribution_curve, Vector2(0, 0))

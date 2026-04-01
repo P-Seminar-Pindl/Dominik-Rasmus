@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://scripts/world_gen.gd" id="2_s0nni"]
 [ext_resource type="PackedScene" uid="uid://ciq6xv0ahja8s" path="res://scenes/GUI.tscn" id="3_cpr0p"]
 [ext_resource type="PackedScene" uid="uid://biy7st87oubxk" path="res://scenes/Camera.tscn" id="4_78awf"]
+[ext_resource type="Texture2D" uid="uid://dp1t8cphavn2q" path="res://textures/kloofendal_48d_partly_cloudy_puresky.jpg" id="5_kiw3p"]
 [ext_resource type="PackedScene" uid="uid://mw2mwfmhcoje" path="res://scenes/Sidebar.tscn" id="5_s0nni"]
-[ext_resource type="Texture2D" uid="uid://cfxpfw31vtght" path="res://textures/citrus_orchard_road_puresky.webp" id="6_aug50"]
 [ext_resource type="Shader" uid="uid://cayg02mtnui0n" path="res://shaders/pixelate.gdshader" id="7_kiw3p"]
 
 [sub_resource type="Curve" id="Curve_cpr0p"]
@@ -15,7 +15,7 @@ point_count = 3
 [sub_resource type="MeshLibrary" id="MeshLibrary_78awf"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_kiw3p"]
-panorama = ExtResource("6_aug50")
+panorama = ExtResource("5_kiw3p")
 
 [sub_resource type="Sky" id="Sky_kiw3p"]
 sky_material = SubResource("PanoramaSkyMaterial_kiw3p")
