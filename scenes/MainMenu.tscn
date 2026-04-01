@@ -17,18 +17,15 @@ offset_left = 480.0
 offset_top = 240.0
 offset_right = 660.0
 offset_bottom = 301.0
-text = "Quit
-"
+text = "Quit"
 
 [node name="Options_Button" type="Button" parent="."]
 offset_left = 480.0
 offset_top = 320.0
 offset_right = 660.0
 offset_bottom = 381.0
-text = "Options
-"
+text = "Options"
 
 [connection signal="pressed" from="Start_Button" to="." method="_on_start_button_pressed"]
 [connection signal="button_down" from="Quit_Button" to="." method="_on_quit_button_button_down"]
-[connection signal="pressed" from="Quit_Button" to="." method="_on_quit_button_pressed"]
 [connection signal="pressed" from="Options_Button" to="." method="_on_options_button_pressed"]

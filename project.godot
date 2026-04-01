@@ -18,11 +18,11 @@ config/name="Game"
 run/main_scene="res://scenes/Game.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
-<<<<<<<Updatedupstreamconfig/features=PackedStringArray("4.5", "Forward Plus")
 
 [autoload]
 
-Global="*uid://0x12mxn23q46"
+Global="*res://scripts/global.gd"
+WorldGen="*res://scripts/world_gen.gd"
 
 [display]
 

@@ -1,15 +1,20 @@
 extends Node
 class_name LibraryManager
-static var Tiles = {}
-static var Buildings = {}
-func PopulateLibrary(grid): 
-	Tiles.Dirt =assetInit.addTileFromTexture("Dirt",grid,"res://textures/dirt.png")
-	Tiles.Water =assetInit.addTileFromTexture("Water",grid,"res://textures/blue_concrete.png")
-	Tiles.Grass =assetInit.addTileFromTexture("Grass",grid,"res://textures/lime_concrete.png")
-	Tiles.Forest =assetInit.addTileFromTexture("Forest",grid,"res://textures/green_concrete_powder.png")
-	Tiles.Sand =assetInit.addTileFromTexture("Sand",grid,"res://textures/sand.png")
-	Tiles.Stone =assetInit.addTileFromTexture("Stone",grid,"res://textures/stone.png")
-func PopulateBuildings(grid: GridMap, folder: String = "res://buildings/") -> void:
+
+static var tiles: Dictionary = {}
+static var buildings: Dictionary = {}
+
+
+func populate_library(grid: GridMap) -> void:
+	tiles.Dirt   = AssetInit.add_tile_from_texture("Dirt",   grid, "res://textures/dirt.png")
+	tiles.Water  = AssetInit.add_tile_from_texture("Water",  grid, "res://textures/blue_concrete.png")
+	tiles.Grass  = AssetInit.add_tile_from_texture("Grass",  grid, "res://textures/lime_concrete.png")
+	tiles.Forest = AssetInit.add_tile_from_texture("Forest", grid, "res://textures/green_concrete_powder.png")
+	tiles.Sand   = AssetInit.add_tile_from_texture("Sand",   grid, "res://textures/sand.png")
+	tiles.Stone  = AssetInit.add_tile_from_texture("Stone",  grid, "res://textures/stone.png")
+
+
+func populate_buildings(grid: GridMap, folder: String = "res://json/Flaticons/") -> void:
 	var dir = DirAccess.open(folder)
 	if dir == null:
 		push_error("Could not open buildings folder: " + folder)
@@ -40,7 +45,6 @@ func PopulateBuildings(grid: GridMap, folder: String = "res://buildings/") -> vo
 			var id: String = data.get("id", file_name.get_basename())
 			var texture: String = data["assets"]["texture"]
 
-			# Build a clean data dict to pass through
 			var building_data = {
 				"workforce": data.get("workforce", 0),
 				"costs":     data.get("costs", {}),
@@ -48,7 +52,7 @@ func PopulateBuildings(grid: GridMap, folder: String = "res://buildings/") -> vo
 				"output":    data.get("output", {}),
 			}
 
-			Buildings[id] = assetInit.addBuildingFromTexture(id, grid, texture, building_data)
+			buildings[id] = AssetInit.add_building_from_texture(id, grid, texture, building_data)
 
 		file_name = dir.get_next()
 

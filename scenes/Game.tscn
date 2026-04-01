@@ -1,16 +1,16 @@
 [gd_scene format=3 uid="uid://dynr3kkd2rgd0"]
 
-[ext_resource type="Script" uid="uid://dm2odqcv0iqgn" path="res://scripts/gameManager.gd" id="1_78awf"]
-[ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://scripts/WorldGen.gd" id="2_s0nni"]
+[ext_resource type="Script" uid="uid://dm2odqcv0iqgn" path="res://scripts/game_manager.gd" id="1_78awf"]
+[ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://scripts/world_gen.gd" id="2_s0nni"]
 [ext_resource type="PackedScene" uid="uid://ciq6xv0ahja8s" path="res://scenes/GUI.tscn" id="3_cpr0p"]
 [ext_resource type="PackedScene" uid="uid://biy7st87oubxk" path="res://scenes/Camera.tscn" id="4_78awf"]
 [ext_resource type="PackedScene" uid="uid://mw2mwfmhcoje" path="res://scenes/Sidebar.tscn" id="5_s0nni"]
 [ext_resource type="Texture2D" uid="uid://cfxpfw31vtght" path="res://textures/citrus_orchard_road_puresky.webp" id="6_aug50"]
-[ext_resource type="Shader" uid="uid://cayg02mtnui0n" path="res://Shader/pixelate.gdshader" id="7_kiw3p"]
+[ext_resource type="Shader" uid="uid://cayg02mtnui0n" path="res://shaders/pixelate.gdshader" id="7_kiw3p"]
 
 [sub_resource type="Curve" id="Curve_cpr0p"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.19651055, 0.16710436), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 3
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.43515846, 0.29581422), 0.0, 0.0, 0, 0, Vector2(0.6541787, 0.5153007), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
 
 [sub_resource type="MeshLibrary" id="MeshLibrary_78awf"]
 
@@ -30,9 +30,8 @@ shader_parameter/pixel_size = 1.0
 
 [node name="Game" type="Node3D" unique_id=1285071726]
 script = ExtResource("1_78awf")
-HeightModifier = 40
+height_modifier = 47
 distribution_curve = SubResource("Curve_cpr0p")
-HeightMultiplier = 25
 
 [node name="GridMap" type="GridMap" parent="." unique_id=677668730]
 mesh_library = SubResource("MeshLibrary_78awf")
@@ -46,6 +45,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 31.980667, 0)
 
 [node name="Camera3D" parent="." unique_id=1754714316 instance=ExtResource("4_78awf")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 100, 0)
+SensitivityMulti = 1.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=101835108]
 transform = Transform3D(-2.48164e-07, 5.67733, 0, -5.67733, -2.48164e-07, 0, 0, 0, 5.67733, 12.483, 67.2991, 14.38)
