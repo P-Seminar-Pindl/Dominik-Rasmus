@@ -9,7 +9,7 @@
 [ext_resource type="Shader" uid="uid://cayg02mtnui0n" path="res://shaders/pixelate.gdshader" id="7_kiw3p"]
 
 [sub_resource type="Curve" id="Curve_cpr0p"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.8184438, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.69740635, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="MeshLibrary" id="MeshLibrary_78awf"]

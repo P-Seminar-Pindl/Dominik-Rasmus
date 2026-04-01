@@ -1,7 +1,11 @@
 extends Node
-
+@export var height_modifier: int = 10
 var selected_building: String = ""
-
+var distribution_curve : Curve
+var cell_size : Vector3
+var chunk_render_distance : int = 32
+var grid : GridMap
+var anchor := Vector2.ZERO
 # Tracks every placed building instance.
 # Key: Vector3i (grid position)
 # Value: Dictionary with building data and runtime state

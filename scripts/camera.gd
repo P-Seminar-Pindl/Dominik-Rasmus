@@ -1,5 +1,4 @@
 extends Camera3D
-
 @onready var grid: GridMap = $"../GridMap"
 @onready var game_manager = get_tree().get_first_node_in_group("game_manager")
 @export var SensitivityMulti : float
@@ -9,7 +8,7 @@ const CELL_SIZE := Vector3(2.0, 2.0, 2.0)
 var anchor = Vector3.ZERO
 var dragging = false
 var right_dragging = false
-
+var _last_chunk := Vector2i(999, 999)
 
 var target_distance := 10.0
 var zoom_speed = 0.1
@@ -68,15 +67,16 @@ func _update_ghost(grid_pos: Vector3i) -> void:
 # ── Process ───────────────────────────────────────────────────────────────────
 
 func _process(delta: float) -> void:
-	# Smooth zoom
-	distance = lerp(distance, target_distance, delta * 10)  # 10 = smoothing speed
+	distance = lerp(distance, target_distance, delta * 10)
 	_update_camera()
-	
-	# --- your existing ghost update code below ---
+	_update_ghost_cursor()
+	_update_chunks_if_moved()
+
+
+func _update_ghost_cursor() -> void:
 	if Global.selected_building == "":
 		_ghost.visible = false
 		return
-
 	var hit = _raycast_grid(get_viewport().get_mouse_position())
 	if hit.is_empty():
 		_ghost.visible = false
@@ -84,7 +84,21 @@ func _process(delta: float) -> void:
 		_ghost.visible = true
 		_update_ghost(_cell_above(hit))
 
+func _update_chunks_if_moved() -> void:
+	# Convert world pos → tile pos
+	var tile_anchor = Vector2(anchor.x / CELL_SIZE.x, anchor.z / CELL_SIZE.z)
+	WorldGen.stream_chunks(
+		grid,
+		Global.distribution_curve,
+		tile_anchor,
+		
+	)
 
+func _frame_budget_usec() -> int:
+	# Leave ~40% of the frame for rendering, physics, etc.
+	var target_fps: float = Engine.max_fps if Engine.max_fps > 0 else 10
+	var frame_usec: float = 1_000_000.0 / target_fps
+	return int(frame_usec * 0.3)  # spend max 30% of frame on chunk loading
 # ── Raycasting ────────────────────────────────────────────────────────────────
 
 func _raycast_grid(screen_pos: Vector2) -> Dictionary:

@@ -7,26 +7,28 @@ var offset = Vector2i(0, 0)
 @onready var sidebar = $CanvasLayer/ColorRect/Sidebar
 @onready var render_distance = $Camera3D/RenderDistance
 @onready var grid = $GridMap
-
 @export var height_modifier: int
 @export var distribution_curve: Curve
-@export var height_multiplier: int = 0
 
 
 func _ready() -> void:
+	Global.distribution_curve = distribution_curve
+	Global.cell_size = grid.cell_size
+	Global.grid = grid
+	
 	add_to_group("game_manager")
+	#Library Manager
 	library_manager.populate_library(grid)
 	library_manager.populate_buildings(grid)
+	
+	# ✅ Must call init() first to configure noise!
+	WorldGen.init(WorldGen.cfg)
 
-	WorldGen.generate_island_centers(5, 400.0, randi())
-	WorldGen.generate_map(grid, offset.x, offset.y, distribution_curve, 300, Vector3(100, 0, 100), height_modifier)
+	# First generation pass
+	WorldGen.stream_chunks(grid, Global.distribution_curve, Vector2(0, 0))
 
+	# Add UI-elements
 	sidebar.populate(library_manager.buildings)
 	sidebar.item_selected.connect(func(name: String) -> void:
 		Global.selected_building = name
 	)
-
-
-func _on_render_distance_value_changed(_value: float) -> void:
-	WorldGen.remove_map(grid)
-	WorldGen.generate_map(grid, 0, 0, distribution_curve, render_distance.value, Vector3(100, 0, 100), height_modifier)

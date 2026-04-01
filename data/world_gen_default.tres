@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WorldGenConfig" format=3 uid="uid://d1njabrvf77gx"]
+
+[ext_resource type="Script" uid="uid://cne0lfobpwup6" path="res://scripts/world_gen_config.gd" id="1_vkuja"]
+
+[resource]
+script = ExtResource("1_vkuja")
+seed = 44
+island_radius = 80.0
+noise_freq = 2.0
+warp_strength = 0.0
+chunk_render_dist = 32
+metadata/_custom_type_script = "uid://cne0lfobpwup6"
