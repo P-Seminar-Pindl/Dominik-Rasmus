@@ -27,13 +27,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 31.980667, 0)
 [node name="Camera3D" type="Camera3D" parent="." unique_id=880410752]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 107.52161, 1000, 0)
 
-[node name="RenderDistance" type="HSlider" parent="Camera3D" unique_id=1052927532]
-offset_right = 438.0
-offset_bottom = 16.0
-max_value = 500.0
-
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=599420568]
 transform = Transform3D(-2.48164e-07, 5.67733, 0, -5.67733, -2.48164e-07, 0, 0, 0, 5.67733, 12.483, 67.2991, 14.38)
 skeleton = NodePath("")
-
-[connection signal="value_changed" from="Camera3D/RenderDistance" to="." method="_on_render_distance_value_changed"]
