@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="StorageBuildingResource" format=3 uid="uid://cvomq5krey3wh"]
+
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="1_vh27f"]
+[ext_resource type="Script" uid="uid://s1f26he0acif" path="res://scripts/Templates/storage_building_resource.gd" id="2_6s3sv"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_vh27f"]
+size = Vector3(2, 2, 2)
+
+[resource]
+script = ExtResource("2_6s3sv")
+name = "Warehouse"
+mesh = SubResource("BoxMesh_vh27f")
+metadata/_custom_type_script = "uid://s1f26he0acif"

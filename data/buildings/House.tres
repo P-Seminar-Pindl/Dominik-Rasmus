@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="HouseBuildingResource" format=3 uid="uid://house_building"]
+
+[ext_resource type="Script" path="res://scripts/Templates/house_building_resource.gd" id="1"]
+[ext_resource type="PackedScene" path="res://prototyping/ui/HouseInfoPanel.tscn" id="2"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_house"]
+albedo_color = Color(0.55, 0.35, 0.2, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_house"]
+material = SubResource("Mat_house")
+size = Vector3(2, 2, 2)
+
+[resource]
+script = ExtResource("1")
+name = "House"
+info_title = "House"
+info_description = "Provides housing for workers."
+footprint_size = Vector2i(1, 1)
+mesh = SubResource("Mesh_house")
+info_panel = ExtResource("2")
+population_capacity = 4
+workforce = 2

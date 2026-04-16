@@ -16,13 +16,14 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Game"
 run/main_scene="res://scenes/Game.tscn"
-config/features=PackedStringArray("4.5", "Forward Plus")
+config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Global="*res://scripts/global.gd"
-WorldGen="*res://scripts/world_gen.gd"
+WorldGen="res://scripts/world_gen.gd"
+BuildingNetwork="*uid://d2u2as057a0ac"
 
 [display]
 
