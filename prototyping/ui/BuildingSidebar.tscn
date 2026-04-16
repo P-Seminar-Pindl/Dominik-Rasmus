@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://building_sidebar"]
+
+[ext_resource type="Script" path="res://prototyping/ui/building_sidebar.gd" id="1"]
+
+[node name="BuildingSidebar" type="PanelContainer"]
+script = ExtResource("1")
