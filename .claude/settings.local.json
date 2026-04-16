@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"buildings\\\\[\" /c/Users/rasen/Documents/GitHub/Game/scripts/*.gd)",
+      "Bash(grep -A 5 -B 5 \"LibraryManager.buildings\" /c/Users/rasen/Documents/GitHub/Game/scripts/*.gd)"
+    ]
+  }
+}

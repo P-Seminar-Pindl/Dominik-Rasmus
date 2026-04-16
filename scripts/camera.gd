@@ -69,8 +69,8 @@ func _update_ghost(grid_pos: Vector3i) -> void:
 func _process(delta: float) -> void:
 	distance = lerp(distance, target_distance, delta * 10)
 	_update_camera()
-	_update_ghost_cursor()
-	_update_chunks_if_moved()
+	#_update_ghost_cursor()
+	#_update_chunks_if_moved()
 
 
 func _update_ghost_cursor() -> void:
@@ -87,12 +87,12 @@ func _update_ghost_cursor() -> void:
 func _update_chunks_if_moved() -> void:
 	# Convert world pos → tile pos
 	var tile_anchor = Vector2(anchor.x / CELL_SIZE.x, anchor.z / CELL_SIZE.z)
-	WorldGen.stream_chunks(
-		grid,
-		Global.distribution_curve,
-		tile_anchor,
-		
-	)
+	#WorldGen.stream_chunks(
+	#	grid,
+	#	Global.distribution_curve,
+	#	tile_anchor,
+	#	
+	#)
 
 func _frame_budget_usec() -> int:
 	# Leave ~40% of the frame for rendering, physics, etc.
