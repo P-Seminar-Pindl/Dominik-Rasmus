@@ -10,6 +10,9 @@ const ResourceAmount = preload("res://scripts/Templates/resource_amount.gd")
 @export var info_description: String = ""
 @export var info_panel: PackedScene  # optional — if null, system picks default by type
 
+@export_group("UI")
+@export var show_in_sidebar: bool = true
+
 @export_group("Variants")
 @export var active_variant: String = ""  # name of the LibraryManager entry to swap to when connected
 

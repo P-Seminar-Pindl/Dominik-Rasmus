@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dynr3kkd2rgd0"]
 
-[ext_resource type="Script" uid="uid://dm2odqcv0iqgn" path="res://scripts/game_manager.gd" id="1_78awf"]
-[ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://scripts/world_gen.gd" id="2_s0nni"]
+[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_78awf"]
+[ext_resource type="Script" path="res://scripts/world_gen.gd" id="2_s0nni"]
 [ext_resource type="PackedScene" uid="uid://ciq6xv0ahja8s" path="res://scenes/GUI.tscn" id="3_cpr0p"]
 [ext_resource type="PackedScene" uid="uid://biy7st87oubxk" path="res://scenes/Camera.tscn" id="4_78awf"]
 [ext_resource type="Texture2D" uid="uid://dp1t8cphavn2q" path="res://textures/kloofendal_48d_partly_cloudy_puresky.jpg" id="5_kiw3p"]

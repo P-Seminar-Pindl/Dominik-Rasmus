@@ -3,6 +3,7 @@ extends Camera3D
 const _DefaultInfoPanel = preload("res://prototyping/ui/default_info_panel.gd")
 const _sidebar_scene := preload("res://prototyping/ui/BuildingSidebar.tscn")
 const _BuildingSidebar = preload("res://prototyping/ui/building_sidebar.gd")
+const _ResourceDisplay = preload("res://prototyping/ui/resource_display.gd")
 
 @onready var grid: GridMap = $".."
 @export var SensitivityMulti: float = 1.0
@@ -57,6 +58,10 @@ func _ready() -> void:
 	# sidebar._ready() fires once the canvas layer is added (deferred above).
 	var sidebar := _sidebar_scene.instantiate() as _BuildingSidebar
 	_canvas_layer.add_child(sidebar)
+
+	# Resource HUD — top-right corner.
+	var res_display := _ResourceDisplay.new()
+	_canvas_layer.add_child(res_display)
 
 
 # ── Ghost ─────────────────────────────────────────────────────────────────────
@@ -269,12 +274,20 @@ func _place_at(origin: Vector3i) -> void:
 	var res := entry["resource"] as BuildingResource
 	if not _can_place(origin, res.footprint_size):
 		return
+	# Check the player can afford the build cost.
+	for cost in res.costs:
+		if not ResourceManager.has_enough(cost.item, cost.amount):
+			print("Cannot afford %s: need %d %s" % [res.name, cost.amount, cost.item])
+			return
+	# Deduct costs.
+	for cost in res.costs:
+		ResourceManager.remove(cost.item, cost.amount)
 	# Place mesh at anchor cell only; occupancy covers all footprint cells
 	grid.set_cell_item(origin, entry["index"])
 	Global.place_building(origin, Global.selected_building)
-	print ("building placed")
+	print("building placed")
 	await BuildingNetwork.rebuild_network()
-	print ("network recalced")
+	print("network recalced")
 
 # ── Inspect ───────────────────────────────────────────────────────────────────
 

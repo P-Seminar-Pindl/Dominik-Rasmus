@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="HouseBuildingResource" format=3 uid="uid://house_building"]
+[gd_resource type="Resource" script_class="HouseBuildingResource" format=3 uid="uid://bilw22j8tfi3d"]
 
 [ext_resource type="Script" path="res://scripts/Templates/house_building_resource.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/Templates/resource_amount.gd" id="1_hynf3"]
 [ext_resource type="PackedScene" path="res://prototyping/ui/HouseInfoPanel.tscn" id="2"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_house"]
@@ -12,11 +13,10 @@ size = Vector3(2, 2, 2)
 
 [resource]
 script = ExtResource("1")
+population_capacity = 4
 name = "House"
 info_title = "House"
 info_description = "Provides housing for workers."
-footprint_size = Vector2i(1, 1)
-mesh = SubResource("Mesh_house")
 info_panel = ExtResource("2")
-population_capacity = 4
+mesh = SubResource("Mesh_house")
 workforce = 2

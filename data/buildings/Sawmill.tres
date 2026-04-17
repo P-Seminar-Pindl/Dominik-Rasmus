@@ -1,16 +1,35 @@
 [gd_resource type="Resource" script_class="ProductionBuildingResource" format=3 uid="uid://csj6nrvr6emqk"]
 
 [ext_resource type="Script" uid="uid://bc18ds8vike8c" path="res://scripts/Templates/production_building_resource.gd" id="1"]
-[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="1_bd1ne"]
+[ext_resource type="Script" path="res://scripts/Templates/resource_amount.gd" id="1_bd1ne"]
+[ext_resource type="PackedScene" path="res://prototyping/ui/ProductionInfoPanel.tscn" id="2_sawmill"]
+
+[sub_resource type="Resource" id="Resource_rfyem"]
+script = ExtResource("1_bd1ne")
+item = "Gold"
+amount = 20
 
 [sub_resource type="BoxMesh" id="BoxMesh_rfyem"]
 size = Vector3(4, 2, 4)
 
+[sub_resource type="Resource" id="Output_planks"]
+script = ExtResource("1_bd1ne")
+item = "Planks"
+
+[sub_resource type="Resource" id="Storage_planks"]
+script = ExtResource("1_bd1ne")
+item = "Planks"
+amount = 10
+
 [resource]
 script = ExtResource("1")
+output = Array[ExtResource("1_bd1ne")]([SubResource("Output_planks")])
+storage_slots = Array[ExtResource("1_bd1ne")]([SubResource("Storage_planks")])
 name = "Sawmill"
 info_title = "Sawmill"
 info_description = "Converts raw logs into planks for construction."
+info_panel = ExtResource("2_sawmill")
 mesh = SubResource("BoxMesh_rfyem")
 footprint_size = Vector2i(2, 2)
 workforce = 2
+costs = Array[ExtResource("1_bd1ne")]([SubResource("Resource_rfyem")])

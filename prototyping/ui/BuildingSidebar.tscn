@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://building_sidebar"]
+[gd_scene format=3 uid="uid://bf7sb0koe38cq"]
 
-[ext_resource type="Script" path="res://prototyping/ui/building_sidebar.gd" id="1"]
+[ext_resource type="Script" uid="uid://q7yb54x45rhq" path="res://prototyping/ui/building_sidebar.gd" id="1"]
 
-[node name="BuildingSidebar" type="PanelContainer"]
+[node name="BuildingSidebar" type="PanelContainer" unique_id=1841958425]
 script = ExtResource("1")

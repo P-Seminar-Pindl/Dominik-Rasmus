@@ -18,6 +18,7 @@ func _build_ui() -> void:
 	margin.add_theme_constant_override("margin_bottom",30)
 	margin.add_theme_constant_override("margin_left", 8)
 	margin.add_theme_constant_override("margin_right", 30)
+	margin.custom_minimum_size.y = 240
 	add_child(margin)
 
 	var scroll := ScrollContainer.new()
@@ -48,6 +49,9 @@ func _build_ui() -> void:
 
 	# One button per registered building
 	for building_name: String in LibraryManager.buildings:
+		var res: BuildingResource = LibraryManager.buildings[building_name].get("resource")
+		if not res or not res.show_in_sidebar:
+			continue
 		var btn := Button.new()
 		btn.text = building_name
 		btn.toggle_mode = true

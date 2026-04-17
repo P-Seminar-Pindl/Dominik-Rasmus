@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://production_info_panel"]
+
+[ext_resource type="Script" path="res://prototyping/ui/production_info_panel.gd" id="1"]
+
+[node name="ProductionInfoPanel" type="PanelContainer"]
+script = ExtResource("1")

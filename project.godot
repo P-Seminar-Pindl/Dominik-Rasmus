@@ -24,6 +24,7 @@ config/icon="res://icon.svg"
 Global="*res://scripts/global.gd"
 WorldGen="res://scripts/world_gen.gd"
 BuildingNetwork="*uid://d2u2as057a0ac"
+ResourceManager="*res://scripts/ResourceManager.gd"
 
 [display]
 

@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://nee1811kxd85"]
 
 [ext_resource type="Script" uid="uid://bcmmbo8qpqepo" path="res://prototyping/camera_prototype.gd" id="2_qs18x"]
-[ext_resource type="PackedScene" path="res://prototyping/ui/BuildingSidebar.tscn" id="3_omn1d"]
 [ext_resource type="Script" uid="uid://c3teem255g4ey" path="res://prototyping/ProductionLine.gd" id="Script_prodline"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ta3ec"]
@@ -87,7 +86,3 @@ light_energy = 11.333
 [node name="Player" type="Camera3D" parent="." unique_id=202831947]
 transform = Transform3D(1, 0, 0, 0, 0.9998477, -0.017452406, 0, 0.017452406, 0.9998477, -1.035, 3.522, 0)
 script = ExtResource("2_qs18x")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1743327806]
-
-[node name="BuildingSidebar" parent="CanvasLayer" unique_id=1008953357 instance=ExtResource("3_omn1d")]
