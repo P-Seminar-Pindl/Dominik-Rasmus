@@ -9,12 +9,17 @@ script = ExtResource("1_bd1ne")
 item = "Gold"
 amount = 20
 
+[sub_resource type="Resource" id="Resource_fdp6d"]
+script = ExtResource("1_bd1ne")
+item = "Gold"
+
 [sub_resource type="BoxMesh" id="BoxMesh_rfyem"]
 size = Vector3(4, 2, 4)
 
 [sub_resource type="Resource" id="Output_planks"]
 script = ExtResource("1_bd1ne")
 item = "Planks"
+amount = 5
 
 [sub_resource type="Resource" id="Storage_planks"]
 script = ExtResource("1_bd1ne")
@@ -23,7 +28,9 @@ amount = 10
 
 [resource]
 script = ExtResource("1")
+input = Array[ExtResource("1_bd1ne")]([SubResource("Resource_fdp6d")])
 output = Array[ExtResource("1_bd1ne")]([SubResource("Output_planks")])
+production_time = 0.01
 storage_slots = Array[ExtResource("1_bd1ne")]([SubResource("Storage_planks")])
 name = "Sawmill"
 info_title = "Sawmill"
