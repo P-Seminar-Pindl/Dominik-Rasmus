@@ -46,28 +46,25 @@ func _show_extra(data: Dictionary) -> void:
 		_storage_label.text = "\n".join(lines)
 
 	# State + progress
-	var dist: int            = data.get("warehouse_distance", -1)
-	var prod_state: String   = data.get("prod_state", "idle")
-	var log_state: String    = data.get("logistics_state", "idle")
-	var progress: float      = data.get("logistics_progress", 0.0)
-	var timer: float         = data.get("prod_timer", 0.0)
+	var dist: int       = data.get("warehouse_distance", -1)
+	var state: String   = data.get("prod_state", "idle")
+	var progress: float = data.get("logistics_progress", 0.0)
+	var timer: float    = data.get("timer", 0.0)
 
-	var status_lines: PackedStringArray = []
 	if dist < 0:
-		status_lines.append("  [No warehouse connection]")
-	match prod_state:
-		"producing":
-			status_lines.append("  Producing: %.1fs / %.1fs" % [timer, res.production_time])
-		_:
-			status_lines.append("  Production: idle")
-	match log_state:
-		"fetching":
-			status_lines.append("  Fetching: %.1f / %d hops" % [progress, dist])
-		"delivering":
-			status_lines.append("  Delivering: %.1f / %d hops" % [progress, dist])
-		_:
-			status_lines.append("  Logistics: idle (dist: %d)" % dist)
-	_progress_label.text = "\n".join(status_lines)
+		_progress_label.text = "  [No warehouse connection]"
+	else:
+		match state:
+			"idle":
+				_progress_label.text = "  Idle  (dist: %d hops)" % dist
+			"fetching":
+				_progress_label.text = "  Fetching: %.1f / %d hops" % [progress, dist]
+			"producing":
+				_progress_label.text = "  Producing: %.1fs / %.1fs" % [timer, res.production_time]
+			"delivering":
+				_progress_label.text = "  Delivering: %.1f / %d hops" % [progress, dist]
+			_:
+				_progress_label.text = "  %s" % state
 
 
 static func _cap_for(res: ProductionBuildingResource, item: String) -> int:

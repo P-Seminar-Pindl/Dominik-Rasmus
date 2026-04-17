@@ -138,7 +138,7 @@ func _update_carriers() -> void:
 		if not res is ProductionBuildingResource:
 			continue
 
-		var state:    String  = data.get("logistics_state", "idle")
+		var state:    String  = data.get("prod_state", "idle")
 		var dist:     int     = data.get("warehouse_distance", -1)
 		var path:     Array   = data.get("warehouse_path", [])
 		var carrier:  Node3D  = data.get("carrier", null) as Node3D
