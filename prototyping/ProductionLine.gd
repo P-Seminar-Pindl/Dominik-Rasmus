@@ -40,6 +40,9 @@ func rebuild_network() -> void:
 		Global.placed_buildings[origin]["connected"]          = false
 		Global.placed_buildings[origin]["warehouse_distance"] = -1
 		Global.placed_buildings[origin]["warehouse_path"]     = []
+		Global.placed_buildings[origin]["carrier_state"]      = "idle"
+		Global.placed_buildings[origin]["input_buffer"]       = {}
+		Global.placed_buildings[origin]["carrier_cargo"]      = {}
 
 		var res := Global.placed_buildings[origin].get("resource") as BuildingResource
 		if res is RoadBuildingResource:
@@ -138,13 +141,13 @@ func _update_carriers() -> void:
 		if not res is ProductionBuildingResource:
 			continue
 
-		var state:    String  = data.get("prod_state", "idle")
-		var dist:     int     = data.get("warehouse_distance", -1)
-		var path:     Array   = data.get("warehouse_path", [])
-		var carrier:  Node3D  = data.get("carrier", null) as Node3D
-		var progress: float   = data.get("logistics_progress", 0.0)
+		var carrier_state: String = data.get("carrier_state", "idle")
+		var dist:          int    = data.get("warehouse_distance", -1)
+		var path:          Array  = data.get("warehouse_path", [])
+		var carrier:       Node3D = data.get("carrier", null) as Node3D
+		var progress:      float  = data.get("logistics_progress", 0.0)
 
-		var needs_carrier := (state == "fetching" or state == "delivering") \
+		var needs_carrier := (carrier_state == "fetching" or carrier_state == "delivering") \
 				and dist > 0 and not path.is_empty()
 
 		if needs_carrier:
@@ -156,7 +159,7 @@ func _update_carriers() -> void:
 			var t := clampf(progress / float(dist), 0.0, 1.0)
 			# fetching  : warehouse → building  (path forward)
 			# delivering: building  → warehouse (path reversed)
-			var path_t := t if state == "fetching" else (1.0 - t)
+			var path_t := t if carrier_state == "fetching" else (1.0 - t)
 			carrier.position = _path_position(path, path_t)
 		else:
 			if is_instance_valid(carrier):

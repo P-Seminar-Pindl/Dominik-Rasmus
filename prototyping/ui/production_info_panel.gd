@@ -34,37 +34,57 @@ func _show_extra(data: Dictionary) -> void:
 	else:
 		_recipe_label.text = input_str.strip_edges() + " → " + output_str.strip_edges()
 
-	# Local storage buffer
+	# Local storage buffer + input buffer + carrier cargo
 	var storage: Dictionary = data.get("storage", {})
-	if storage.is_empty():
-		_storage_label.text = "  (empty)"
-	else:
-		var lines: PackedStringArray = []
+	var input_buffer: Dictionary = data.get("input_buffer", {})
+	var carrier_cargo: Dictionary = data.get("carrier_cargo", {})
+
+	var storage_lines: PackedStringArray = []
+	if not storage.is_empty():
 		for item in storage.keys():
 			var cap: int = _cap_for(res, item)
-			lines.append("  %s: %d / %d" % [item, storage[item], cap])
-		_storage_label.text = "\n".join(lines)
+			storage_lines.append("  Out: %s: %d / %d" % [item, storage[item], cap])
+	if not input_buffer.is_empty():
+		for item in input_buffer.keys():
+			storage_lines.append("  In: %s: %d" % [item, input_buffer[item]])
+	if not carrier_cargo.is_empty():
+		for item in carrier_cargo.keys():
+			storage_lines.append("  Cargo: %s: %d" % [item, carrier_cargo[item]])
 
-	# State + progress
-	var dist: int       = data.get("warehouse_distance", -1)
-	var state: String   = data.get("prod_state", "idle")
-	var progress: float = data.get("logistics_progress", 0.0)
-	var timer: float    = data.get("timer", 0.0)
-
-	if dist < 0:
-		_progress_label.text = "  [No warehouse connection]"
+	if storage_lines.is_empty():
+		_storage_label.text = "  (empty)"
 	else:
-		match state:
+		_storage_label.text = "\n".join(storage_lines)
+
+	# Production state + carrier state + progress
+	var dist: int           = data.get("warehouse_distance", -1)
+	var prod_state: String  = data.get("prod_state", "idle")
+	var carrier_state: String = data.get("carrier_state", "idle")
+	var progress: float     = data.get("logistics_progress", 0.0)
+	var timer: float        = data.get("timer", 0.0)
+
+	var status_lines: PackedStringArray = []
+
+	# Production status
+	match prod_state:
+		"idle":
+			status_lines.append("  Prod: Idle")
+		"producing":
+			status_lines.append("  Prod: %.1fs / %.1fs" % [timer, res.production_time])
+
+	# Carrier status
+	if dist < 0:
+		status_lines.append("  [No warehouse]")
+	else:
+		match carrier_state:
 			"idle":
-				_progress_label.text = "  Idle  (dist: %d hops)" % dist
+				status_lines.append("  Carrier: Idle")
 			"fetching":
-				_progress_label.text = "  Fetching: %.1f / %d hops" % [progress, dist]
-			"producing":
-				_progress_label.text = "  Producing: %.1fs / %.1fs" % [timer, res.production_time]
+				status_lines.append("  Carrier: Fetching (%.1f / %d)" % [progress, dist])
 			"delivering":
-				_progress_label.text = "  Delivering: %.1f / %d hops" % [progress, dist]
-			_:
-				_progress_label.text = "  %s" % state
+				status_lines.append("  Carrier: Delivering (%.1f / %d)" % [progress, dist])
+
+	_progress_label.text = "\n".join(status_lines)
 
 
 static func _cap_for(res: ProductionBuildingResource, item: String) -> int:

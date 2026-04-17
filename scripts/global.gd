@@ -36,9 +36,12 @@ func place_building(origin: Vector3i, building_id: String) -> void:
 		"timer":              0.0,     # seconds into current production cycle
 		"warehouse_distance": -1,      # road hops to nearest warehouse; -1 = disconnected
 		"warehouse_path":     [],      # Array[Vector3i] road cells, warehouse-border → building
-		"prod_state":         "idle",  # idle | fetching | producing | delivering
+		"prod_state":         "idle",  # idle | producing
+		"carrier_state":      "idle",  # idle | fetching | delivering
 		"logistics_progress": 0.0,     # seconds of carrier travel completed this trip
 		"carrier":            null,    # MeshInstance3D carrier node, or null
+		"input_buffer":       {},      # inputs held at building: { "Logs": 2 }
+		"carrier_cargo":      {},      # items on carrier: { "Logs": 2 }
 	}
 
 	for dx in range(fp.x):
@@ -97,39 +100,66 @@ func _process(delta: float) -> void:
 		var prod := res as ProductionBuildingResource
 		var dist: int = data.get("warehouse_distance", -1)
 
+		# ── Carrier track (fetching / delivering) ────────────────────────────────
+
+		if prod.input.is_empty():
+			# No inputs — carrier only needed for delivery
+			data["carrier_state"] = "idle"
+		else:
+			# Inputs needed — manage fetch cycle
+			match data.get("carrier_state", "idle"):
+				"idle":
+					# Start fetching if input_buffer is empty and we can afford it
+					if data["input_buffer"].is_empty():
+						if dist < 0:
+							continue  # can't fetch without warehouse connection
+						# Check we can afford the inputs
+						var can_fetch := true
+						for slot in prod.input:
+							if not ResourceManager.has_enough(slot.item, slot.amount):
+								can_fetch = false
+								break
+						if can_fetch:
+							# Deduct from warehouse and populate carrier_cargo
+							for slot in prod.input:
+								ResourceManager.remove(slot.item, slot.amount)
+								data["carrier_cargo"][slot.item] = data["carrier_cargo"].get(slot.item, 0) + slot.amount
+							data["carrier_state"] = "fetching"
+							data["logistics_progress"] = 0.0
+
+				"fetching":
+					data["logistics_progress"] += delta
+					if data["logistics_progress"] >= dist:
+						# Carrier arrived — move cargo to input_buffer
+						for item in data["carrier_cargo"].keys():
+							data["input_buffer"][item] = data["carrier_cargo"][item]
+						data["carrier_cargo"].clear()
+						data["carrier_state"] = "idle"
+
+		# ── Production track (idle / producing) ──────────────────────────────────
+
 		match data.get("prod_state", "idle"):
 
 			"idle":
 				if prod.input.is_empty():
-					# No inputs needed — produce freely, warehouse only required for delivery.
+					# No inputs needed — start producing immediately
 					data["prod_state"] = "producing"
 					data["timer"] = 0.0
 				else:
-					if dist < 0:
-						continue  # needs warehouse to fetch inputs
-					# Reserve inputs now — they leave the warehouse with the carrier.
-					var can_fetch := true
+					# Inputs needed — check input_buffer has enough
+					var has_inputs := true
 					for slot in prod.input:
-						if not ResourceManager.has_enough(slot.item, slot.amount):
-							can_fetch = false
+						if data["input_buffer"].get(slot.item, 0) < slot.amount:
+							has_inputs = false
 							break
-					if can_fetch:
-						for slot in prod.input:
-							ResourceManager.remove(slot.item, slot.amount)
-						data["prod_state"] = "fetching"
-						data["logistics_progress"] = 0.0
-
-			"fetching":
-				# Carrier travels from warehouse to production building.
-				data["logistics_progress"] += delta
-				if data["logistics_progress"] >= dist:
-					data["prod_state"] = "producing"
-					data["timer"] = 0.0
+					if has_inputs:
+						data["prod_state"] = "producing"
+						data["timer"] = 0.0
 
 			"producing":
 				data["timer"] += delta
 				if data["timer"] >= prod.production_time:
-					# Fill local output buffer. Stall if full (wait for space).
+					# Production complete — check if output buffer has space
 					var can_store := true
 					for slot in prod.output:
 						var cap := _storage_cap(prod, slot.item)
@@ -137,24 +167,47 @@ func _process(delta: float) -> void:
 							can_store = false
 							break
 					if can_store:
+						# Consume inputs from input_buffer
+						for slot in prod.input:
+							data["input_buffer"][slot.item] -= slot.amount
+						# Add outputs to storage buffer
 						for slot in prod.output:
 							data["storage"][slot.item] = data["storage"].get(slot.item, 0) + slot.amount
-						data["prod_state"] = "delivering"
-						data["logistics_progress"] = 0.0
+						data["prod_state"] = "idle"
+						data["timer"] = 0.0
+					# else: stall, keep timer, try again next frame
 
+		# ── Carrier delivery track ──────────────────────────────────────────────
+
+		match data.get("carrier_state", "idle"):
 			"delivering":
-				# Carrier travels from production building back to warehouse.
-				# Stall if disconnected — output stays in local buffer until a road is built.
-				if dist < 0:
-					continue
 				data["logistics_progress"] += delta
 				if data["logistics_progress"] >= dist:
-					for item in data["storage"].keys():
-						var amount: int = data["storage"][item]
+					# Carrier arrived at warehouse — move cargo to ResourceManager
+					for item in data["carrier_cargo"].keys():
+						var amount: int = data["carrier_cargo"][item]
 						if amount > 0:
 							ResourceManager.add(item, amount)
-							data["storage"][item] = 0
-					data["prod_state"] = "idle"
+					data["carrier_cargo"].clear()
+					data["carrier_state"] = "idle"
+
+			"idle":
+				# Try to start delivery if storage has items
+				if not data["storage"].is_empty() and dist >= 0:
+					var has_output := false
+					for item in data["storage"].keys():
+						if data["storage"][item] > 0:
+							has_output = true
+							break
+					if has_output:
+						# Move storage to carrier_cargo
+						for item in data["storage"].keys():
+							var amount = data["storage"][item]
+							if amount > 0:
+								data["carrier_cargo"][item] = amount
+						data["storage"].clear()
+						data["carrier_state"] = "delivering"
+						data["logistics_progress"] = 0.0
 
 
 func _storage_cap(prod: ProductionBuildingResource, item: String) -> int:
