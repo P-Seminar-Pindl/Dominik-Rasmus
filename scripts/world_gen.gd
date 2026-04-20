@@ -1,18 +1,22 @@
 # world_gen.gd
 extends GridMap
 
+const PropResource = preload("res://scripts/Templates/prop_resource.gd")
+
 # ── Noise instances ───────────────────────────────────────────────────────────
-static var elev_noise:   FastNoiseLite = FastNoiseLite.new()
-static var warp_noise:   FastNoiseLite = FastNoiseLite.new()
-static var temp_noise:   FastNoiseLite = FastNoiseLite.new()
-static var humid_noise:  FastNoiseLite = FastNoiseLite.new()
-static var detail_noise: FastNoiseLite = FastNoiseLite.new()
+static var elev_noise:     FastNoiseLite = FastNoiseLite.new()
+static var warp_noise:     FastNoiseLite = FastNoiseLite.new()
+static var temp_noise:     FastNoiseLite = FastNoiseLite.new()
+static var humid_noise:    FastNoiseLite = FastNoiseLite.new()
+static var detail_noise:   FastNoiseLite = FastNoiseLite.new()
+static var resource_noise: FastNoiseLite = FastNoiseLite.new()
 
 # ── Runtime state ─────────────────────────────────────────────────────────────
-static var loaded_chunks:  Dictionary      = {}
-static var chunk_tiles:    Dictionary      = {}
-static var load_queue:     Array[Vector2i] = []
-static var queued_set:     Dictionary      = {}
+static var loaded_chunks:    Dictionary      = {}
+static var chunk_tiles:      Dictionary      = {}
+static var chunk_prop_tiles: Dictionary      = {}  # Vector2i → Array[Vector3i]
+static var load_queue:       Array[Vector2i] = []
+static var queued_set:       Dictionary      = {}
 
 # Region layer — infinite island placement
 static var region_data:    Dictionary      = {}  # Vector2i → RegionData
@@ -56,8 +60,13 @@ static func init(config: WorldGenConfig) -> void:
 	detail_noise.frequency  = 0.15
 	detail_noise.seed       = cfg.seed + 4
 
+	resource_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+	resource_noise.frequency  = cfg.resource_noise_freq
+	resource_noise.seed       = cfg.seed + 5
+
 	loaded_chunks.clear()
 	chunk_tiles.clear()
+	chunk_prop_tiles.clear()
 	load_queue.clear()
 	queued_set.clear()
 	region_data.clear()
@@ -126,8 +135,11 @@ static func stream_chunks(map: GridMap, distribution_curve: Curve, anchor: Vecto
 
 static func remove_map(map: GridMap) -> void:
 	map.clear()
+	if Global.prop_grid != null:
+		Global.prop_grid.clear()
 	loaded_chunks.clear()
 	chunk_tiles.clear()
+	chunk_prop_tiles.clear()
 	load_queue.clear()
 	queued_set.clear()
 	region_data.clear()
@@ -200,28 +212,77 @@ static func _load_chunk(map: GridMap, chunk: Vector2i, curve: Curve) -> void:
 	)))
 
 	var tiles_placed: Array[Vector3i] = []
+	var props_placed: Array[Vector3i] = []
 	for lx in cfg.chunk_size:
 		for ly in cfg.chunk_size:
 			var coord := Vector2i(origin.x + lx, origin.y + ly)
 			var cell  := _compute_tile(coord, curve)
 			map.set_cell_item(cell.pos, cell.mesh_id)
 			tiles_placed.append(cell.pos)
-	loaded_chunks[chunk] = true
-	chunk_tiles[chunk]   = tiles_placed
+			if cell.biome_name != "":
+				var prop_id := _maybe_spawn_prop(coord, cell.pos.y, cell.biome_name)
+				if prop_id >= 0:
+					props_placed.append(Vector3i(coord.x, cell.pos.y + 1, coord.y))
+	loaded_chunks[chunk]    = true
+	chunk_tiles[chunk]      = tiles_placed
+	chunk_prop_tiles[chunk] = props_placed
 
 static func _unload_chunk(map: GridMap, chunk: Vector2i) -> void:
 	if chunk_tiles.has(chunk):
 		for cell_pos in chunk_tiles[chunk]:
 			map.set_cell_item(cell_pos, GridMap.INVALID_CELL_ITEM)
 		chunk_tiles.erase(chunk)
+	if chunk_prop_tiles.has(chunk) and Global.prop_grid != null:
+		for prop_pos in chunk_prop_tiles[chunk]:
+			Global.prop_grid.set_cell_item(prop_pos, GridMap.INVALID_CELL_ITEM)
+		chunk_prop_tiles.erase(chunk)
 	loaded_chunks.erase(chunk)
+
+
+# ── Prop spawning ─────────────────────────────────────────────────────────────
+
+# Returns the placed mesh id, or -1 if no prop was spawned.
+static func _maybe_spawn_prop(coord: Vector2i, height: int, biome_name: String) -> int:
+	if Global.prop_grid == null:
+		return -1
+	var biome := _find_biome(biome_name)
+	if biome == null or biome.prop_families.is_empty():
+		return -1
+	var n := _fbm(resource_noise, coord.x, coord.y, cfg.resource_noise_octaves)
+	if n < cfg.prop_spawn_threshold:
+		return -1
+	var family: String = biome.prop_families[0]
+	var tier := _pick_prop_tier(family, n)
+	if tier == null:
+		return -1
+	var mesh_id: int = LibraryManager.prop_mesh_ids.get(tier.name, -1)
+	if mesh_id < 0:
+		return -1
+	Global.prop_grid.set_cell_item(Vector3i(coord.x, height + 1, coord.y), mesh_id)
+	return mesh_id
+
+
+static func _find_biome(biome_name: String) -> BiomeResource:
+	for b in cfg.biomes:
+		if b.name == biome_name:
+			return b
+	return null
+
+
+static func _pick_prop_tier(family: String, density: float) -> PropResource:
+	var tiers: Array = LibraryManager.props.get(family, [])
+	for tier in tiers:
+		if density >= tier.min_density and density < tier.max_density:
+			return tier
+	return null
 
 
 # ── Tile computation ──────────────────────────────────────────────────────────
 
 class TileResult:
-	var pos:     Vector3i
-	var mesh_id: int
+	var pos:        Vector3i
+	var mesh_id:    int
+	var biome_name: String = ""  # empty = no prop spawn (water / sand / river)
 
 static func _compute_tile(coord: Vector2i, curve: Curve) -> TileResult:
 	var wx := warp_noise.get_noise_2d(coord.x * cfg.warp_freq,
@@ -269,7 +330,13 @@ static func _compute_tile(coord: Vector2i, curve: Curve) -> TileResult:
 	if elev >= cfg.threshold_lowland:
 		t = clampf(t - 0.2, 0.0, 1.0)
 
-	result.mesh_id = _biome_tile(t, humid, elev, detail, tile)
+	var biome := _biome_for(t, humid, elev)
+	if biome != null:
+		result.mesh_id = _pick_variant(tile, biome.name, detail)
+		result.biome_name = biome.name
+	else:
+		push_error("WorldGen: no biome matched temp=%.2f humid=%.2f elev=%.2f" % [t, humid, elev])
+		result.mesh_id = 0
 	return result
 
 
@@ -283,13 +350,19 @@ static func _pick_variant(tile: Dictionary, biome: String, detail: float) -> int
 
 
 # Data-driven biome selection — iterates cfg.biomes in order, first match wins
-static func _biome_tile(temp: float, humid: float, elev: float,
-						detail: float, tile: Dictionary) -> int:
+static func _biome_for(temp: float, humid: float, elev: float) -> BiomeResource:
 	for biome in cfg.biomes:
 		if temp  >= biome.temp_min  and temp  < biome.temp_max  and \
 		   humid >= biome.humid_min and humid < biome.humid_max and \
 		   elev  >= biome.min_elevation and elev < biome.max_elevation:
-			return _pick_variant(tile, biome.name, detail)
+			return biome
+	return null
+
+static func _biome_tile(temp: float, humid: float, elev: float,
+						detail: float, tile: Dictionary) -> int:
+	var biome := _biome_for(temp, humid, elev)
+	if biome != null:
+		return _pick_variant(tile, biome.name, detail)
 	push_error("WorldGen: no biome matched temp=%.2f humid=%.2f elev=%.2f" % [temp, humid, elev])
 	return 0
 

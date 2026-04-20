@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="PropResource" format=3 uid="uid://da5yypdus5amt"]
+
+[ext_resource type="Script" uid="uid://fbeuc6w1wwqi" path="res://scripts/Templates/prop_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="1_ni3s8"]
+[ext_resource type="Texture2D" uid="uid://cs5doubg3buv4" path="res://textures/green_concrete_powder.png" id="2"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_tree_sparse"]
+
+[resource]
+script = ExtResource("1")
+name = "Tree_sparse"
+family = "Tree"
+texture = ExtResource("2")
+mesh = SubResource("BoxMesh_tree_sparse")
+size = Vector3(1, 2, 1)
+collision_size = Vector3(1, 2, 1)
+min_density = 0.35
+max_density = 0.55
+is_harvestable = true

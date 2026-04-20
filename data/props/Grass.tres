@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="PropResource" format=3 uid="uid://bsrpist16vaor"]
+
+[ext_resource type="Script" uid="uid://fbeuc6w1wwqi" path="res://scripts/Templates/prop_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="1_gwfy1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_grass"]
+
+[sub_resource type="PlaceholderTexture3D" id="PlaceholderTexture3D_umjvq"]
+size = Vector3i(32, 32, 0)
+
+[resource]
+script = ExtResource("1")
+name = "Grass"
+family = "Grass"
+texture = SubResource("PlaceholderTexture3D_umjvq")
+mesh = SubResource("BoxMesh_grass")
+size = Vector3(1.5, 0.3, 1.5)
+collision_size = Vector3(1.5, 0.3, 1.5)
+min_density = 0.35
+max_density = 0.465

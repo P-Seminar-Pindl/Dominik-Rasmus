@@ -54,6 +54,12 @@ const BiomeResource = preload("res://scripts/Templates/biome_resource.gd")
 @export_group("Biomes")
 @export var biomes: Array[BiomeResource] = []
 
+# ── Resource noise (props) ────────────────────────────────────────────────────
+@export_group("Resource Noise")
+@export var resource_noise_freq:    float = 0.04
+@export var resource_noise_octaves: int   = 3
+@export var prop_spawn_threshold:   float = 0.35
+
 # ── Region layer ──────────────────────────────────────────────────────────────
 @export_group("Region Layer")
 @export var region_size: int = 500

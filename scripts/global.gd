@@ -5,6 +5,7 @@ var distribution_curve : Curve
 var cell_size : Vector3
 var chunk_render_distance : int = 32
 var grid : GridMap
+var prop_grid : GridMap
 var anchor := Vector2.ZERO
 
 # Tracks every placed building instance.

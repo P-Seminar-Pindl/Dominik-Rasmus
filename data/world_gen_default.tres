@@ -8,7 +8,7 @@
 [ext_resource type="Resource" path="res://data/biomes/Savanna.tres" id="biome_05"]
 [ext_resource type="Resource" path="res://data/biomes/Grass.tres" id="biome_06"]
 [ext_resource type="Resource" path="res://data/biomes/Forest.tres" id="biome_07"]
-[ext_resource type="Resource" path="res://data/biomes/Desert.tres" id="biome_08"]
+[ext_resource type="Resource" uid="uid://c4hxbdv5xjkrs" path="res://data/biomes/Desert.tres" id="biome_08"]
 [ext_resource type="Resource" path="res://data/biomes/Savanna_hot.tres" id="biome_09"]
 [ext_resource type="Resource" path="res://data/biomes/Jungle.tres" id="biome_10"]
 [ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="biome_script"]
@@ -20,7 +20,7 @@ island_radius = 300.0
 islands_per_region = 1
 mask_inner = 0.1
 mask_outer = 0.85
-noise_freq = 0.012
+noise_freq = 0.006
 warp_strength = 8.0
 warp_freq = 0.04
 temp_octaves = 4
@@ -34,6 +34,4 @@ biomes = Array[ExtResource("biome_script")]([ExtResource("biome_01"), ExtResourc
 river_min_elevation = 0.55
 river_mouth_elevation = 0.15
 river_count_per_island = 4
-river_width = 2
-river_bank_width = 1
 metadata/_custom_type_script = "uid://cne0lfobpwup6"

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="PropResource" format=3 uid="uid://dmwutnjel7n3j"]
+
+[ext_resource type="Script" uid="uid://fbeuc6w1wwqi" path="res://scripts/Templates/prop_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="1_2vnlc"]
+[ext_resource type="Texture2D" uid="uid://dvncv31wt1ink" path="res://textures/stone.png" id="2"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_rock_large"]
+
+[resource]
+script = ExtResource("1")
+name = "Rock_large"
+family = "Rock"
+texture = ExtResource("2")
+mesh = SubResource("BoxMesh_rock_large")
+size = Vector3(1.6, 1.6, 1.6)
+collision_size = Vector3(1.6, 1.6, 1.6)
+min_density = 0.65
+max_density = 1.01
+is_harvestable = true
