@@ -22,6 +22,7 @@ var distance := 10.0
 
 var _ghost: MeshInstance3D = null
 var _ghost_grid_pos: Vector3i = Vector3i(-99999, -99999, -99999)
+var _debug_label: Label = null
 
 
 func _ready() -> void:
@@ -32,6 +33,18 @@ func _ready() -> void:
 	pitch = asin(offset.y / distance)
 
 	_build_ghost()
+	_build_debug_label()
+
+
+func _build_debug_label() -> void:
+	_debug_label = Label.new()
+	_debug_label.position = Vector2(10, 10)
+	_debug_label.add_theme_font_size_override("font_size", 28)
+	_debug_label.add_theme_color_override("font_color", Color.WHITE)
+	_debug_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	_debug_label.add_theme_constant_override("shadow_offset_x", 2)
+	_debug_label.add_theme_constant_override("shadow_offset_y", 2)
+	get_viewport().add_child(_debug_label)
 
 
 
@@ -69,8 +82,20 @@ func _update_ghost(grid_pos: Vector3i) -> void:
 func _process(delta: float) -> void:
 	distance = lerp(distance, target_distance, delta * 10)
 	_update_camera()
-	#_update_ghost_cursor()
-	#_update_chunks_if_moved()
+	_update_ghost_cursor()
+	_update_chunks_if_moved()
+	_update_debug_label()
+
+
+func _update_debug_label() -> void:
+	var hit = _raycast_grid(get_viewport().get_mouse_position())
+	if hit.is_empty():
+		_debug_label.text = ""
+		return
+	var cell: Vector3i = hit["cell"]
+	var item_id: int = grid.get_cell_item(cell)
+	var tile_name: String = LibraryManager.tile_id_to_name.get(item_id, "?")
+	_debug_label.text = "Biome: %s  (%d, %d, %d)" % [tile_name, cell.x, cell.y, cell.z]
 
 
 func _update_ghost_cursor() -> void:
@@ -87,12 +112,11 @@ func _update_ghost_cursor() -> void:
 func _update_chunks_if_moved() -> void:
 	# Convert world pos → tile pos
 	var tile_anchor = Vector2(anchor.x / CELL_SIZE.x, anchor.z / CELL_SIZE.z)
-	#WorldGen.stream_chunks(
-	#	grid,
-	#	Global.distribution_curve,
-	#	tile_anchor,
-	#	
-	#)
+	WorldGen.stream_chunks(
+		grid,
+		Global.distribution_curve,
+		tile_anchor,
+)
 
 func _frame_budget_usec() -> int:
 	# Leave ~40% of the frame for rendering, physics, etc.

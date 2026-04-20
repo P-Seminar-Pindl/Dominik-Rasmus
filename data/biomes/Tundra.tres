@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_tundra"]
+
+[ext_resource type="Script" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Tundra"
+temp_min = 0.0
+temp_max = 0.2
+humid_min = 0.0
+humid_max = 0.5
+min_elevation = 0.0
+max_elevation = 1.0

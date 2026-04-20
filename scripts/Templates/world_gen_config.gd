@@ -1,12 +1,14 @@
 class_name WorldGenConfig
 extends Resource
 
+const BiomeResource = preload("res://scripts/Templates/biome_resource.gd")
+
 # ── Island layout ─────────────────────────────────────────────────────────────
 @export_group("Island Layout")
-@export var seed:           int   = 137
-@export var island_count:   int   = 4
-@export var island_spread:  float = 300.0
-@export var island_radius:  float = 180.0
+@export var seed:                 int   = 137
+@export var island_radius:        float = 180.0
+@export var islands_per_region:   int   = 3
+@export var region_island_spread: float = 180.0
 @export var mask_inner:     float = 0.2
 @export var mask_outer:     float = 0.75
 
@@ -44,6 +46,23 @@ extends Resource
 # ── Chunking ──────────────────────────────────────────────────────────────────
 @export_group("Chunking")
 @export var chunks_per_frame: int = 2
-@export var chunk_size:        int = 1616
+@export var chunk_size:        int = 16
 
 @export var chunk_render_dist: int = 8
+
+# ── Biomes ────────────────────────────────────────────────────────────────────
+@export_group("Biomes")
+@export var biomes: Array[BiomeResource] = []
+
+# ── Region layer ──────────────────────────────────────────────────────────────
+@export_group("Region Layer")
+@export var region_size: int = 500
+
+# ── Rivers ────────────────────────────────────────────────────────────────────
+@export_group("Rivers")
+@export var river_enabled:           bool  = true
+@export var river_min_elevation:     float = 0.65
+@export var river_mouth_elevation:   float = 0.36
+@export var river_count_per_island:  int   = 2
+@export var river_width:              int   = 2
+@export var river_bank_width:         int   = 1

@@ -12,6 +12,7 @@ func setup_mesh():
 	if texture:
 		mat.albedo_texture = texture
 		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		mat.uv1_scale = Vector3i(1,1,1)
 		mat.uv1_triplanar = true
 		mat.uv1_triplanar_sharpness = 1.0
 		

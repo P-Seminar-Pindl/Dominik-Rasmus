@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="HouseBuildingResource" format=3 uid="uid://bilw22j8tfi3d"]
+[gd_resource type="Resource" script_class="HouseBuildingResource" format=3 uid="uid://bp2lmy106ys1o"]
 
-[ext_resource type="Script" path="res://scripts/Templates/house_building_resource.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/Templates/resource_amount.gd" id="1_hynf3"]
+[ext_resource type="Script" uid="uid://b07b5fkhgbvax" path="res://scripts/Templates/house_building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="1_hynf3"]
 [ext_resource type="PackedScene" path="res://prototyping/ui/HouseInfoPanel.tscn" id="2"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_house"]

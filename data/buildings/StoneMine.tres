@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="ProductionBuildingResource" format=3 uid="uid://stonemine"]
+
+[ext_resource type="Script" uid="uid://prodbh" path="res://scripts/Templates/production_building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://resamt" path="res://scripts/Templates/resource_amount.gd" id="1_ra"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_stonemine"]
+albedo_color = Color(0.6, 0.6, 0.6, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_stonemine"]
+size = Vector3(4, 2, 4)
+material = SubResource("Mat_stonemine")
+
+[sub_resource type="Resource" id="Output_stone"]
+script = ExtResource("1_ra")
+item = "Stone"
+amount = 4
+
+[sub_resource type="Resource" id="Storage_stone"]
+script = ExtResource("1_ra")
+item = "Stone"
+amount = 12
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("1_ra")
+item = "Gold"
+amount = 20
+
+[resource]
+script = ExtResource("1")
+output = Array[ExtResource("1_ra")]([SubResource("Output_stone")])
+production_time = 6.0
+storage_slots = Array[ExtResource("1_ra")]([SubResource("Storage_stone")])
+name = "StoneMine"
+info_title = "Stone Mine"
+info_description = "Extracts stone for construction."
+active_variant = "StoneMine_Active"
+mesh = SubResource("Mesh_stonemine")
+footprint_size = Vector2i(2, 2)
+workforce = 2
+costs = Array[ExtResource("1_ra")]([SubResource("Cost_gold")])

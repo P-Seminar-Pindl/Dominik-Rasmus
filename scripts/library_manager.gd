@@ -3,6 +3,7 @@ class_name LibraryManager
 
 static var tiles: Dictionary = {}
 static var buildings: Dictionary = {}
+static var tile_id_to_name: Dictionary = {}  # mesh_library item id → tile name
 
 func populate_tiles_from_folder(grid: GridMap, folder: String = "res://tiles/") -> void:
 	var dir = DirAccess.open(folder)
@@ -34,6 +35,7 @@ func populate_tiles_from_folder(grid: GridMap, folder: String = "res://tiles/") 
 					tiles[res.name].append(index)
 				else:
 					tiles[res.name] = [index]
+				tile_id_to_name[index] = res.name
 		file_name = dir.get_next()
 	dir.list_dir_end()
 

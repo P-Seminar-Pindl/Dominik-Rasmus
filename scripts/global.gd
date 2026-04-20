@@ -109,21 +109,33 @@ func _process(delta: float) -> void:
 			# Inputs needed — manage fetch cycle
 			match data.get("carrier_state", "idle"):
 				"idle":
-					# Start fetching if input_buffer is empty and we can afford it
-					if data["input_buffer"].is_empty():
-						if dist < 0:
-							continue  # can't fetch without warehouse connection
-						# Check we can afford the inputs
+					# Start fetching if input_buffer is below stockpile target and we can afford it
+					if dist < 0:
+						continue  # can't fetch without warehouse connection
+
+					# Check if any input is below its stockpile target
+					var needs_fetch := false
+					var fetch_amounts: Dictionary = {}  # item → amount to fetch
+					for slot in prod.input_stockpile:
+						var current: int = data["input_buffer"].get(slot.item, 0)
+						var needed: int = slot.amount - current
+						if needed > 0:
+							needs_fetch = true
+							fetch_amounts[slot.item] = needed
+
+					if needs_fetch:
+						# Check we can afford the full fetch
 						var can_fetch := true
-						for slot in prod.input:
-							if not ResourceManager.has_enough(slot.item, slot.amount):
+						for item in fetch_amounts.keys():
+							if not ResourceManager.has_enough(item, fetch_amounts[item]):
 								can_fetch = false
 								break
 						if can_fetch:
 							# Deduct from warehouse and populate carrier_cargo
-							for slot in prod.input:
-								ResourceManager.remove(slot.item, slot.amount)
-								data["carrier_cargo"][slot.item] = data["carrier_cargo"].get(slot.item, 0) + slot.amount
+							for item in fetch_amounts.keys():
+								var amount: int = fetch_amounts[item]
+								ResourceManager.remove(item, amount)
+								data["carrier_cargo"][item] = data["carrier_cargo"].get(item, 0) + amount
 							data["carrier_state"] = "fetching"
 							data["logistics_progress"] = 0.0
 

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BuildingResource" format=3 uid="uid://farm_active"]
+
+[ext_resource type="Script" uid="uid://buildres" path="res://scripts/Templates/building_resource.gd" id="1"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_farm_active"]
+albedo_color = Color(0.7, 1.0, 0.3, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_farm_active"]
+size = Vector3(4, 2, 4)
+material = SubResource("Mat_farm_active")
+
+[resource]
+script = ExtResource("1")
+name = "Farm_Active"
+info_title = "Farm (Active)"
+info_description = "Connected and producing at peak efficiency."
+show_in_sidebar = false
+mesh = SubResource("Mesh_farm_active")

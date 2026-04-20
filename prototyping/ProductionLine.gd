@@ -24,6 +24,39 @@ func _process(_delta: float) -> void:
 	_update_carriers()
 
 
+# ── Carrier management ─────────────────────────────────────────────────────────
+
+func _update_carriers() -> void:
+	for origin in Global.placed_buildings.keys():
+		var data: Dictionary = Global.placed_buildings[origin]
+		var res := data.get("resource", null) as BuildingResource
+		if not res is ProductionBuildingResource:
+			continue
+
+		var carrier_state: String = data.get("carrier_state", "idle")
+		var dist:          int    = data.get("warehouse_distance", -1)
+		var path:          Array  = data.get("warehouse_path", [])
+		var carrier:       Node3D = data.get("carrier", null) as Node3D
+		var progress:      float  = data.get("logistics_progress", 0.0)
+
+		var needs_carrier := (carrier_state == "fetching" or carrier_state == "delivering") \
+				and dist > 0 and not path.is_empty()
+
+		if needs_carrier:
+			if not is_instance_valid(carrier):
+				carrier = _spawn_carrier()
+				data["carrier"] = carrier
+
+			var t := clampf(progress / float(dist), 0.0, 1.0)
+			var path_t := t if carrier_state == "fetching" else (1.0 - t)
+			carrier.position = _path_position(path, path_t)
+			carrier.visible = true
+		else:
+			if is_instance_valid(carrier):
+				carrier.visible = false
+			data["carrier"] = null
+
+
 # ── Network rebuild ────────────────────────────────────────────────────────────
 
 ## Call this after any building is placed or removed.
@@ -45,7 +78,7 @@ func rebuild_network() -> void:
 		Global.placed_buildings[origin]["carrier_cargo"]      = {}
 
 		var res := Global.placed_buildings[origin].get("resource") as BuildingResource
-		if res is RoadBuildingResource:
+		if res.active_variant != "":
 			var inactive_id: int = Global.placed_buildings[origin].get("grid_id", -1)
 			set_cell_item(Global.cell_to_anchor.get(origin, origin), inactive_id)
 
@@ -56,9 +89,11 @@ func rebuild_network() -> void:
 	var parent_map: Dictionary = {}
 	var queue: Array[Vector3i] = []
 
+	var warehouses_found := 0
 	for origin in Global.placed_buildings:
 		var grid_id: int = Global.placed_buildings[origin].get("grid_id", -1)
 		if grid_id in storage_indices:
+			warehouses_found += 1
 			Global.placed_buildings[origin]["warehouse_distance"] = 0
 			var fp: Vector2i = Global.placed_buildings[origin].get("footprint", Vector2i(1, 1))
 			for cell: Vector3i in _footprint_border(origin, fp):
@@ -66,6 +101,7 @@ func rebuild_network() -> void:
 					visited[cell]    = 1
 					parent_map[cell] = WAREHOUSE_SENTINEL
 					queue.append(cell)
+	print("[ProductionLine] BFS: found %d warehouses, queue size: %d" % [warehouses_found, queue.size()])
 
 	while not queue.is_empty():
 		var current: Vector3i = queue.pop_front()
@@ -118,6 +154,16 @@ func rebuild_network() -> void:
 		path.append(origin)       # building anchor as final waypoint
 		Global.placed_buildings[origin]["warehouse_path"] = path
 
+	# Activate connected building anchors that have active variants.
+	for origin in Global.placed_buildings:
+		var res := Global.placed_buildings[origin].get("resource") as BuildingResource
+		if res == null or res.active_variant == "" or res is RoadBuildingResource:
+			continue
+		if Global.placed_buildings[origin].get("warehouse_distance", -1) >= 0:
+			var active_entry: Dictionary = LibraryManager.buildings.get(res.active_variant, {})
+			if not active_entry.is_empty():
+				set_cell_item(origin, active_entry["index"])
+
 	# Swap visited roads to their active variant.
 	for cell: Vector3i in visited:
 		if not Global.cell_to_anchor.has(cell):
@@ -134,7 +180,7 @@ func rebuild_network() -> void:
 
 # ── Carrier management ─────────────────────────────────────────────────────────
 
-func _update_carriers() -> void:
+
 	for origin in Global.placed_buildings.keys():
 		var data: Dictionary = Global.placed_buildings[origin]
 		var res := data.get("resource", null) as BuildingResource
@@ -161,9 +207,10 @@ func _update_carriers() -> void:
 			# delivering: building  → warehouse (path reversed)
 			var path_t := t if carrier_state == "fetching" else (1.0 - t)
 			carrier.position = _path_position(path, path_t)
+			carrier.visible = true
 		else:
 			if is_instance_valid(carrier):
-				carrier.queue_free()
+				carrier.visible = false
 			data["carrier"] = null
 
 

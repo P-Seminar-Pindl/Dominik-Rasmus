@@ -160,11 +160,15 @@ func _raycast_grid(screen_pos: Vector2) -> Dictionary:
 		project_ray_origin(screen_pos) + project_ray_normal(screen_pos) * RAY_LENGTH
 	)
 	var result = space.intersect_ray(query)
+	print("[DEBUG] Raycast result: ", result)
 	if result.is_empty():
+		print("[DEBUG] Raycast hit nothing")
 		return {}
 	var inside = result["position"] - result["normal"] * 0.1
+	var cell = grid.local_to_map(grid.to_local(inside))
+	print("[DEBUG] Raycast hit cell: ", cell)
 	return {
-		"cell":   grid.local_to_map(grid.to_local(inside)),
+		"cell":   cell,
 		"normal": result["normal"],
 	}
 
@@ -182,13 +186,30 @@ func _input(event: InputEvent) -> void:
 	# Left click — place or inspect
 	if event is InputEventMouseButton and event.pressed \
 			and event.button_index == MOUSE_BUTTON_LEFT and not dragging:
+		# Don't process if clicking on UI
+		if get_viewport().gui_get_hovered_control() != null:
+			return
+		print("[DEBUG] Left click detected at ", event.position)
 		var hit: Dictionary = _raycast_grid(event.position)
+		print("[DEBUG] Raycast hit: ", hit)
 		if not hit.is_empty():
-			var cell := _cell_above(hit)
 			if Global.selected_building != "":
+				var cell := _cell_above(hit)
+				print("[DEBUG] Cell above hit: ", cell)
+				print("[DEBUG] Placing building: ", Global.selected_building)
 				_place_at(cell)
 			else:
-				_inspect_at(cell)
+				# For inspection, try the hit cell first, then the cell above
+				var hit_cell: Vector3i = hit["cell"]
+				var above_cell: Vector3i = _cell_above(hit)
+				print("[DEBUG] Hit cell: ", hit_cell, ", Above cell: ", above_cell)
+				var data = Global.get_building_at(hit_cell)
+				if data.is_empty():
+					print("[DEBUG] No building at hit cell, trying above cell")
+					_inspect_at(above_cell)
+				else:
+					print("[DEBUG] Building found at hit cell")
+					_inspect_at(hit_cell)
 		elif Global.selected_building != "":
 			# Fallback: place on ground plane
 			var pt = Plane(Vector3.UP, 0.0).intersects_ray(
@@ -292,14 +313,21 @@ func _place_at(origin: Vector3i) -> void:
 # ── Inspect ───────────────────────────────────────────────────────────────────
 
 func _inspect_at(cell: Vector3i) -> void:
+	print("[DEBUG] _inspect_at called with cell: ", cell)
+	print("[DEBUG] All placed buildings: ", Global.placed_buildings)
+	print("[DEBUG] cell_to_anchor mapping: ", Global.cell_to_anchor)
 	var data: Dictionary = Global.get_building_at(cell)
+	print("[DEBUG] Building data: ", data)
 	if data.is_empty():
+		print("[DEBUG] No building found at cell")
 		if _active_panel:
 			_active_panel.hide()
 		return
 
 	var res := data.get("resource", null) as BuildingResource
+	print("[DEBUG] Resource: ", res)
 	var panel_scene: PackedScene = res.info_panel if res and res.info_panel else _default_panel_scene
+	print("[DEBUG] Panel scene: ", panel_scene)
 
 	# Swap panel if type changed
 	if _active_panel == null or _active_panel.get_meta("panel_scene", null) != panel_scene:
@@ -308,6 +336,9 @@ func _inspect_at(cell: Vector3i) -> void:
 		_active_panel = panel_scene.instantiate() as _DefaultInfoPanel
 		_active_panel.set_meta("panel_scene", panel_scene)
 		_canvas_layer.add_child(_active_panel)
+		print("[DEBUG] Panel instantiated and added to canvas layer")
 
+	print("[DEBUG] Calling show_building with data")
 	_active_panel.show_building(data)
 	_active_panel.set_position(get_viewport().get_mouse_position() + Vector2(12.0, 12.0))
+	print("[DEBUG] Panel shown at position: ", _active_panel.get_position())
