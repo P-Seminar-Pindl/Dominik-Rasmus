@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://house_info_panel"]
+
+[ext_resource type="Script" path="res://prototyping/production/ui/house_info_panel.gd" id="1"]
+
+[node name="HouseInfoPanel" type="PanelContainer"]
+script = ExtResource("1")

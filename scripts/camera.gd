@@ -1,7 +1,13 @@
 extends Camera3D
+
+const DefaultInfoPanelClass = preload("res://prototyping/production/ui/default_info_panel.gd")
+const DEFAULT_INFO_PANEL_SCENE = preload("res://prototyping/production/ui/DefaultInfoPanel.tscn")
+const ResourceDisplayClass = preload("res://prototyping/production/ui/resource_display.gd")
+
 @onready var grid: GridMap = $"../GridMap"
-@onready var game_manager = get_tree().get_first_node_in_group("game_manager")
+@onready var ui_layer: CanvasLayer = $"../CanvasLayer"
 @export var SensitivityMulti : float
+@export var placement_debug: bool = true
 const RAY_LENGTH = 10000.0
 const CELL_SIZE := Vector3(2.0, 2.0, 2.0)
 
@@ -21,8 +27,12 @@ var pitch := 0.0
 var distance := 10.0
 
 var _ghost: MeshInstance3D = null
+var _ghost_mesh: BoxMesh = null
+var _ghost_mat: StandardMaterial3D = null
 var _ghost_grid_pos: Vector3i = Vector3i(-99999, -99999, -99999)
 var _debug_label: Label = null
+var _last_selected_building: String = ""
+var _active_panel: DefaultInfoPanelClass = null
 
 
 func _ready() -> void:
@@ -34,6 +44,7 @@ func _ready() -> void:
 
 	_build_ghost()
 	_build_debug_label()
+	_ensure_resource_display()
 
 
 func _build_debug_label() -> void:
@@ -52,29 +63,50 @@ func _build_debug_label() -> void:
 
 func _build_ghost() -> void:
 	_ghost = MeshInstance3D.new()
-	var mesh = BoxMesh.new()
-	mesh.size = CELL_SIZE
-	_ghost.mesh = mesh
-	var mat = StandardMaterial3D.new()
-	mat.albedo_color = Color(0.2, 0.8, 1.0, 0.25)
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.flags_do_not_receive_shadows = true
+	_ghost_mesh = BoxMesh.new()
+	_ghost_mesh.size = CELL_SIZE
+	_ghost.mesh = _ghost_mesh
+	_ghost_mat = StandardMaterial3D.new()
+	_ghost_mat.albedo_color = Color(0.2, 0.8, 1.0, 0.25)
+	_ghost_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	_ghost_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_ghost_mat.flags_do_not_receive_shadows = true
 	_ghost.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	_ghost.material_override = mat
+	_ghost.material_override = _ghost_mat
 	_ghost.visible = false
 	get_parent().add_child(_ghost)
 
 
 func _update_ghost(grid_pos: Vector3i) -> void:
+	if _ghost == null or not _ghost.is_inside_tree():
+		return
 	if grid_pos == _ghost_grid_pos:
 		return
 	_ghost_grid_pos = grid_pos
-	_ghost.global_position = Vector3(
-		grid_pos.x * CELL_SIZE.x + CELL_SIZE.x * 0.5,
+	_ghost.position = Vector3(
+		(grid_pos.x) * CELL_SIZE.x + CELL_SIZE.x * 0.5,
 		grid_pos.y * CELL_SIZE.y + CELL_SIZE.y * 0.5,
-		grid_pos.z * CELL_SIZE.z + CELL_SIZE.z * 0.5,
+		(grid_pos.z) * CELL_SIZE.z + CELL_SIZE.z * 0.5,
 	)
+
+
+func _ensure_resource_display() -> void:
+	if ui_layer == null:
+		return
+	if ui_layer.get_node_or_null("ResourceDisplay") != null:
+		return
+	var panel := ResourceDisplayClass.new()
+	panel.name = "ResourceDisplay"
+	ui_layer.add_child(panel)
+
+
+func _refresh_ghost_size() -> void:
+	var entry: Dictionary = LibraryManager.buildings.get(Global.selected_building, {})
+	if entry.is_empty():
+		_ghost_mesh.size = CELL_SIZE
+		return
+	var fp: Vector2i = (entry["resource"] as BuildingResource).footprint_size
+	_ghost_mesh.size = Vector3(fp.x * CELL_SIZE.x, CELL_SIZE.y, fp.y * CELL_SIZE.z)
 
 
 # ── Process ───────────────────────────────────────────────────────────────────
@@ -85,6 +117,10 @@ func _process(delta: float) -> void:
 	_update_ghost_cursor()
 	_update_chunks_if_moved()
 	_update_debug_label()
+
+	if Global.selected_building != _last_selected_building:
+		_last_selected_building = Global.selected_building
+		_refresh_ghost_size()
 
 
 func _update_debug_label() -> void:
@@ -107,11 +143,21 @@ func _update_ghost_cursor() -> void:
 		_ghost.visible = false
 	else:
 		_ghost.visible = true
-		_update_ghost(_cell_above(hit))
+		var origin := _cell_above(hit)
+		_update_ghost(origin)
+		var entry: Dictionary = LibraryManager.buildings.get(Global.selected_building, {})
+		var fp := Vector2i(1, 1)
+		if not entry.is_empty():
+			fp = (entry["resource"] as BuildingResource).footprint_size
+		if _can_place(origin, fp):
+			_ghost_mat.albedo_color = Color(0.2, 0.8, 1.0, 0.25)
+		else:
+			_ghost_mat.albedo_color = Color(1.0, 0.2, 0.2, 0.4)
 
 func _update_chunks_if_moved() -> void:
 	# Convert world pos → tile pos
 	var tile_anchor = Vector2(anchor.x / CELL_SIZE.x, anchor.z / CELL_SIZE.z)
+	Global.anchor = tile_anchor
 	WorldGen.stream_chunks(
 		grid,
 		Global.distribution_curve,
@@ -159,16 +205,32 @@ func _update_camera() -> void:
 func _input(event: InputEvent) -> void:
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and not dragging:
+		if _is_pointer_over_blocking_ui():
+			_debug_place("Click ignored: pointer over interactive UI")
+			return
 		var hit = _raycast_grid(event.position)
 		if not hit.is_empty():
-			_place_at(_cell_above(hit))
+			if Global.selected_building == "":
+				_debug_place("Inspect mode click")
+				var hit_cell: Vector3i = hit["cell"]
+				if Global.get_building_at(hit_cell).is_empty():
+					_inspect_at(_cell_above(hit))
+				else:
+					_inspect_at(hit_cell)
+			else:
+				_debug_place("Place click on raycast cell %s" % [str(_cell_above(hit))])
+				_place_at(_cell_above(hit))
 		else:
-			var pt = Plane(Vector3.UP, 0.0).intersects_ray(
-				project_ray_origin(event.position),
-				project_ray_normal(event.position)
-			)
-			if pt:
-				_place_at(grid.local_to_map(pt))
+			if Global.selected_building != "":
+				_debug_place("Raycast missed, trying ground-plane fallback")
+				var pt = Plane(Vector3.UP, 0.0).intersects_ray(
+					project_ray_origin(event.position),
+					project_ray_normal(event.position)
+				)
+				if pt:
+					_place_at(grid.local_to_map(pt))
+				else:
+					_debug_place("Ground-plane fallback failed")
 
 	if event is InputEventMouseButton and event.pressed:
 		var zoom_dir = 0
@@ -224,16 +286,102 @@ func _input(event: InputEvent) -> void:
 
 		global_position += move
 		anchor += move
+
+
+func _footprint_cells(origin: Vector3i, fp: Vector2i) -> Array[Vector3i]:
+	var cells: Array[Vector3i] = []
+	for dx in range(fp.x):
+		for dz in range(fp.y):
+			cells.append(origin + Vector3i(dx, 0, dz))
+	return cells
+
+
+func _can_place(origin: Vector3i, fp: Vector2i) -> bool:
+	for cell in _footprint_cells(origin, fp):
+		if Global.is_cell_occupied(cell):
+			return false
+	return true
+
+
+func _first_occupied_cell(origin: Vector3i, fp: Vector2i) -> Vector3i:
+	for cell in _footprint_cells(origin, fp):
+		if Global.is_cell_occupied(cell):
+			return cell
+	return Vector3i(-99999, -99999, -99999)
+
+
+func _is_pointer_over_blocking_ui() -> bool:
+	var hovered := get_viewport().gui_get_hovered_control()
+	if hovered == null:
+		return false
+
+	var current: Control = hovered
+	while current != null:
+		# The fullscreen post-process ColorRect is decorative and should not block world input.
+		if current is ColorRect:
+			current = current.get_parent() as Control
+			continue
+		if current is Button or current is ScrollContainer or current is Panel or current is PanelContainer:
+			return true
+		current = current.get_parent() as Control
+
+	return false
+
+
+func _debug_place(message: String) -> void:
+	if placement_debug:
+		print("[PlacementDebug] " + message)
+
+
+func _inspect_at(cell: Vector3i) -> void:
+	var data: Dictionary = Global.get_building_at(cell)
+	if data.is_empty():
+		if _active_panel:
+			_active_panel.hide()
+		return
+
+	var res := data.get("resource", null) as BuildingResource
+	var panel_scene: PackedScene = DEFAULT_INFO_PANEL_SCENE
+	if res and res.info_panel:
+		panel_scene = res.info_panel
+
+	if _active_panel == null or _active_panel.get_meta("panel_scene", null) != panel_scene:
+		if _active_panel:
+			_active_panel.queue_free()
+		_active_panel = panel_scene.instantiate() as DefaultInfoPanelClass
+		_active_panel.set_meta("panel_scene", panel_scene)
+		if ui_layer:
+			ui_layer.add_child(_active_panel)
+		else:
+			get_viewport().add_child(_active_panel)
+
+	_active_panel.show_building(data)
+	_active_panel.position = get_viewport().get_mouse_position() + Vector2(12, 12)
 # ── Placement ─────────────────────────────────────────────────────────────────
 
-func _place_at(grid_pos: Vector3i) -> void:
+func _place_at(origin: Vector3i) -> void:
 	if Global.selected_building == "":
+		_debug_place("Place aborted: no selected building")
 		return
-	var item: int = LibraryManager.buildings.get(Global.selected_building, {}).get("id", -1)
-	if item == -1:
-		item = LibraryManager.tiles.get(Global.selected_building, -1)
-	if item == -1:
+	var entry: Dictionary = LibraryManager.buildings.get(Global.selected_building, {})
+	if entry.is_empty():
+		_debug_place("Place aborted: building '%s' not found in LibraryManager.buildings" % Global.selected_building)
 		return
-	grid.set_cell_item(grid_pos, item)
-	if LibraryManager.buildings.has(Global.selected_building):
-		Global.place_building(grid_pos, Global.selected_building)
+	var res := entry["resource"] as BuildingResource
+	if not _can_place(origin, res.footprint_size):
+		var blocked := _first_occupied_cell(origin, res.footprint_size)
+		_debug_place("Place blocked: footprint occupied at %s" % str(blocked))
+		return
+
+	for cost in res.costs:
+		if not ResourceManager.has_enough(cost.item, cost.amount):
+			_debug_place("Place blocked: missing %s (%d required, %d available)" % [cost.item, cost.amount, ResourceManager.get_amount(cost.item)])
+			return
+
+	for cost in res.costs:
+		ResourceManager.remove(cost.item, cost.amount)
+
+	grid.set_cell_item(origin, entry["index"])
+	Global.place_building(origin, Global.selected_building)
+	BuildingNetwork.rebuild_network()
+	_debug_place("Placed '%s' at %s" % [Global.selected_building, str(origin)])

@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cdaqgdx1cg3p4"]
+
+[ext_resource type="Script" uid="uid://b2ka7f1rnk57w" path="res://prototyping/production/ui/production_info_panel.gd" id="1"]
+
+[node name="ProductionInfoPanel" type="PanelContainer" unique_id=212648562]
+visible = false
+script = ExtResource("1")
