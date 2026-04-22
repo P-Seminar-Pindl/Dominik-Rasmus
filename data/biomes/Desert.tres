@@ -7,3 +7,4 @@ script = ExtResource("1")
 name = "Desert"
 temp_min = 0.5
 humid_max = 0.35
+color = Color(0.87, 0.74, 0.4, 1)

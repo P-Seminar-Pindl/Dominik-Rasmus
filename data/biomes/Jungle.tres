@@ -7,3 +7,4 @@ script = ExtResource("1")
 name = "Jungle"
 temp_min = 0.5
 humid_min = 0.65
+color = Color(0.12, 0.42, 0.06, 1)

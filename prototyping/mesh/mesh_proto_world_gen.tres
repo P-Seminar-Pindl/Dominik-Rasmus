@@ -1,16 +1,22 @@
 [gd_resource type="Resource" script_class="WorldGenConfig" format=3 uid="uid://2uadlsojuju5"]
 
 [ext_resource type="Script" uid="uid://cne0lfobpwup6" path="res://scripts/Templates/world_gen_config.gd" id="1_vkuja"]
-[ext_resource type="Resource" path="res://data/biomes/Tundra_highland.tres" id="biome_01"]
+[ext_resource type="Resource" uid="uid://6dyw66ip6wxb" path="res://data/biomes/Tundra_highland.tres" id="biome_01"]
 [ext_resource type="Resource" uid="uid://ekrxs28fdh71" path="res://data/biomes/Stone_highland.tres" id="biome_02"]
-[ext_resource type="Resource" path="res://data/biomes/Tundra.tres" id="biome_03"]
+[ext_resource type="Resource" uid="uid://ccknse047qrcb" path="res://data/biomes/Tundra.tres" id="biome_03"]
 [ext_resource type="Resource" uid="uid://d2ysxhrf0fim6" path="res://data/biomes/Taiga.tres" id="biome_04"]
-[ext_resource type="Resource" path="res://data/biomes/Savanna.tres" id="biome_05"]
+[ext_resource type="Resource" uid="uid://bontet0o0weo0" path="res://data/biomes/Savanna.tres" id="biome_05"]
 [ext_resource type="Resource" uid="uid://bp6qybhit4dg8" path="res://data/biomes/Grass.tres" id="biome_06"]
 [ext_resource type="Resource" uid="uid://dy8uqdco3kx4j" path="res://data/biomes/Forest.tres" id="biome_07"]
 [ext_resource type="Resource" uid="uid://tffk04ml3n5x" path="res://data/biomes/Desert.tres" id="biome_08"]
-[ext_resource type="Resource" path="res://data/biomes/Savanna_hot.tres" id="biome_09"]
+[ext_resource type="Resource" uid="uid://ch6spf7yow5ry" path="res://data/biomes/Savanna_hot.tres" id="biome_09"]
 [ext_resource type="Resource" uid="uid://bscgmwfsdq2u1" path="res://data/biomes/Jungle.tres" id="biome_10"]
+[ext_resource type="Resource" path="res://data/biomes/Volcanic.tres" id="biome_11"]
+[ext_resource type="Resource" path="res://data/biomes/Mangrove.tres" id="biome_12"]
+[ext_resource type="Resource" path="res://data/biomes/Boreal.tres" id="biome_13"]
+[ext_resource type="Resource" path="res://data/biomes/Steppe.tres" id="biome_14"]
+[ext_resource type="Resource" path="res://data/biomes/Shrubland.tres" id="biome_15"]
+[ext_resource type="Resource" path="res://data/biomes/Wetland.tres" id="biome_16"]
 [ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="biome_script"]
 
 [resource]
@@ -46,7 +52,7 @@ chunks_per_frame = 50
 mesh_subdivisions = 0
 normal_smoothing_radius = 0
 chunk_render_dist = 128
-biomes = Array[ExtResource("biome_script")]([ExtResource("biome_01"), ExtResource("biome_02"), ExtResource("biome_03"), ExtResource("biome_04"), ExtResource("biome_05"), ExtResource("biome_06"), ExtResource("biome_07"), ExtResource("biome_08"), ExtResource("biome_09"), ExtResource("biome_10")])
+biomes = Array[ExtResource("biome_script")]([ExtResource("biome_01"), ExtResource("biome_11"), ExtResource("biome_02"), ExtResource("biome_12"), ExtResource("biome_03"), ExtResource("biome_04"), ExtResource("biome_13"), ExtResource("biome_14"), ExtResource("biome_05"), ExtResource("biome_15"), ExtResource("biome_06"), ExtResource("biome_07"), ExtResource("biome_16"), ExtResource("biome_08"), ExtResource("biome_09"), ExtResource("biome_10")])
 region_size = 1000
 river_min_elevation = 0.55
 river_mouth_elevation = 0.08

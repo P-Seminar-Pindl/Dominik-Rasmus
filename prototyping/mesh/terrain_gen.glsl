@@ -67,7 +67,10 @@ layout(push_constant, std430) uniform Params {
 } p;
 
 // ── Biome table ───────────────────────────────────────────────────────────────
-// Each biome: temp_min, temp_max, humid_min, humid_max, elev_min, elev_max, r, g, b, + 3 pad floats = 12 floats
+// Each biome: [vec4 0] temp_min, temp_max, humid_min, humid_max
+//             [vec4 1] elev_min, elev_max, r, g
+//             [vec4 2] b, texture_index (future), color_variation (future), pad
+// = 3 vec4s = 12 floats per biome
 layout(set = 0, binding = 3, std430) restrict readonly buffer Biomes {
 	vec4 data[];  // 3 vec4s per biome = 12 floats
 } biome_buf;

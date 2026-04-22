@@ -8,3 +8,4 @@ name = "Forest"
 temp_min = 0.2
 temp_max = 0.5
 humid_min = 0.6
+color = Color(0.1, 0.38, 0.08, 1)

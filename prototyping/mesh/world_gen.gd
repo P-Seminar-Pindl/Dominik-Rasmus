@@ -9,20 +9,11 @@ const DEFAULT_PROTO_CFG_PATH := "res://prototyping/mesh/mesh_proto_world_gen.tre
 @export var distribution_curve: Curve  # kept for hot-reload hash; not used by shader (shader uses FBM directly)
 @export var max_chunk_build_ms_per_frame: float = 120
 
-# ── Biome color table (must match shader biome_buf packing) ───────────────────
-const BIOME_COLORS: Dictionary = {
-	"Water":   Color(0.05, 0.20, 0.55),
-	"Sand":    Color(0.85, 0.80, 0.55),
-	"Grass":   Color(0.35, 0.65, 0.20),
-	"Forest":  Color(0.12, 0.40, 0.10),
-	"Stone":   Color(0.55, 0.55, 0.55),
-	"Tundra":  Color(0.88, 0.90, 0.95),
-	"Taiga":   Color(0.20, 0.50, 0.45),
-	"Savanna": Color(0.72, 0.65, 0.30),
-	"Jungle":  Color(0.25, 0.50, 0.10),
-	"Desert":  Color(0.85, 0.72, 0.38),
-	"River":   Color(0.10, 0.45, 0.90),
-}
+# ── Special-case tile colors (not driven by BiomeResource) ───────────────────
+const COLOR_WATER:     Color = Color(0.05, 0.20, 0.55, 1)
+const COLOR_SAND:      Color = Color(0.85, 0.80, 0.55, 1)
+const COLOR_RIVER:     Color = Color(0.10, 0.45, 0.90, 1)
+const COLOR_HEADWATER: Color = Color(0.18, 0.56, 0.66, 1)
 
 # ── CPU noise (used only for river tracing / region generation) ───────────────
 var elev_noise:   FastNoiseLite = FastNoiseLite.new()
@@ -333,7 +324,7 @@ func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array
 	biome_bytes.fill(0)
 	for i in biome_count:
 		var bm = cfg.biomes[i]
-		var col: Color = BIOME_COLORS.get(bm.name, Color.MAGENTA)
+		var col: Color = bm.color
 		var base := i * 3 * vec4_size
 		biome_bytes.encode_float(base +  0, bm.temp_min)
 		biome_bytes.encode_float(base +  4, bm.temp_max)
@@ -344,6 +335,8 @@ func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array
 		biome_bytes.encode_float(base + 24, col.r)
 		biome_bytes.encode_float(base + 28, col.g)
 		biome_bytes.encode_float(base + 32, col.b)
+		biome_bytes.encode_float(base + 36, float(bm.texture_index))
+		biome_bytes.encode_float(base + 40, bm.color_variation)
 
 	# ── Build river / bank tile buffers ───────────────────────────────────────
 	# Format: ivec4[0].x = count, then entries packed two per ivec4 (.xy / .zw)
@@ -817,17 +810,13 @@ func _sample_elev(coord: Vector2i) -> float:
 func _biome_color_from_elev01(coord: Vector2i, elev: float) -> Color:
 	if cfg.river_enabled and river_tile_set.has(coord):
 		var mask := clampf(_multi_island_mask(coord), 0.0, 1.0)
-		var deep: Color = BIOME_COLORS.get("River", Color(0.10, 0.45, 0.90))
-		var headwater := Color(0.18, 0.56, 0.66)
-		return deep.lerp(headwater, mask * 0.65)
+		return COLOR_RIVER.lerp(COLOR_HEADWATER, mask * 0.65)
 	if cfg.river_enabled and river_bank_set.has(coord) and elev >= cfg.threshold_beach:
-		var sand: Color = BIOME_COLORS.get("Sand", Color.YELLOW)
-		var grass: Color = BIOME_COLORS.get("Grass", Color(0.35, 0.65, 0.20))
-		return sand.lerp(grass, 0.22)
+		return COLOR_SAND.lerp(Color(0.36, 0.67, 0.22, 1), 0.22)
 	if elev < cfg.threshold_ocean:
-		return BIOME_COLORS.get("Water", Color.BLUE)
+		return COLOR_WATER
 	if elev < cfg.threshold_beach:
-		return BIOME_COLORS.get("Sand", Color.YELLOW)
+		return COLOR_SAND
 
 	var temp  := _fbm(temp_noise,  coord.x, coord.y, cfg.temp_octaves)
 	temp  = clampf(temp - (elev * cfg.temp_altitude_drop), 0.0, 1.0)
@@ -842,17 +831,13 @@ func _biome_color_from_elev01f(coord: Vector2, elev: float) -> Color:
 	var tile_coord := Vector2i(floori(coord.x), floori(coord.y))
 	if cfg.river_enabled and river_tile_set.has(tile_coord):
 		var mask := clampf(_multi_island_mask(tile_coord), 0.0, 1.0)
-		var deep: Color = BIOME_COLORS.get("River", Color(0.10, 0.45, 0.90))
-		var headwater := Color(0.18, 0.56, 0.66)
-		return deep.lerp(headwater, mask * 0.65)
+		return COLOR_RIVER.lerp(COLOR_HEADWATER, mask * 0.65)
 	if cfg.river_enabled and river_bank_set.has(tile_coord) and elev >= cfg.threshold_beach:
-		var sand: Color = BIOME_COLORS.get("Sand", Color.YELLOW)
-		var grass: Color = BIOME_COLORS.get("Grass", Color(0.35, 0.65, 0.20))
-		return sand.lerp(grass, 0.22)
+		return COLOR_SAND.lerp(Color(0.36, 0.67, 0.22, 1), 0.22)
 	if elev < cfg.threshold_ocean:
-		return BIOME_COLORS.get("Water", Color.BLUE)
+		return COLOR_WATER
 	if elev < cfg.threshold_beach:
-		return BIOME_COLORS.get("Sand", Color.YELLOW)
+		return COLOR_SAND
 
 	var temp  := _fbm(temp_noise,  coord.x, coord.y, cfg.temp_octaves)
 	temp  = clampf(temp - (elev * cfg.temp_altitude_drop), 0.0, 1.0)
@@ -872,7 +857,7 @@ func _biome_tile_color(temp: float, humid: float, elev: float) -> Color:
 		if temp  >= biome.temp_min  and temp  < biome.temp_max  and \
 		   humid >= biome.humid_min and humid < biome.humid_max and \
 		   elev  >= biome.min_elevation and elev < biome.max_elevation:
-			return BIOME_COLORS.get(biome.name, Color.MAGENTA)
+			return biome.color
 	return Color.MAGENTA
 
 

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_volcanic"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Volcanic"
+temp_min = 0.0
+temp_max = 1.0
+humid_min = 0.0
+humid_max = 0.12
+min_elevation = 0.75
+max_elevation = 1.0
+color = Color(0.18, 0.14, 0.12, 1)
+texture_index = 0
+color_variation = 0.0

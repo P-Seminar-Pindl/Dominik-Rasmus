@@ -1,13 +1,10 @@
-[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_tundra_high"]
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://6dyw66ip6wxb"]
 
-[ext_resource type="Script" path="res://scripts/Templates/biome_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
-name = "Tundra"
-temp_min = 0.0
+name = "Tundra_highland"
 temp_max = 0.35
-humid_min = 0.0
-humid_max = 1.0
 min_elevation = 0.8
-max_elevation = 1.0
+color = Color(0.92, 0.94, 0.98, 1)

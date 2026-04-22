@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_mangrove"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Mangrove"
+temp_min = 0.55
+temp_max = 1.0
+humid_min = 0.6
+humid_max = 1.0
+min_elevation = 0.0
+max_elevation = 0.42
+color = Color(0.08, 0.35, 0.12, 1)
+texture_index = 0
+color_variation = 0.0

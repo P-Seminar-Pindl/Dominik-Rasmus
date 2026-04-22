@@ -9,3 +9,4 @@ temp_min = 0.2
 temp_max = 0.5
 humid_min = 0.3
 humid_max = 0.6
+color = Color(0.36, 0.67, 0.22, 1)

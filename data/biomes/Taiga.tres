@@ -7,3 +7,4 @@ script = ExtResource("1")
 name = "Taiga"
 temp_max = 0.2
 humid_min = 0.5
+color = Color(0.2, 0.52, 0.44, 1)
