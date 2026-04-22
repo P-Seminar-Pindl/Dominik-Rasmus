@@ -11,13 +11,20 @@ const BiomeResource = preload("res://scripts/Templates/biome_resource.gd")
 @export var region_island_spread: float = 180.0
 @export var mask_inner:     float = 0.2
 @export var mask_outer:     float = 0.75
+@export var island_shape_rotation:      float = 0.0
+@export var island_radial_wave_count:   float = 0.0
+@export var island_radial_wave_strength: float = 0.0
+@export var island_edge_noise_freq:     float = 0.0
+@export var island_edge_noise_octaves:  int   = 1
+@export var island_edge_noise_strength: float = 0.0
 
 # ── Elevation noise ───────────────────────────────────────────────────────────
 @export_group("Elevation Noise")
 @export var noise_type:     FastNoiseLite.NoiseType = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
-@export var noise_freq:     float = 0.018
+@export var noise_freq:     float = 0.007
 @export var warp_strength:  float = 12.0
 @export var warp_freq:      float = 0.025
+@export var warp_octaves:   int   = 2
 @export var fbm_octaves:    int   = 6
 
 # ── Temperature noise ─────────────────────────────────────────────────────────
@@ -42,11 +49,25 @@ const BiomeResource = preload("res://scripts/Templates/biome_resource.gd")
 @export_group("Height")
 @export var height_modifier:  int   = 6
 @export var height_sea_level: float = 0.30
+@export var terrain_flatten_power:      float = 1.8
+@export var mountain_start_floor:       float = 0.62
+@export var mountain_end:               float = 0.92
+@export var mountain_power:             float = 2.6
+@export var mountain_strength:          float = 0.55
+@export var terrace_steps:              float = 7.0
+@export var terrace_blend_strength:     float = 0.33
+@export var island_mask_exponent:       float = 1.0
+
+@export_group("Biome Shaping")
+@export var highland_temp_cooling:      float = 0.2
 
 # ── Chunking ──────────────────────────────────────────────────────────────────
 @export_group("Chunking")
 @export var chunks_per_frame: int = 2
 @export var chunk_size:        int = 16
+@export var mesh_subdivisions: int = 1
+@export var catmull_clark_subdivisions: int = 0
+@export var normal_smoothing_radius: int = 2
 
 @export var chunk_render_dist: int = 8
 
@@ -66,3 +87,22 @@ const BiomeResource = preload("res://scripts/Templates/biome_resource.gd")
 @export var river_count_per_island:  int   = 2
 @export var river_width:              int   = 2
 @export var river_bank_width:         int   = 1
+@export var river_min_path_length:    int   = 6
+@export var river_max_steps:          int   = 1200
+@export var river_search_radius_mult: float = 2.6
+@export var river_forced_climb_steps: int   = 220
+@export var river_max_uphill_step:    float = 0.03
+@export var river_meander_scale:      float = 0.037
+@export var river_meander_strength:   float = 0.6
+@export var river_direction_inertia:  float = 0.45
+@export var river_outward_bias:       float = 1.05
+@export var river_center_pull_bias:   float = 1.35
+@export var river_straight_penalty:   float = 0.22
+@export var river_uphill_cost:        float = 105.0
+@export var river_carve_coast_strength:    float = 0.78
+@export var river_carve_headwater_strength: float = 0.36
+@export var river_carve_ocean_offset:       float = 0.02
+@export var river_carve_beach_offset:       float = 0.04
+@export var river_bank_carve_offset:        float = 0.05
+@export var river_bank_carve_strength:      float = 0.25
+@export var threshold_ocean_offset: float = -0.25

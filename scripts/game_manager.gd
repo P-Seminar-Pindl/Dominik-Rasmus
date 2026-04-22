@@ -3,12 +3,13 @@ extends Node3D
 var library_manager = LibraryManager.new()
 var map_size = Vector2i(10000, 10000)
 var offset = Vector2i(0, 0)
+const SIDEBAR_SCENE := preload("res://scenes/Sidebar.tscn")
 
-@onready var sidebar = $CanvasLayer/ColorRect/Sidebar
-@onready var render_distance = $Camera3D/RenderDistance
 @onready var grid = $GridMap
+@onready var canvas_layer = $CanvasLayer
 @export var height_modifier: int
 @export var distribution_curve: Curve
+var sidebar: Sidebar = null
 
 
 func _ready() -> void:
@@ -29,7 +30,18 @@ func _ready() -> void:
 	
 	
 	# Add UI-elements
+	if sidebar == null:
+		var existing_sidebar := canvas_layer.get_node_or_null("Sidebar")
+		if existing_sidebar is Sidebar:
+			sidebar = existing_sidebar as Sidebar
+		else:
+			sidebar = SIDEBAR_SCENE.instantiate() as Sidebar
+			sidebar.name = "Sidebar"
+			canvas_layer.add_child(sidebar)
+
 	sidebar.populate(library_manager.buildings)
 	sidebar.item_selected.connect(func(name: String) -> void:
 		Global.selected_building = name
 	)
+
+	BuildingNetwork.rebuild_network()

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TileResource" format=3 uid="uid://tile_desert"]
+[gd_resource type="Resource" script_class="TileResource" format=3 uid="uid://bsb66gk1y7ryv"]
 
 [ext_resource type="Script" uid="uid://buh0r7nfw5aja" path="res://scripts/Templates/tile_resource.gd" id="1_desert"]
 [ext_resource type="Texture2D" uid="uid://bgjvv36yskmoo" path="res://textures/sand.png" id="2_desert"]

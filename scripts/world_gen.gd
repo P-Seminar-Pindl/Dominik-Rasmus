@@ -418,5 +418,5 @@ static func _trace_river(start: Vector2i, island_center: Vector2) -> Array[Vecto
 
 static func _masked_elev_local(coord: Vector2i, island_center: Vector2) -> float:
 	var dist: float = island_center.distance_to(Vector2(coord))
-	var mask: float = clampf(1.0 - smoothstep(cfg.mask_inner, cfg.mask_outer, dist / cfg.island_radius), 0.0, 1.0)
+	var mask: float = clampf(1.0 - smoothstep(cfg.mask_inner, cfg.mask_outer, dist / cfg.island_radius), 0.0, 1)
 	return lerp(0.0, _raw_elevation(coord), mask)

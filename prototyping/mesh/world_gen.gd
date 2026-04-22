@@ -7,7 +7,7 @@ const DEFAULT_PROTO_CFG_PATH := "res://prototyping/mesh/mesh_proto_world_gen.tre
 # ── Exports ───────────────────────────────────────────────────────────────────
 @export var cfg: WorldGenConfig = preload("res://prototyping/mesh/mesh_proto_world_gen.tres")
 @export var distribution_curve: Curve  # kept for hot-reload hash; not used by shader (shader uses FBM directly)
-@export var max_chunk_build_ms_per_frame: float = 0
+@export var max_chunk_build_ms_per_frame: float = 120
 
 # ── Biome color table (must match shader biome_buf packing) ───────────────────
 const BIOME_COLORS: Dictionary = {

@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_forest"]
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://dy8uqdco3kx4j"]
 
-[ext_resource type="Script" path="res://scripts/Templates/biome_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
@@ -8,6 +8,3 @@ name = "Forest"
 temp_min = 0.2
 temp_max = 0.5
 humid_min = 0.6
-humid_max = 1.0
-min_elevation = 0.0
-max_elevation = 1.0

@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://default_info_panel"]
-
-[ext_resource type="Script" path="res://prototyping/ui/default_info_panel.gd" id="1"]
-
-[node name="DefaultInfoPanel" type="PanelContainer"]
-script = ExtResource("1")

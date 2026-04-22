@@ -1,13 +1,9 @@
-[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_stone_high"]
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://ekrxs28fdh71"]
 
-[ext_resource type="Script" path="res://scripts/Templates/biome_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
 name = "Stone"
 temp_min = 0.35
-temp_max = 1.0
-humid_min = 0.0
-humid_max = 1.0
 min_elevation = 0.8
-max_elevation = 1.0
