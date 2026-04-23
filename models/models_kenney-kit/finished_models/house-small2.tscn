@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://cydqk8a5u4ip2"]
 
 [ext_resource type="PackedScene" uid="uid://evhb5ny1mg3b" path="res://models/models_kenney-kit/wall-wood-detail-cross.fbx" id="1_idksw"]
-[ext_resource type="PackedScene" uid="uid://dhj0sgvg8u4x3" path="res://models/models_kenney-kit/wall-window-small.fbx" id="2_tq56t"]
 [ext_resource type="PackedScene" uid="uid://c5g4ia4uhddoi" path="res://models/models_kenney-kit/wall-wood-detail-horizontal.fbx" id="3_kg672"]
 [ext_resource type="PackedScene" uid="uid://dqcqjahxjl1uu" path="res://models/models_kenney-kit/wall-wood-door.fbx" id="4_vtn4u"]
 [ext_resource type="PackedScene" uid="uid://btdnv0agf1766" path="res://models/models_kenney-kit/wall-wood-side.fbx" id="5_jaw50"]
 [ext_resource type="PackedScene" uid="uid://btoewtnuijqss" path="res://models/models_kenney-kit/roof-window.fbx" id="6_bpryi"]
 [ext_resource type="PackedScene" uid="uid://icitylcwr5b1" path="res://models/models_kenney-kit/roof-left.fbx" id="7_w5t68"]
 [ext_resource type="PackedScene" uid="uid://dbjnaax3jjur6" path="res://models/models_kenney-kit/roof-right.fbx" id="8_cjyfj"]
+[ext_resource type="PackedScene" uid="uid://cjyq2btu4bnyr" path="res://models/models_kenney-kit/wall-wood-window-round.fbx" id="8_idksw"]
 
 [node name="House2" type="Node3D" unique_id=1335323920]
 
@@ -22,12 +22,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 2)
 
 [node name="wall-wood-detail-cross4" parent="." unique_id=1005713477 instance=ExtResource("1_idksw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
-
-[node name="wall-window-small" parent="." unique_id=484457382 instance=ExtResource("2_tq56t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
-
-[node name="wall-window-small2" parent="." unique_id=1614705687 instance=ExtResource("2_tq56t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
 
 [node name="wall-wood-detail-horizontal" parent="." unique_id=807467950 instance=ExtResource("3_kg672")]
 transform = Transform3D(8.940697e-08, 0, -1, 0, 1, 0, 1, 0, 8.940697e-08, 0, 0, 2)
@@ -61,3 +55,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 2)
 
 [node name="roof-right2" parent="." unique_id=1791297142 instance=ExtResource("8_cjyfj")]
 transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 1, 1, 0)
+
+[node name="wall-wood-window-round" parent="." unique_id=1859044050 instance=ExtResource("8_idksw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+
+[node name="wall-wood-window-round2" parent="." unique_id=1120638822 instance=ExtResource("8_idksw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
