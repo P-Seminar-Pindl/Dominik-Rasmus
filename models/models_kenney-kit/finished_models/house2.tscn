@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://cydqk8a5u4ip2"]
+
+[ext_resource type="PackedScene" uid="uid://evhb5ny1mg3b" path="res://models/models_kenney-kit/wall-wood-detail-cross.fbx" id="1_idksw"]
+[ext_resource type="PackedScene" uid="uid://dhj0sgvg8u4x3" path="res://models/models_kenney-kit/wall-window-small.fbx" id="2_tq56t"]
+[ext_resource type="PackedScene" uid="uid://c5g4ia4uhddoi" path="res://models/models_kenney-kit/wall-wood-detail-horizontal.fbx" id="3_kg672"]
+[ext_resource type="PackedScene" uid="uid://dqcqjahxjl1uu" path="res://models/models_kenney-kit/wall-wood-door.fbx" id="4_vtn4u"]
+[ext_resource type="PackedScene" uid="uid://btdnv0agf1766" path="res://models/models_kenney-kit/wall-wood-side.fbx" id="5_jaw50"]
+[ext_resource type="PackedScene" uid="uid://btoewtnuijqss" path="res://models/models_kenney-kit/roof-window.fbx" id="6_bpryi"]
+[ext_resource type="PackedScene" uid="uid://icitylcwr5b1" path="res://models/models_kenney-kit/roof-left.fbx" id="7_w5t68"]
+[ext_resource type="PackedScene" uid="uid://dbjnaax3jjur6" path="res://models/models_kenney-kit/roof-right.fbx" id="8_cjyfj"]
+
+[node name="House2" type="Node3D" unique_id=1335323920]
+
+[node name="wall-wood-detail-cross" parent="." unique_id=759723367 instance=ExtResource("1_idksw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="wall-wood-detail-cross3" parent="." unique_id=1857833383 instance=ExtResource("1_idksw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 2)
+
+[node name="wall-wood-detail-cross2" parent="." unique_id=2146788201 instance=ExtResource("1_idksw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 2)
+
+[node name="wall-wood-detail-cross4" parent="." unique_id=1005713477 instance=ExtResource("1_idksw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="wall-window-small" parent="." unique_id=484457382 instance=ExtResource("2_tq56t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+
+[node name="wall-window-small2" parent="." unique_id=1614705687 instance=ExtResource("2_tq56t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
+
+[node name="wall-wood-detail-horizontal" parent="." unique_id=807467950 instance=ExtResource("3_kg672")]
+transform = Transform3D(8.940697e-08, 0, -1, 0, 1, 0, 1, 0, 8.940697e-08, 0, 0, 2)
+
+[node name="wall-wood-detail-horizontal2" parent="." unique_id=1625742186 instance=ExtResource("3_kg672")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1, 0, 2)
+
+[node name="wall-wood-door" parent="." unique_id=1239327732 instance=ExtResource("4_vtn4u")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.50828975, 0, 0)
+
+[node name="wall-wood-side5" parent="." unique_id=1888637379 instance=ExtResource("5_jaw50")]
+transform = Transform3D(-4.371139e-08, 0, -2.2989643, 0, 1, 0, 1, 0, -1.0049092e-07, 0.57519454, 0, -0.91298324)
+
+[node name="wall-wood-side6" parent="." unique_id=620352893 instance=ExtResource("5_jaw50")]
+transform = Transform3D(-4.3711385e-08, 0, 1.9385737, 0, 1, 0, -0.99999994, 0, -8.473775e-08, 0.48802423, 0, 0)
+
+[node name="roof-window" parent="." unique_id=755523861 instance=ExtResource("6_bpryi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1)
+
+[node name="roof-left" parent="." unique_id=1907255141 instance=ExtResource("7_w5t68")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="roof-left2" parent="." unique_id=1147185419 instance=ExtResource("7_w5t68")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1, 1, 2)
+
+[node name="roof-window2" parent="." unique_id=1692056372 instance=ExtResource("6_bpryi")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1, 1, 1)
+
+[node name="roof-right" parent="." unique_id=1440035528 instance=ExtResource("8_cjyfj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 2)
+
+[node name="roof-right2" parent="." unique_id=1791297142 instance=ExtResource("8_cjyfj")]
+transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 1, 1, 0)
