@@ -31,6 +31,7 @@ var river_tile_set: Dictionary = {}
 var river_bank_set: Dictionary = {}
 
 var chunk_meshes:   Dictionary      = {}
+var chunk_props:    Dictionary      = {}
 var mesh_cache:     Dictionary      = {}
 var mesh_cache_lru: Array[Vector2i] = []
 
@@ -53,8 +54,9 @@ var _pipeline_rid: RID
 # ── Inner classes ─────────────────────────────────────────────────────────────
 
 class RegionData:
-	var island_centers: Array[Vector2] = []
-	var river_paths:    Array          = []
+	var island_centers:  Array[Vector2] = []
+	var island_climates: Array[Vector2] = []  # (temp_bias, humid_bias) per center, same index
+	var river_paths:     Array          = []
 
 
 # ── Init ──────────────────────────────────────────────────────────────────────
@@ -229,7 +231,9 @@ func _load_chunk(chunk: Vector2i) -> void:
 		origin.x + cfg.chunk_size - 1,
 		origin.y + cfg.chunk_size - 1
 	)))
-	var chunk_centers := _gather_chunk_centers(origin)
+	var chunk_data := _gather_chunk_centers(origin)
+	var chunk_centers:  Array[Vector2] = chunk_data["centers"]
+	var chunk_climates: Array[Vector2] = chunk_data["climates"]
 
 	var mesh: ArrayMesh
 	if mesh_cache.has(chunk):
@@ -237,7 +241,7 @@ func _load_chunk(chunk: Vector2i) -> void:
 		mesh_cache_lru.erase(chunk)
 		mesh_cache_lru.append(chunk)
 	else:
-		mesh = _build_chunk_mesh_gpu(chunk, origin, chunk_centers)
+		mesh = _build_chunk_mesh_gpu(chunk, origin, chunk_centers, chunk_climates)
 		mesh_cache[chunk] = mesh
 		mesh_cache_lru.append(chunk)
 		_evict_mesh_cache()
@@ -250,11 +254,18 @@ func _load_chunk(chunk: Vector2i) -> void:
 	chunk_meshes[chunk] = mi
 	loaded_chunks[chunk] = true
 
+	var prop_root := _spawn_props_for_chunk(chunk, origin, chunk_centers, chunk_climates)
+	add_child(prop_root)
+	chunk_props[chunk] = prop_root
+
 
 func _unload_chunk(chunk: Vector2i) -> void:
 	if chunk_meshes.has(chunk):
 		chunk_meshes[chunk].queue_free()
 		chunk_meshes.erase(chunk)
+	if chunk_props.has(chunk):
+		chunk_props[chunk].queue_free()
+		chunk_props.erase(chunk)
 	loaded_chunks.erase(chunk)
 
 
@@ -272,6 +283,9 @@ func _clear_all() -> void:
 	for mi in chunk_meshes.values():
 		mi.queue_free()
 	chunk_meshes.clear()
+	for node in chunk_props.values():
+		node.queue_free()
+	chunk_props.clear()
 	loaded_chunks.clear()
 	load_queue.clear()
 	queued_set.clear()
@@ -284,17 +298,19 @@ func _clear_all() -> void:
 
 # ── GPU mesh building ─────────────────────────────────────────────────────────
 
-func _gather_chunk_centers(origin: Vector2i) -> Array[Vector2]:
-	var all_centers: Array[Vector2] = []
+func _gather_chunk_centers(origin: Vector2i) -> Dictionary:
+	var centers:  Array[Vector2] = []
+	var climates: Array[Vector2] = []
 	var search_r: int = ceili(float(cfg.island_radius) / cfg.region_size) + 1
 	var chunk_region := _tile_to_region(origin)
 	for rx in range(chunk_region.x - search_r, chunk_region.x + search_r + 1):
 		for ry in range(chunk_region.y - search_r, chunk_region.y + search_r + 1):
 			var rd := _ensure_region(Vector2i(rx, ry))
-			all_centers.append_array(rd.island_centers)
-	return all_centers
+			centers.append_array(rd.island_centers)
+			climates.append_array(rd.island_climates)
+	return {"centers": centers, "climates": climates}
 
-func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array[Vector2]) -> ArrayMesh:
+func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array[Vector2], all_climates: Array[Vector2]) -> ArrayMesh:
 	# Fall back to CPU if compute not available
 	if not _rd or not _pipeline_rid.is_valid():
 		return _build_chunk_mesh_cpu(chunk, origin, all_centers)
@@ -305,16 +321,18 @@ func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array
 	var vert_count: int = verts * verts
 	var vec4_size  := 16
 
-	# Pack as vec4 pairs: each vec4 holds two (x,z) centers
+	# One vec4 per island: xy = center position, zw = (temp_bias, humid_bias)
 	var center_count := all_centers.size()
-	var center_vec4s := ceili(float(center_count) / 2.0)
 	var center_bytes := PackedByteArray()
-	center_bytes.resize(max(center_vec4s, 1) * vec4_size)
+	center_bytes.resize(max(center_count, 1) * vec4_size)
 	center_bytes.fill(0)
 	for i in center_count:
-		var base := (i >> 1) * vec4_size + (i % 2) * 8
-		center_bytes.encode_float(base,     all_centers[i].x)
-		center_bytes.encode_float(base + 4, all_centers[i].y)
+		var base := i * vec4_size
+		var climate: Vector2 = all_climates[i] if i < all_climates.size() else Vector2(0.5, 0.5)
+		center_bytes.encode_float(base,      all_centers[i].x)
+		center_bytes.encode_float(base + 4,  all_centers[i].y)
+		center_bytes.encode_float(base + 8,  climate.x)
+		center_bytes.encode_float(base + 12, climate.y)
 
 	# ── Build biome buffer ────────────────────────────────────────────────────
 	# 3 vec4s per biome: [temp_min,temp_max,humid_min,humid_max], [elev_min,elev_max,r,g], [b,0,0,0]
@@ -680,12 +698,14 @@ func _pack_tile_set(tile_set: Dictionary) -> PackedByteArray:
 
 
 func _pack_non_river_settings() -> PackedByteArray:
-	# 3 vec4s:
-	# [flatten_power, mountain_start_floor, mountain_end, mountain_power]
-	# [mountain_strength, terrace_steps, terrace_blend_strength, highland_temp_cooling]
-	# [warp_octaves, island_mask_exponent, 0, 0]
+	# 5 vec4s:
+	# [0] flatten_power, mountain_start_floor, mountain_end, mountain_power
+	# [1] mountain_strength, terrace_steps, terrace_blend_strength, highland_temp_cooling
+	# [2] warp_octaves, island_mask_exponent, _, _
+	# [3] island_shape_rotation, radial_wave_count, radial_wave_strength, edge_noise_freq
+	# [4] edge_noise_octaves, edge_noise_strength, climate_falloff, climate_influence
 	var bytes := PackedByteArray()
-	bytes.resize(3 * 16)
+	bytes.resize(5 * 16)
 	bytes.fill(0)
 	bytes.encode_float(0,  cfg.terrain_flatten_power)
 	bytes.encode_float(4,  cfg.mountain_start_floor)
@@ -697,7 +717,81 @@ func _pack_non_river_settings() -> PackedByteArray:
 	bytes.encode_float(28, cfg.highland_temp_cooling)
 	bytes.encode_float(32, float(cfg.warp_octaves))
 	bytes.encode_float(36, cfg.island_mask_exponent)
+	bytes.encode_float(48, cfg.island_shape_rotation)
+	bytes.encode_float(52, cfg.island_radial_wave_count)
+	bytes.encode_float(56, cfg.island_radial_wave_strength)
+	bytes.encode_float(60, cfg.island_edge_noise_freq)
+	bytes.encode_float(64, float(cfg.island_edge_noise_octaves))
+	bytes.encode_float(68, cfg.island_edge_noise_strength)
+	bytes.encode_float(72, cfg.island_climate_falloff)
+	bytes.encode_float(76, cfg.island_climate_influence)
 	return bytes
+
+
+# ── Prop distribution ─────────────────────────────────────────────────────────
+
+func _get_biome(temp: float, humid: float, elev: float) -> BiomeResource:
+	for biome in cfg.biomes:
+		if temp  >= biome.temp_min  and temp  < biome.temp_max  and \
+		   humid >= biome.humid_min and humid < biome.humid_max and \
+		   elev  >= biome.min_elevation and elev < biome.max_elevation:
+			return biome
+	return null
+
+
+func _spawn_props_for_chunk(
+		chunk: Vector2i,
+		origin: Vector2i,
+		centers: Array[Vector2],
+		climates: Array[Vector2]
+	) -> Node3D:
+	var root := Node3D.new()
+
+	var rng := RandomNumberGenerator.new()
+	rng.seed = cfg.seed ^ (chunk.x * 198491317) ^ (chunk.y * 6542989)
+
+	for tx in cfg.chunk_size:
+		for tz in cfg.chunk_size:
+			var tile := Vector2i(origin.x + tx, origin.y + tz)
+			var coord := Vector2(tile)
+
+			if river_tile_set.has(tile) or river_bank_set.has(tile):
+				continue
+
+			var elev01: float = _sample_elev01_from_centersf(coord, centers)
+			if elev01 < cfg.threshold_beach:
+				continue
+
+			var temp: float  = clampf(_fbm(temp_noise,  coord.x, coord.y, cfg.temp_octaves)  - elev01 * cfg.temp_altitude_drop, 0.0, 1.0)
+			var humid: float = _fbm(humid_noise, coord.x, coord.y, cfg.humid_octaves)
+			if elev01 >= cfg.threshold_lowland:
+				temp = clampf(temp - cfg.highland_temp_cooling, 0.0, 1.0)
+
+			var biome: BiomeResource = _get_biome(temp, humid, elev01)
+			if biome == null or biome.props.is_empty():
+				continue
+
+			var height: float = _height_from_elev01(elev01)
+
+			for entry: PropEntry in biome.props:
+				if entry.scene == null:
+					continue
+				if rng.randf() >= entry.density:
+					continue
+
+				var inst: Node3D = entry.scene.instantiate()
+				inst.position = Vector3(
+					coord.x + rng.randf_range(-0.4, 0.4),
+					height + entry.y_offset,
+					coord.y + rng.randf_range(-0.4, 0.4)
+				)
+				if entry.random_rotation:
+					inst.rotation.y = rng.randf_range(0.0, TAU)
+				var s: float = rng.randf_range(entry.scale_min, entry.scale_max)
+				inst.scale = Vector3(s, s, s)
+				root.add_child(inst)
+
+	return root
 
 
 # ── CPU fallback mesh builder (used when compute unavailable) ─────────────────
@@ -891,11 +985,16 @@ func _ensure_region(rcoord: Vector2i) -> RegionData:
 		(rcoord.x + 0.5) * cfg.region_size,
 		(rcoord.y + 0.5) * cfg.region_size
 	)
+	var t_var: float = cfg.island_climate_temp_variance
+	var h_var: float = cfg.island_climate_humid_variance
 	for _i in count:
 		rd.island_centers.append(Vector2(
 			region_center.x + rng.randf_range(-cfg.region_island_spread, cfg.region_island_spread),
 			region_center.y + rng.randf_range(-cfg.region_island_spread, cfg.region_island_spread)
 		))
+		var t_bias: float = clampf(cfg.island_climate_temp_center + rng.randf_range(-t_var, t_var), 0.0, 1.0)
+		var h_bias: float = clampf(cfg.island_climate_humid_center + rng.randf_range(-h_var, h_var), 0.0, 1.0)
+		rd.island_climates.append(Vector2(t_bias, h_bias))
 
 	region_data[rcoord] = rd
 

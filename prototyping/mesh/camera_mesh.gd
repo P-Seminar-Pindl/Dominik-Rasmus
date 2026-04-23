@@ -42,7 +42,7 @@ func _update_camera() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_MIDDLE:
+		if event.button_index == MOUSE_BUTTON_LEFT:
 			_dragging_orbit = event.pressed
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			_dragging_pan = event.pressed

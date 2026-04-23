@@ -14,9 +14,9 @@ layout(set = 0, binding = 1, std430) restrict writeonly buffer Colors {
 	vec4 data[];
 } colors;
 
-// island_centers: packed as vec2 pairs, terminated by count
+// island_centers: one vec4 per island — xy = position, zw = (temp_bias, humid_bias)
 layout(set = 0, binding = 2, std430) restrict readonly buffer IslandCenters {
-	vec4 data[];  // each vec4 = two centers: (cx0,cy0, cx1,cy1)
+	vec4 data[];
 } island_buf;
 
 // ── Push constants ────────────────────────────────────────────────────────────
@@ -128,9 +128,14 @@ float fbm(float x, float y, uint seed, int octaves) {
 	return clamp(value, 0.0, 1.0);
 }
 
-// ── Island mask ───────────────────────────────────────────────────────────────
+// ── Island sampling (mask + climate bias) ────────────────────────────────────
 
-float island_mask(vec2 coord) {
+struct IslandSample {
+	float mask;           // strongest island mask at this coord (0..1)
+	vec2  climate_bias;   // mask-weighted average of nearby island climates (temp, humid)
+};
+
+IslandSample sample_islands(vec2 coord) {
 	float mask_exp = max(settings_buf.data[2].y, 0.05);
 	float shape_rotation = settings_buf.data[3].x;
 	float radial_wave_count = settings_buf.data[3].y;
@@ -138,11 +143,17 @@ float island_mask(vec2 coord) {
 	float edge_noise_freq = settings_buf.data[3].w;
 	int edge_noise_octaves = max(1, int(settings_buf.data[4].x + 0.5));
 	float edge_noise_strength = settings_buf.data[4].y;
+	float climate_falloff = max(settings_buf.data[4].z, 0.05);
+
 	float best = 0.0;
+	vec2  climate_sum = vec2(0.0);
+	float weight_sum  = 0.0;
+
 	for (int i = 0; i < p.island_count; i++) {
-		int vec4_idx = i / 2;
-		vec4 packed  = island_buf.data[vec4_idx];
-		vec2 center  = (i % 2 == 0) ? packed.xy : packed.zw;
+		vec4 packed  = island_buf.data[i];
+		vec2 center  = packed.xy;
+		vec2 climate = packed.zw;
+
 		vec2 off = coord - center;
 		float dist = length(off);
 		vec2 dir = dist > 0.0001 ? off / dist : vec2(1.0, 0.0);
@@ -156,10 +167,18 @@ float island_mask(vec2 coord) {
 
 		float shape_scale = max(0.2, 1.0 + radial_wave + edge_noise);
 		float t = dist / max(p.island_radius * shape_scale, 0.0001);
-		float mask   = pow(clamp(1.0 - smoothstep(p.mask_inner, p.mask_outer, t), 0.0, 1.0), mask_exp);
+		float mask = pow(clamp(1.0 - smoothstep(p.mask_inner, p.mask_outer, t), 0.0, 1.0), mask_exp);
 		best = max(best, clamp(mask, 0.0, 1.0));
+
+		float w = pow(mask, climate_falloff);
+		climate_sum += climate * w;
+		weight_sum  += w;
 	}
-	return best;
+
+	IslandSample s;
+	s.mask = best;
+	s.climate_bias = weight_sum > 0.0001 ? climate_sum / weight_sum : vec2(0.5);
+	return s;
 }
 
 // ── Biome color lookup ────────────────────────────────────────────────────────
@@ -177,8 +196,8 @@ vec3 biome_color(float temp, float humid, float elev) {
 		vec3  col       = vec3(b.z, b.w, c.x);
 
 		if (temp  >= temp_min  && temp  < temp_max  &&
-		    humid >= humid_min && humid < humid_max  &&
-		    elev  >= elev_min  && elev  < elev_max) {
+			humid >= humid_min && humid < humid_max  &&
+			elev  >= elev_min  && elev  < elev_max) {
 			return col;
 		}
 	}
@@ -236,8 +255,9 @@ void main() {
 
 	// Elevation
 	float raw_elev = fbm((wx_coord + wx) * p.noise_freq, (wz_coord + wz) * p.noise_freq,
-	                     uint(p.elev_seed), p.fbm_octaves);
-	float mask  = island_mask(vec2(wx_coord, wz_coord));
+						 uint(p.elev_seed), p.fbm_octaves);
+	IslandSample island = sample_islands(vec2(wx_coord, wz_coord));
+	float mask  = island.mask;
 	float elev  = mix(0.0, raw_elev, mask);
 
 	if (river_tile) {
@@ -294,10 +314,18 @@ void main() {
 		col = vec3(0.85, 0.80, 0.55);
 	} else {
 		float temp  = fbm(wx_coord * p.temp_freq,  wz_coord * p.temp_freq,
-		                  uint(p.temp_seed), p.temp_octaves);
-		temp = clamp(temp - (elev * p.temp_altitude_drop), 0.0, 1.0);
+						  uint(p.temp_seed), p.temp_octaves);
 		float humid = fbm(wx_coord * p.humid_freq, wz_coord * p.humid_freq,
-		                  uint(p.humid_seed), p.humid_octaves);
+						  uint(p.humid_seed), p.humid_octaves);
+
+		// Blend FBM noise toward this island's climate personality.
+		// Effective influence fades to zero at the coast so the transition is smooth.
+		float climate_influence = settings_buf.data[4].w;
+		float eff = clamp(climate_influence * island.mask, 0.0, 1.0);
+		temp  = mix(temp,  island.climate_bias.x, eff);
+		humid = mix(humid, island.climate_bias.y, eff);
+
+		temp = clamp(temp - (elev * p.temp_altitude_drop), 0.0, 1.0);
 
 		float t = temp;
 		if (elev >= p.threshold_lowland) {

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_rainforest"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Rainforest"
+temp_min = 0.22
+temp_max = 0.45
+humid_min = 0.85
+humid_max = 1.0
+min_elevation = 0.0
+max_elevation = 0.7
+color = Color(0.06, 0.3, 0.18, 1)
+color_variation = 0.0

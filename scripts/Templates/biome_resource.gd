@@ -11,3 +11,4 @@ class_name BiomeResource
 @export var color:           Color = Color.MAGENTA
 @export var texture_index:   int   = 0
 @export var color_variation: float = 0.0
+@export var props: Array[PropEntry] = []

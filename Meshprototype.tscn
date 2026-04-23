@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://bfp68wu2bo84v"]
+
+[ext_resource type="Script" path="res://prototypes_mesh/logistics/ProductionLine.gd" id="1_et4b7"]
+[ext_resource type="Script" path="res://prototypes_mesh/camera/camera_prototype.gd" id="2_wi8dj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ta3ec"]
+albedo_color = Color(0, 0, 0.35686275, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_yuslo"]
+material = SubResource("StandardMaterial3D_ta3ec")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_qs18x"]
+center_offset = Vector3(0, -1, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_omn1d"]
+albedo_color = Color(0.4616983, 0, 0.0075523886, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_r1r60"]
+material = SubResource("StandardMaterial3D_omn1d")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lh6wt"]
+albedo_color = Color(0, 0.69143635, 3.85046e-07, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xiu5h"]
+material = SubResource("StandardMaterial3D_lh6wt")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_road_act"]
+albedo_color = Color(1, 0.85, 0, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_road_act"]
+material = SubResource("StandardMaterial3D_road_act")
+center_offset = Vector3(0, -1, 0)
+
+[sub_resource type="MeshLibrary" id="MeshLibrary_gghor"]
+item/0/name = "House_inactive"
+item/0/mesh = SubResource("BoxMesh_yuslo")
+item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/mesh_cast_shadow = 1
+item/0/shapes = []
+item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/navigation_layers = 1
+item/1/name = "Road"
+item/1/mesh = SubResource("PlaneMesh_qs18x")
+item/1/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/mesh_cast_shadow = 1
+item/1/shapes = []
+item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/navigation_layers = 1
+item/2/name = "Warehouse"
+item/2/mesh = SubResource("BoxMesh_r1r60")
+item/2/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/mesh_cast_shadow = 1
+item/2/shapes = []
+item/2/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/navigation_layers = 1
+item/3/name = "House_active"
+item/3/mesh = SubResource("BoxMesh_xiu5h")
+item/3/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/mesh_cast_shadow = 1
+item/3/shapes = []
+item/3/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/navigation_layers = 1
+item/4/name = "Road_active"
+item/4/mesh = SubResource("PlaneMesh_road_act")
+item/4/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/mesh_cast_shadow = 1
+item/4/shapes = []
+item/4/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/navigation_layers = 1
+
+[node name="GridMap" type="GridMap" unique_id=928866814]
+mesh_library = SubResource("MeshLibrary_gghor")
+script = ExtResource("1_et4b7")
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1532395961]
+transform = Transform3D(-0.6957734, 0.7142203, -0.07608317, 0.44807646, 0.34881797, -0.8231363, -0.56136143, -0.6068075, -0.5627236, 0, 18.855, 0)
+light_energy = 11.333
+
+[node name="Player" type="Camera3D" parent="." unique_id=202831947]
+transform = Transform3D(1, 0, 0, 0, 0.9998477, -0.017452406, 0, 0.017452406, 0.9998477, -1.035, 3.522, 0)
+script = ExtResource("2_wi8dj")

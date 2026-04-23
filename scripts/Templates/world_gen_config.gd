@@ -61,6 +61,19 @@ const BiomeResource = preload("res://scripts/Templates/biome_resource.gd")
 @export_group("Biome Shaping")
 @export var highland_temp_cooling:      float = 0.2
 
+@export_group("Island Climate")
+# How strongly each island's climate dominates the FBM temp/humid noise at its center.
+# 0 = FBM only (current behavior), 1 = fully determined by island bias.
+@export_range(0.0, 1.0) var island_climate_influence:      float = 0.75
+# Range around _center that per-island biases are rolled from (± this value).
+@export_range(0.0, 0.5) var island_climate_temp_variance:  float = 0.35
+@export_range(0.0, 0.5) var island_climate_humid_variance: float = 0.40
+# World-wide default that island biases are spread around. Lower temp_center = generally colder world.
+@export_range(0.0, 1.0) var island_climate_temp_center:    float = 0.5
+@export_range(0.0, 1.0) var island_climate_humid_center:   float = 0.5
+# How sharply the climate bias fades toward the coast. >1 keeps the bias concentrated near the island center.
+@export_range(0.1, 4.0) var island_climate_falloff:        float = 1.5
+
 # ── Chunking ──────────────────────────────────────────────────────────────────
 @export_group("Chunking")
 @export var chunks_per_frame: int = 2
