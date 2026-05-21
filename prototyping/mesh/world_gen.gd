@@ -794,6 +794,16 @@ func _spawn_props_for_chunk(
 	return root
 
 
+# ── Public terrain queries (used by placement_manager) ───────────────────────
+
+func get_height_at(tile: Vector2i) -> float:
+	return _height_from_elev01(_sample_elev01(tile))
+
+
+func get_elev01_at(tile: Vector2i) -> float:
+	return _sample_elev01(tile)
+
+
 # ── CPU fallback mesh builder (used when compute unavailable) ─────────────────
 
 func _build_chunk_mesh_cpu(_chunk: Vector2i, origin: Vector2i, all_centers: Array[Vector2]) -> ArrayMesh:

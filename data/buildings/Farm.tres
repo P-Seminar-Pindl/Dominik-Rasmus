@@ -1,40 +1,28 @@
-[gd_resource type="Resource" script_class="ProductionBuildingResource" format=3 uid="uid://farm"]
+[gd_resource type="Resource" script_class="ProductionBuildingResource" format=3]
 
 [ext_resource type="Script" uid="uid://bc18ds8vike8c" path="res://scripts/Templates/production_building_resource.gd" id="1"]
-[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="1_ra"]
-
-[sub_resource type="Resource" id="Cost_gold"]
-script = ExtResource("1_ra")
-item = "Gold"
-amount = 15
-
-[sub_resource type="StandardMaterial3D" id="Mat_farm"]
-albedo_color = Color(0.45, 0.8, 0.2, 1)
-
-[sub_resource type="BoxMesh" id="Mesh_farm"]
-material = SubResource("Mat_farm")
-size = Vector3(4, 2, 4)
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://dedn5l88q3ii8" path="res://models/models_kenney-kit/finished_models/farm.tscn" id="3"]
 
 [sub_resource type="Resource" id="Output_food"]
-script = ExtResource("1_ra")
+script = ExtResource("2")
 item = "Food"
 amount = 5
 
 [sub_resource type="Resource" id="Storage_food"]
-script = ExtResource("1_ra")
+script = ExtResource("2")
 item = "Food"
 amount = 15
 
 [resource]
 script = ExtResource("1")
-output = Array[ExtResource("1_ra")]([SubResource("Output_food")])
+scene = ExtResource("3")
+output = Array[ExtResource("2")]([SubResource("Output_food")])
 production_time = 6.0
-storage_slots = Array[ExtResource("1_ra")]([SubResource("Storage_food")])
+storage_slots = Array[ExtResource("2")]([SubResource("Storage_food")])
 name = "Farm"
 info_title = "Farm"
 info_description = "Produces food for your settlement."
-active_variant = "Farm_Active"
-mesh = SubResource("Mesh_farm")
-footprint_size = Vector2i(2, 2)
+footprint_size = Vector2i(3, 4)
 workforce = 2
-costs = Array[ExtResource("1_ra")]([SubResource("Cost_gold")])
+show_in_sidebar = true
