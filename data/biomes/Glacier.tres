@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_glacier"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Glacier"
+temp_min = 0.0
+temp_max = 0.1
+humid_min = 0.0
+humid_max = 1.0
+min_elevation = 0.0
+max_elevation = 0.85
+color = Color(0.7, 0.84, 0.92, 1)
+color_variation = 0.0

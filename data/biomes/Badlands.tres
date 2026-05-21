@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_badlands"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Badlands"
+temp_min = 0.6
+temp_max = 1.0
+humid_min = 0.0
+humid_max = 0.2
+min_elevation = 0.3
+max_elevation = 0.78
+color = Color(0.72, 0.38, 0.22, 1)
+color_variation = 0.0

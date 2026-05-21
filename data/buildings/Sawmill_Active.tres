@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BuildingResource" format=3 uid="uid://sawmill_active"]
+
+[ext_resource type="Script" uid="uid://buildres" path="res://scripts/Templates/building_resource.gd" id="1"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_sawmill_active"]
+albedo_color = Color(0.95, 0.7, 0.2, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_sawmill_active"]
+size = Vector3(4, 2, 4)
+material = SubResource("Mat_sawmill_active")
+
+[resource]
+script = ExtResource("1")
+name = "Sawmill_Active"
+info_title = "Sawmill (Active)"
+info_description = "Connected and converting logs at peak rate."
+show_in_sidebar = false
+mesh = SubResource("Mesh_sawmill_active")

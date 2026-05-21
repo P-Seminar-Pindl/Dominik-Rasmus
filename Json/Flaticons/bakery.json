@@ -1,0 +1,18 @@
+{
+	"id": "bakery",
+	"assets": {
+		"texture": "res://textures/FlaticonBuildings/008-bakery-shop.png",
+		"mesh": ""
+	},
+	"workforce": 3,
+	"costs": {
+		"wood": 5,
+		"stone": 10
+	},
+	"input": {
+		"flour": 5
+	},
+	"output": {
+		"bread": 5
+	}
+}

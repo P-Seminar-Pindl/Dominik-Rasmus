@@ -1,0 +1,16 @@
+{
+	"id": "well",
+	"assets": {
+		"texture": "res://textures/FlaticonBuildings/001-village.png",
+		"mesh": ""
+	},
+	"workforce": 1,
+	"costs": {
+		"wood": 5,
+		"stone": 10
+	},
+	"input": {},
+	"output": {
+		"water": 10
+	}
+}

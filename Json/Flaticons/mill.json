@@ -1,0 +1,18 @@
+{
+	"id": "mill",
+	"assets": {
+		"texture": "res://textures/FlaticonBuildings/007-building.png",
+		"mesh": ""
+	},
+	"workforce": 2,
+	"costs": {
+		"wood": 8,
+		"stone": 5
+	},
+	"input": {
+		"wheat": 8
+	},
+	"output": {
+		"flour": 6
+	}
+}

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RoadBuildingResource" format=3 uid="uid://da1pthmexscs7"]
+
+[ext_resource type="Script" uid="uid://xmxn0du72bou" path="res://scripts/Templates/road_building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="1_vdm31"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_road"]
+albedo_color = Color(0.22, 0.22, 0.22, 1)
+
+[sub_resource type="PlaneMesh" id="Mesh_road"]
+material = SubResource("Mat_road")
+center_offset = Vector3(0, -1, 0)
+
+[resource]
+script = ExtResource("1")
+name = "Road"
+info_title = "Road"
+info_description = "Connects buildings to the logistics network."
+active_variant = "Road_Active"
+mesh = SubResource("Mesh_road")

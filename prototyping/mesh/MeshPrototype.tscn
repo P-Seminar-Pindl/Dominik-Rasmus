@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bbab2c8l8he47"]
+
+[ext_resource type="Script" uid="uid://cefrw12otyfh5" path="res://prototyping/mesh/world_gen.gd" id="1_world_gen"]
+[ext_resource type="Script" uid="uid://cvqjs1iylgvd" path="res://prototyping/mesh/camera_mesh.gd" id="2_camera"]
+[ext_resource type="Script" uid="uid://b3nk4pe1ubnba" path="res://prototyping/mesh/prototype_visuals.gd" id="3_proto_visuals"]
+
+[sub_resource type="Curve" id="Curve_cpr0p"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.8184438, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="MeshPrototype" type="Node3D" unique_id=18399804]
+script = ExtResource("3_proto_visuals")
+
+[node name="World" type="Node3D" parent="." unique_id=339640962]
+script = ExtResource("1_world_gen")
+distribution_curve = SubResource("Curve_cpr0p")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=815776332]
+transform = Transform3D(1, 0, 0, 0, 0.57357657, 0.81915224, 0, -0.81915224, 0.57357657, 0, 60, 0)
+light_energy = 1.2
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=214742119]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 80, 80)
+script = ExtResource("2_camera")

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_wetland"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Wetland"
+temp_min = 0.35
+temp_max = 0.75
+humid_min = 0.75
+humid_max = 1.0
+min_elevation = 0.0
+max_elevation = 0.65
+color = Color(0.22, 0.38, 0.18, 1)
+texture_index = 0
+color_variation = 0.0

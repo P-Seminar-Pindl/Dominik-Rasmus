@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://tffk04ml3n5x"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Desert"
+temp_min = 0.5
+humid_max = 0.35
+color = Color(0.87, 0.74, 0.4, 1)

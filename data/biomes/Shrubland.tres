@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_shrubland"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Shrubland"
+temp_min = 0.25
+temp_max = 0.5
+humid_min = 0.2
+humid_max = 0.45
+min_elevation = 0.0
+max_elevation = 0.8
+color = Color(0.58, 0.60, 0.28, 1)
+texture_index = 0
+color_variation = 0.0

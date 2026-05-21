@@ -1,0 +1,60 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://bp6qybhit4dg8"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://cs2f7vadtvyw1" path="res://scripts/Templates/prop_entry.gd" id="1_1q31x"]
+[ext_resource type="PackedScene" uid="uid://b6ym6at6d3j04" path="res://models/FBX format/grass_large.fbx" id="2_oo2ij"]
+[ext_resource type="PackedScene" uid="uid://ddqr2w8wdwr2h" path="res://models/FBX format/tree_oak.fbx" id="3_0v4qc"]
+[ext_resource type="PackedScene" uid="uid://87m7bx07tuot" path="res://models/FBX format/plant_bush.fbx" id="4_vorha"]
+[ext_resource type="PackedScene" uid="uid://dtqvwd36oy0td" path="res://models/FBX format/tree_thin.fbx" id="5_nqm6d"]
+[ext_resource type="PackedScene" uid="uid://cuh0362rv2g2v" path="res://models/FBX format/tree_cone.fbx" id="6_wyioi"]
+[ext_resource type="PackedScene" uid="uid://dpnkkb0qhumel" path="res://models/FBX format/tree_tall.fbx" id="7_8p8jn"]
+[ext_resource type="PackedScene" uid="uid://bldjctjkq6x37" path="res://models/FBX format/grass_leafs.fbx" id="8_ca434"]
+
+[sub_resource type="Resource" id="Resource_0v4qc"]
+script = ExtResource("1_1q31x")
+scene = ExtResource("2_oo2ij")
+density = 2.0
+
+[sub_resource type="Resource" id="Resource_6d1yd"]
+script = ExtResource("1_1q31x")
+scene = ExtResource("3_0v4qc")
+density = 0.01
+
+[sub_resource type="Resource" id="Resource_5301k"]
+script = ExtResource("1_1q31x")
+scene = ExtResource("4_vorha")
+density = 0.01
+
+[sub_resource type="Resource" id="Resource_n1man"]
+script = ExtResource("1_1q31x")
+scene = ExtResource("5_nqm6d")
+density = 0.01
+metadata/_custom_type_script = "uid://cs2f7vadtvyw1"
+
+[sub_resource type="Resource" id="Resource_djkjp"]
+script = ExtResource("1_1q31x")
+scene = ExtResource("6_wyioi")
+density = 0.01
+metadata/_custom_type_script = "uid://cs2f7vadtvyw1"
+
+[sub_resource type="Resource" id="Resource_cunp2"]
+script = ExtResource("1_1q31x")
+scene = ExtResource("7_8p8jn")
+density = 0.01
+metadata/_custom_type_script = "uid://cs2f7vadtvyw1"
+
+[sub_resource type="Resource" id="Resource_msp7u"]
+script = ExtResource("1_1q31x")
+scene = ExtResource("8_ca434")
+density = 2.0
+metadata/_custom_type_script = "uid://cs2f7vadtvyw1"
+
+[resource]
+script = ExtResource("1")
+name = "Grass"
+temp_min = 0.2
+temp_max = 0.5
+humid_min = 0.3
+humid_max = 0.6
+color = Color(0.36, 0.67, 0.22, 1)
+props = Array[ExtResource("1_1q31x")]([SubResource("Resource_0v4qc"), SubResource("Resource_6d1yd"), SubResource("Resource_5301k"), SubResource("Resource_n1man"), SubResource("Resource_djkjp"), SubResource("Resource_cunp2"), SubResource("Resource_msp7u")])

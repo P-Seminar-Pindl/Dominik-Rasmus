@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="StorageBuildingResource" format=3 uid="uid://cvomq5krey3wh"]
+
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="1_vh27f"]
+[ext_resource type="Script" uid="uid://s1f26he0acif" path="res://scripts/Templates/storage_building_resource.gd" id="2_6s3sv"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_vh27f"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="Resource" id="Slot_wood"]
+script = ExtResource("1_vh27f")
+item = "Wood"
+amount = 100
+
+[sub_resource type="Resource" id="Slot_planks"]
+script = ExtResource("1_vh27f")
+item = "Planks"
+amount = 100
+
+[sub_resource type="Resource" id="Slot_stone"]
+script = ExtResource("1_vh27f")
+item = "Stone"
+amount = 50
+
+[resource]
+script = ExtResource("2_6s3sv")
+storage_slots = Array[ExtResource("1_vh27f")]([SubResource("Slot_wood"), SubResource("Slot_planks"), SubResource("Slot_stone")])
+name = "Warehouse"
+info_title = "Warehouse"
+info_description = "Stores raw materials and finished goods."
+mesh = SubResource("BoxMesh_vh27f")

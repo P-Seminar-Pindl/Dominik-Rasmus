@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://bf54k467flkx6"]
+
+[ext_resource type="PackedScene" uid="uid://bckgwd3hnoapw" path="res://models/models_kenney-kit/wall-window-stone.fbx" id="1_g3lau"]
+[ext_resource type="PackedScene" uid="uid://dgglmn61bgt5a" path="res://models/models_kenney-kit/wall-door.fbx" id="2_qesnc"]
+[ext_resource type="PackedScene" uid="uid://d04m7eti7t8hh" path="res://models/models_kenney-kit/wall-detail-horizontal.fbx" id="3_48cts"]
+[ext_resource type="PackedScene" uid="uid://ceybnxe4p4hjh" path="res://models/models_kenney-kit/roof-gable-end.fbx" id="4_kjduy"]
+
+[node name="House1" type="Node3D" unique_id=947352736]
+
+[node name="wall-window-stone" parent="." unique_id=1250065395 instance=ExtResource("1_g3lau")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.49977422)
+
+[node name="wall-window-stone2" parent="." unique_id=899299047 instance=ExtResource("1_g3lau")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0.5002258)
+
+[node name="wall-window-stone4" parent="." unique_id=1403535611 instance=ExtResource("1_g3lau")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, -0.49977422)
+
+[node name="wall-window-stone3" parent="." unique_id=692694949 instance=ExtResource("1_g3lau")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5002258)
+
+[node name="wall-door" parent="." unique_id=2137623355 instance=ExtResource("2_qesnc")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0.5002258)
+
+[node name="wall-detail-horizontal" parent="." unique_id=1371516544 instance=ExtResource("3_48cts")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, -1.4449377)
+
+[node name="roof-gable-end" parent="." unique_id=937745096 instance=ExtResource("4_kjduy")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 1, -0.49977422)
+
+[node name="roof-gable-end2" parent="." unique_id=1837420315 instance=ExtResource("4_kjduy")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 1, 0.5002258)

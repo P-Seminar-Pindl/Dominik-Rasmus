@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://biome_alpine"]
+
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+name = "Alpine"
+temp_min = 0.1
+temp_max = 0.6
+humid_min = 0.0
+humid_max = 1.0
+min_elevation = 0.65
+max_elevation = 0.85
+color = Color(0.52, 0.58, 0.46, 1)
+color_variation = 0.0

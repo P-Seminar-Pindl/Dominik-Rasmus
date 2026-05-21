@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://ctq2hcff0v6ur"]
+
+[ext_resource type="PackedScene" uid="uid://diyfa14a4q1pt" path="res://models/models_kenney-kit/wall-wood-corner.fbx" id="1_d130w"]
+[ext_resource type="PackedScene" uid="uid://d26w7i3aybwtn" path="res://models/models_kenney-kit/wall-wood-window-glass.fbx" id="2_y4nwg"]
+[ext_resource type="PackedScene" uid="uid://c5g4ia4uhddoi" path="res://models/models_kenney-kit/wall-wood-detail-horizontal.fbx" id="3_mbh3s"]
+[ext_resource type="PackedScene" uid="uid://dqcqjahxjl1uu" path="res://models/models_kenney-kit/wall-wood-door.fbx" id="4_gtgkq"]
+[ext_resource type="PackedScene" uid="uid://cp6t8s3f6wt4k" path="res://models/models_kenney-kit/roof-high-corner.fbx" id="5_4vh72"]
+[ext_resource type="PackedScene" uid="uid://cksn8yjjr2lci" path="res://models/models_kenney-kit/roof-high-window.fbx" id="6_aaslx"]
+[ext_resource type="PackedScene" uid="uid://dalo0oi2efuct" path="res://models/models_kenney-kit/roof-high-flat.fbx" id="7_1vrl4"]
+
+[node name="HouseSmall2" type="Node2D" unique_id=1977664479]
+
+[node name="wall-wood-corner" parent="." unique_id=1604913343 instance=ExtResource("1_d130w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+
+[node name="wall-wood-corner3" parent="." unique_id=973511028 instance=ExtResource("1_d130w")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -2, 0, 1)
+
+[node name="wall-wood-corner4" parent="." unique_id=1456328387 instance=ExtResource("1_d130w")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2, 0, -1)
+
+[node name="wall-wood-corner2" parent="." unique_id=913807689 instance=ExtResource("1_d130w")]
+transform = Transform3D(1.3113416e-07, 0, 1, 0, 1, 0, -1, 0, 1.3113416e-07, 0, 0, -1)
+
+[node name="wall-wood-window-glass" parent="." unique_id=1352243836 instance=ExtResource("2_y4nwg")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -1, 0, 1)
+
+[node name="wall-wood-window-glass2" parent="." unique_id=416194769 instance=ExtResource("2_y4nwg")]
+transform = Transform3D(-5.9604645e-08, 0, 1, 0, 1, 0, -1, 0, -5.9604645e-08, -1, 0, -1)
+
+[node name="wall-wood-detail-horizontal" parent="." unique_id=1744252301 instance=ExtResource("3_mbh3s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9070654, 0, 0)
+
+[node name="wall-wood-detail-horizontal2" parent="." unique_id=270299617 instance=ExtResource("3_mbh3s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9070654, 0, 1)
+
+[node name="wall-wood-detail-horizontal3" parent="." unique_id=1089932855 instance=ExtResource("3_mbh3s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9070654, 0, -1)
+
+[node name="wall-wood-door" parent="." unique_id=1220123805 instance=ExtResource("4_gtgkq")]
+
+[node name="roof-high-corner" parent="." unique_id=1678662273 instance=ExtResource("5_4vh72")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 1)
+
+[node name="roof-high-corner2" parent="." unique_id=1839828666 instance=ExtResource("5_4vh72")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 1, 1)
+
+[node name="roof-high-corner3" parent="." unique_id=420957453 instance=ExtResource("5_4vh72")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 1, -1)
+
+[node name="roof-high-corner4" parent="." unique_id=1740303828 instance=ExtResource("5_4vh72")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -2, 1, -1)
+
+[node name="roof-high-window" parent="." unique_id=1096419495 instance=ExtResource("6_aaslx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 0)
+
+[node name="roof-high-window2" parent="." unique_id=1963383768 instance=ExtResource("6_aaslx")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 1, 0)
+
+[node name="roof-high-window3" parent="." unique_id=291118318 instance=ExtResource("6_aaslx")]
+transform = Transform3D(1.3113416e-07, 0, -1, 0, 1, 0, 1, 0, 1.3113416e-07, -1, 1, -1)
+
+[node name="roof-high-window4" parent="." unique_id=1037545039 instance=ExtResource("6_aaslx")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -1, 1, 1)
+
+[node name="roof-high-flat" parent="." unique_id=1277429454 instance=ExtResource("7_1vrl4")]
+transform = Transform3D(-1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 0, 0, 1, -1, 2.141071, 0)
