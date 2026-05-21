@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b4iswnv1atu82"
-path="res://.godot/imported/colormap.png-b192f3744cd0f86085a2d19492852889.ctex"
+uid="uid://c1x4p3ohrnaex"
+path="res://.godot/imported/colormap.png-160c1ca0ac599d2adb660a5b5f55d289.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://models/models_kenney-kit/finished_models/colormap.png"
-dest_files=["res://.godot/imported/colormap.png-b192f3744cd0f86085a2d19492852889.ctex"]
+source_file="res://models/models_kenney-kit/finished_models/Textures/colormap.png"
+dest_files=["res://.godot/imported/colormap.png-160c1ca0ac599d2adb660a5b5f55d289.ctex"]
 
 [params]
 

@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cy2vbvxub3rp7"]
+
+[ext_resource type="PackedScene" uid="uid://bycjf073iredi" path="res://models/models_kenney-kit/fountain-round-detail.fbx" id="1_pv5iu"]
+
+[node name="Fountain" type="Node3D" unique_id=1219749731]
+
+[node name="fountain-round-detail" parent="." unique_id=823220947 instance=ExtResource("1_pv5iu")]
