@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dedn5l88q3ii8"]
+[gd_scene format=3 uid="uid://q6bvik48ylsm"]
 
 [ext_resource type="PackedScene" uid="uid://cjd22yebq212o" path="res://models/FBX format/crops_dirtDoubleRow.fbx" id="1_g47rb"]
 [ext_resource type="PackedScene" uid="uid://dxoni745bhgkr" path="res://models/FBX format/crops_dirtDoubleRowEnd.fbx" id="2_5clr7"]
