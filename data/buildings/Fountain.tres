@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BuildingResource" format=3]
+
+[ext_resource type="Script" path="res://scripts/Templates/building_resource.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://cy2vbvxub3rp7" path="res://models/models_kenney-kit/finished_models/fountain.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("2")
+name = "Fountain"
+info_title = "Fountain"
+info_description = "A decorative public fountain."
+footprint_size = Vector2i(2, 2)
+show_in_sidebar = true

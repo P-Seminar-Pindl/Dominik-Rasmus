@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://d3curqwgdpktr"]
+
+[ext_resource type="PackedScene" uid="uid://c162d4gbb7gwf" path="res://models/FBX format/campfire_bricks.fbx" id="1_hnvjf"]
+[ext_resource type="PackedScene" uid="uid://xrgcy3fbtxw3" path="res://models/FBX format/campfire_stones.fbx" id="2_q0ce0"]
+[ext_resource type="PackedScene" uid="uid://buraig6c5bcdw" path="res://models/FBX format/campfire_planks.fbx" id="3_yuepf"]
+[ext_resource type="PackedScene" uid="uid://by6rl22ggd8gu" path="res://models/FBX format/campfire_logs.fbx" id="4_b4ri7"]
+[ext_resource type="PackedScene" uid="uid://y7xdyh0unanb" path="res://models/FBX format/log.fbx" id="5_x4f6e"]
+
+[node name="Campfire" type="Node2D" unique_id=1746497979]
+
+[node name="campfire_bricks" parent="." unique_id=1119378685 instance=ExtResource("1_hnvjf")]
+
+[node name="campfire_stones" parent="." unique_id=1452684039 instance=ExtResource("2_q0ce0")]
+
+[node name="campfire_planks" parent="." unique_id=1530130327 instance=ExtResource("3_yuepf")]
+
+[node name="campfire_logs" parent="." unique_id=1238578168 instance=ExtResource("4_b4ri7")]
+
+[node name="log" parent="." unique_id=319240048 instance=ExtResource("5_x4f6e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="log2" parent="." unique_id=108733167 instance=ExtResource("5_x4f6e")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, -1)
+
+[node name="log3" parent="." unique_id=2013630904 instance=ExtResource("5_x4f6e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="log4" parent="." unique_id=1480265101 instance=ExtResource("5_x4f6e")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 1)

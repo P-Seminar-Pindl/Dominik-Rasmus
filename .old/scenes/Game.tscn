@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://dynr3kkd2rgd0"]
+
+[ext_resource type="Script" uid="uid://dm2odqcv0iqgn" path="res://scripts/game_manager.gd" id="1_78awf"]
+[ext_resource type="Script" uid="uid://cxwipkxwui70l" path="res://scripts/world_gen.gd" id="2_s0nni"]
+[ext_resource type="PackedScene" uid="uid://ciq6xv0ahja8s" path="res://scenes/GUI.tscn" id="3_cpr0p"]
+[ext_resource type="PackedScene" uid="uid://biy7st87oubxk" path="res://scenes/Camera.tscn" id="4_78awf"]
+[ext_resource type="Texture2D" uid="uid://dp1t8cphavn2q" path="res://textures/kloofendal_48d_partly_cloudy_puresky.jpg" id="5_kiw3p"]
+[ext_resource type="Shader" uid="uid://cayg02mtnui0n" path="res://shaders/pixelate.gdshader" id="7_kiw3p"]
+
+[sub_resource type="Curve" id="Curve_cpr0p"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.8184438, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="MeshLibrary" id="MeshLibrary_78awf"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_kiw3p"]
+panorama = ExtResource("5_kiw3p")
+
+[sub_resource type="Sky" id="Sky_kiw3p"]
+sky_material = SubResource("PanoramaSkyMaterial_kiw3p")
+
+[sub_resource type="Environment" id="Environment_g4kob"]
+background_mode = 2
+sky = SubResource("Sky_kiw3p")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_400sg"]
+shader = ExtResource("7_kiw3p")
+shader_parameter/pixel_size = 1.0
+
+[node name="Game" type="Node3D" unique_id=1285071726]
+script = ExtResource("1_78awf")
+height_modifier = 40
+distribution_curve = SubResource("Curve_cpr0p")
+
+[node name="GridMap" type="GridMap" parent="." unique_id=677668730]
+mesh_library = SubResource("MeshLibrary_78awf")
+script = ExtResource("2_s0nni")
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="Gui" parent="." unique_id=223137702 instance=ExtResource("3_cpr0p")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1135785725]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 31.980667, 0)
+
+[node name="Camera3D" parent="." unique_id=1754714316 instance=ExtResource("4_78awf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
+SensitivityMulti = 1.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=101835108]
+transform = Transform3D(-2.48164e-07, 5.67733, 0, -5.67733, -2.48164e-07, 0, 0, 0, 5.67733, 12.483, 67.2991, 14.38)
+skeleton = NodePath("")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2047011059]
+environment = SubResource("Environment_g4kob")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=240111751]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1263572009]
+material = SubResource("ShaderMaterial_400sg")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

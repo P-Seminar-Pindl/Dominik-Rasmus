@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dedn5l88q3ii8"]
+[gd_scene format=3 uid="uid://q6bvik48ylsm"]
 
 [ext_resource type="PackedScene" uid="uid://cjd22yebq212o" path="res://models/FBX format/crops_dirtDoubleRow.fbx" id="1_g47rb"]
 [ext_resource type="PackedScene" uid="uid://dxoni745bhgkr" path="res://models/FBX format/crops_dirtDoubleRowEnd.fbx" id="2_5clr7"]
@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://wixdnoedrlqb" path="res://models/models_kenney-kit/roof-high-left.fbx" id="9_3u3ox"]
 [ext_resource type="PackedScene" uid="uid://b1ufehd1hq141" path="res://models/models_kenney-kit/roof-high-right.fbx" id="10_2m4ou"]
 
-[node name="Farm" type="Node2D" unique_id=344348641]
+[node name="Farm" type="Node3D" unique_id=344348641]
 
 [node name="crops_dirtDoubleRow" parent="." unique_id=711635247 instance=ExtResource("1_g47rb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45524406, 0, 1.6617951)

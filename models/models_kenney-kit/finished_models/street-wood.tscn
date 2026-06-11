@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://1luw8ckimm5j"]
+
+[ext_resource type="PackedScene" uid="uid://b7by2rgi7mf0u" path="res://models/FBX format/path_wood.fbx" id="1_p76i5"]
+
+[node name="Street" type="Node2D" unique_id=1338172720]
+
+[node name="path_wood" parent="." unique_id=476403702 instance=ExtResource("1_p76i5")]

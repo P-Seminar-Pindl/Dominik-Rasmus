@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dpw6fyqg1e040" path="res://models/models_kenney-kit/roof-flat.fbx" id="7_n8txf"]
 [ext_resource type="PackedScene" uid="uid://5podb1oixpm3" path="res://models/models_kenney-kit/wall-half.fbx" id="8_hgmpa"]
 
-[node name="House1" type="Node2D" unique_id=188410943]
+[node name="House1" type="Node3D" unique_id=188410943]
 
 [node name="wall-window-shutters" parent="." unique_id=275616276 instance=ExtResource("1_8rdr4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)

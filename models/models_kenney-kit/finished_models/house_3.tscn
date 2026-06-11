@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://ck085mf7y406d" path="res://models/FBX format/fence_planks.fbx" id="9_ag4ne"]
 [ext_resource type="PackedScene" uid="uid://c1uwr2bvnmfh2" path="res://models/FBX format/fence_gate.fbx" id="10_bqn7o"]
 
-[node name="House3" type="Node2D" unique_id=1003059845]
+[node name="House3" type="Node3D" unique_id=1003059845]
 
 [node name="wall-wood-door" parent="." unique_id=1239327732 instance=ExtResource("1_c3amw")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 1)
