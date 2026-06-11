@@ -13,7 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://bg6cjfidkvxve" path="res://models/models_kenney-kit/windmill.fbx" id="11_3kcd2"]
 [ext_resource type="PackedScene" uid="uid://ckry4h5uvklds" path="res://models/models_kenney-kit/pillar-wood.fbx" id="12_auodw"]
 
-[node name="Windmill" type="Node2D" unique_id=615181498]
+[node name="Windmill" type="Node3D" unique_id=615181498]
 
 [node name="wall-corner-diagonal" parent="." unique_id=1557230252 instance=ExtResource("1_xsnxq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)

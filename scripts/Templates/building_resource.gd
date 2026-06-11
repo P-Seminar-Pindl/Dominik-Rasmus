@@ -17,6 +17,7 @@ const ResourceAmount = preload("res://scripts/Templates/resource_amount.gd")
 @export var active_variant: String = ""  # name of the LibraryManager entry to swap to when connected
 
 @export_group("Mesh")
+@export var scene: PackedScene
 @export var mesh: Mesh = BoxMesh.new()
 @export var collision_size: Vector3 = Vector3(2, 2, 2)
 @export var footprint_size: Vector2i = Vector2i(1, 1)  # cells on X, Z

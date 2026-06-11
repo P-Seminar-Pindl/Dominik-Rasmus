@@ -19,12 +19,6 @@ run/main_scene="res://scenes/Game.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
-[autoload]
-
-Global="*res://scripts/global.gd"
-WorldGen="res://scripts/world_gen.gd"
-BuildingNetwork="*uid://d2u2as057a0ac"
-ResourceManager="*res://scripts/ResourceManager.gd"
 
 [display]
 

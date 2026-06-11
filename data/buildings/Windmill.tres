@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="ProductionBuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://bc18ds8vike8c" path="res://scripts/Templates/production_building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://c2pfbsambilva" path="res://models/models_kenney-kit/finished_models/windmill.tscn" id="3"]
+
+[sub_resource type="Resource" id="Output_planks"]
+script = ExtResource("2")
+item = "Planks"
+amount = 3
+
+[sub_resource type="Resource" id="Storage_planks"]
+script = ExtResource("2")
+item = "Planks"
+amount = 12
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("3")
+output = Array[ExtResource("2")]([SubResource("Output_planks")])
+production_time = 8.0
+storage_slots = Array[ExtResource("2")]([SubResource("Storage_planks")])
+name = "Windmill"
+info_title = "Windmill"
+info_description = "Processes grain into flour."
+footprint_size = Vector2i(3, 3)
+workforce = 2
+show_in_sidebar = true

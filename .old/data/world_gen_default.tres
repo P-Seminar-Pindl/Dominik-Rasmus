@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="WorldGenConfig" format=3 uid="uid://d1njabrvf77gx"]
+
+[ext_resource type="Script" uid="uid://cne0lfobpwup6" path="res://scripts/Templates/world_gen_config.gd" id="1_vkuja"]
+[ext_resource type="Resource" uid="uid://6dyw66ip6wxb" path="res://data/biomes/Tundra_highland.tres" id="biome_01"]
+[ext_resource type="Resource" uid="uid://ekrxs28fdh71" path="res://data/biomes/Stone_highland.tres" id="biome_02"]
+[ext_resource type="Resource" uid="uid://ccknse047qrcb" path="res://data/biomes/Tundra.tres" id="biome_03"]
+[ext_resource type="Resource" uid="uid://d2ysxhrf0fim6" path="res://data/biomes/Taiga.tres" id="biome_04"]
+[ext_resource type="Resource" uid="uid://bontet0o0weo0" path="res://data/biomes/Savanna.tres" id="biome_05"]
+[ext_resource type="Resource" uid="uid://bp6qybhit4dg8" path="res://data/biomes/Grass.tres" id="biome_06"]
+[ext_resource type="Resource" uid="uid://dy8uqdco3kx4j" path="res://data/biomes/Forest.tres" id="biome_07"]
+[ext_resource type="Resource" uid="uid://tffk04ml3n5x" path="res://data/biomes/Desert.tres" id="biome_08"]
+[ext_resource type="Resource" uid="uid://ch6spf7yow5ry" path="res://data/biomes/Savanna_hot.tres" id="biome_09"]
+[ext_resource type="Resource" uid="uid://bscgmwfsdq2u1" path="res://data/biomes/Jungle.tres" id="biome_10"]
+[ext_resource type="Script" uid="uid://ddwssr3ce53vr" path="res://scripts/Templates/biome_resource.gd" id="biome_script"]
+
+[resource]
+script = ExtResource("1_vkuja")
+seed = 139
+island_radius = 300.0
+islands_per_region = 1
+mask_inner = 0.1
+mask_outer = 0.85
+noise_freq = 0.012
+warp_strength = 8.0
+warp_freq = 0.04
+temp_octaves = 4
+temp_altitude_drop = 0.29
+threshold_lowland = 0.62
+threshold_highland = 0.78
+height_modifier = 28
+chunks_per_frame = 10
+chunk_render_dist = 1024
+biomes = Array[ExtResource("biome_script")]([ExtResource("biome_01"), ExtResource("biome_02"), ExtResource("biome_03"), ExtResource("biome_04"), ExtResource("biome_05"), ExtResource("biome_06"), ExtResource("biome_07"), ExtResource("biome_08"), ExtResource("biome_09"), ExtResource("biome_10")])
+river_min_elevation = 0.55
+river_mouth_elevation = 0.15
+river_count_per_island = 4
+threshold_ocean_offset = 0.0
+metadata/_custom_type_script = "uid://cne0lfobpwup6"
