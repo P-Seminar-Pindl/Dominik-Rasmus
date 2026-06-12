@@ -8,6 +8,11 @@ const DEFAULT_PROTO_CFG_PATH := "res://data/world_gen_default.tres"
 @export var distribution_curve: Curve  # kept for hot-reload hash; not used by shader (shader uses FBM directly)
 @export var max_chunk_build_ms_per_frame: float = 120
 
+@export_group("Performance Debug")
+@export var debug_perf: bool = false
+## Only log individual chunks that take longer than this (ms). 0 = log all.
+@export var debug_perf_slow_chunk_ms: float = 30.0
+
 # ── Special-case tile colors (not driven by BiomeResource) ───────────────────
 const COLOR_WATER:     Color = Color(0.05, 0.20, 0.55, 1)
 const COLOR_SAND:      Color = Color(0.85, 0.80, 0.55, 1)
@@ -40,6 +45,12 @@ var _shared_mat:     StandardMaterial3D
 var _last_stream_chunk: Vector2i = Vector2i(2147483647, 2147483647)
 var _cached_render_dist: int = -1
 var _chunk_offsets: Array[Vector2i] = []
+
+# ── Perf-debug accumulators ───────────────────────────────────────────────────
+var _dbg_frame:        int        = 0
+var _dbg_chunks_built: int        = 0
+var _dbg_acc:          Dictionary = {}   # fixed_label → total ms this 60-frame window
+var _dbg_chunk_steps:  Dictionary = {}   # ordered: label → ms for the current chunk
 
 # ── GPU / compute shader state ────────────────────────────────────────────────
 var _rd:           RenderingDevice
@@ -107,13 +118,11 @@ func _init_compute() -> void:
 	if _rd == null:
 		push_error("TerrainGen: no RenderingDevice available (need Forward+ or Vulkan)")
 		return
-
 	var src := RDShaderFile.new()
 	src.parse_versions("""
 		#version 450
 		#define GODOT_GLSL
 	""")
-
 	var glsl_path := "res://shaders/terrain_gen.glsl"
 	var shader_file: RDShaderFile = load(glsl_path)
 	if shader_file == null:
@@ -123,6 +132,9 @@ func _init_compute() -> void:
 	var spirv: RDShaderSPIRV = shader_file.get_spirv()
 	_shader_rid = _rd.shader_create_from_spirv(spirv)
 	_pipeline_rid = _rd.compute_pipeline_create(_shader_rid)
+	print("[WorldGen] _init_compute: shader_valid=%s  pipeline_valid=%s" % [
+		str(_shader_rid.is_valid()), str(_pipeline_rid.is_valid())
+	])
 
 
 # ── Per-frame ─────────────────────────────────────────────────────────────────
@@ -131,12 +143,18 @@ func _process(_delta: float) -> void:
 	if not _ensure_cfg_loaded():
 		return
 
+	var t0 := Time.get_ticks_usec()
 	var current_hash := cfg.get_rid().get_id() * 31 + inst_to_dict(cfg).hash()
 	if current_hash != _last_cfg_hash:
 		_last_cfg_hash = current_hash
 		init(cfg)
+	if debug_perf:
+		_dbg_acc_add("cfg_hash_check", float(Time.get_ticks_usec() - t0) / 1000.0)
 
+	var ts := Time.get_ticks_usec()
 	_stream_chunks()
+	if debug_perf:
+		_dbg_acc_add("stream_chunks", float(Time.get_ticks_usec() - ts) / 1000.0)
 
 	var chunks_per_frame := cfg.chunks_per_frame
 	var frame_start_usec := Time.get_ticks_usec()
@@ -151,6 +169,12 @@ func _process(_delta: float) -> void:
 		queued_set.erase(c)
 		if not loaded_chunks.has(c):
 			_load_chunk(c)
+
+	if debug_perf:
+		_dbg_frame += 1
+		if _dbg_frame >= 60:
+			_dbg_flush_summary()
+			_dbg_frame = 0
 
 
 func _ensure_cfg_loaded() -> bool:
@@ -224,23 +248,46 @@ func _stream_chunks() -> void:
 # ── Chunk load/unload ─────────────────────────────────────────────────────────
 
 func _load_chunk(chunk: Vector2i) -> void:
+	var chunk_t0 := Time.get_ticks_usec()
+	if debug_perf:
+		_dbg_chunk_steps.clear()
+
 	var origin := _chunk_origin(chunk)
+
+	var t := Time.get_ticks_usec()
+	var new_region_a := not region_data.has(_tile_to_region(origin))
 	_ensure_region(_tile_to_region(origin))
+	var new_region_b := not region_data.has(_tile_to_region(Vector2i(origin.x + cfg.chunk_size - 1, origin.y + cfg.chunk_size - 1)))
 	_ensure_region(_tile_to_region(Vector2i(
 		origin.x + cfg.chunk_size - 1,
 		origin.y + cfg.chunk_size - 1
 	)))
+	if debug_perf:
+		var is_new := new_region_a or new_region_b
+		_dbg_chunk_steps["ensure_region" + (" [NEW+rivers]" if is_new else "")] = \
+				float(Time.get_ticks_usec() - t) / 1000.0
+
+	t = Time.get_ticks_usec()
 	var chunk_data := _gather_chunk_centers(origin)
 	var chunk_centers:  Array[Vector2] = chunk_data["centers"]
 	var chunk_climates: Array[Vector2] = chunk_data["climates"]
+	if debug_perf:
+		_dbg_chunk_steps["gather_centers [n=%d]" % chunk_centers.size()] = \
+				float(Time.get_ticks_usec() - t) / 1000.0
 
 	var mesh: ArrayMesh
-	if mesh_cache.has(chunk):
+	var cache_hit := mesh_cache.has(chunk)
+	if cache_hit:
 		mesh = mesh_cache[chunk]
 		mesh_cache_lru.erase(chunk)
 		mesh_cache_lru.append(chunk)
 	else:
+		if debug_perf:
+			_dbg_chunk_steps["build_mesh_gpu"] = 0.0  # placeholder — sub-steps fill in below, value updated after
+		t = Time.get_ticks_usec()
 		mesh = _build_chunk_mesh_gpu(chunk, origin, chunk_centers, chunk_climates)
+		if debug_perf:
+			_dbg_chunk_steps["build_mesh_gpu"] = float(Time.get_ticks_usec() - t) / 1000.0
 		mesh_cache[chunk] = mesh
 		mesh_cache_lru.append(chunk)
 		_evict_mesh_cache()
@@ -253,9 +300,20 @@ func _load_chunk(chunk: Vector2i) -> void:
 	chunk_meshes[chunk] = mi
 	loaded_chunks[chunk] = true
 
+	t = Time.get_ticks_usec()
 	var prop_root := _spawn_props_for_chunk(chunk, origin, chunk_centers, chunk_climates)
 	add_child(prop_root)
 	chunk_props[chunk] = prop_root
+	if debug_perf:
+		_dbg_chunk_steps["spawn_props"] = float(Time.get_ticks_usec() - t) / 1000.0
+
+	if debug_perf:
+		_dbg_chunks_built += 1
+		var total_ms := float(Time.get_ticks_usec() - chunk_t0) / 1000.0
+		_dbg_print_chunk(chunk, total_ms, cache_hit)
+		for label in _dbg_chunk_steps:
+			_dbg_acc_add(label.strip_edges(), _dbg_chunk_steps[label])
+		_dbg_acc_add("TOTAL per chunk", total_ms)
 
 
 func _unload_chunk(chunk: Vector2i) -> void:
@@ -312,7 +370,13 @@ func _gather_chunk_centers(origin: Vector2i) -> Dictionary:
 func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array[Vector2], all_climates: Array[Vector2]) -> ArrayMesh:
 	# Fall back to CPU if compute not available
 	if not _rd or not _pipeline_rid.is_valid():
+		if debug_perf:
+			_dbg_chunk_steps["  [!!! CPU FALLBACK — _rd=%s  pipeline_valid=%s]" % [
+				str(_rd != null), str(_pipeline_rid.is_valid() if _rd else false)
+			]] = 0.0
 		return _build_chunk_mesh_cpu(chunk, origin, all_centers)
+	if debug_perf:
+		_dbg_chunk_steps["  [GPU path OK]"] = 0.0
 
 	var mesh_subdivisions: int = maxi(1, cfg.mesh_subdivisions)
 	var verts: int = cfg.chunk_size * mesh_subdivisions + 1
@@ -357,15 +421,20 @@ func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array
 
 	# ── Build river / bank tile buffers ───────────────────────────────────────
 	# Format: ivec4[0].x = count, then entries packed two per ivec4 (.xy / .zw)
+	var t_pack := Time.get_ticks_usec()
 	var river_bytes := _pack_tile_set(river_tile_set)
 	var bank_bytes  := _pack_tile_set(river_bank_set)
 	var settings_bytes := _pack_non_river_settings()
+	if debug_perf:
+		_dbg_chunk_steps["  pack_tile_sets [river=%d  bank=%d]" % [river_tile_set.size(), river_bank_set.size()]] = \
+				float(Time.get_ticks_usec() - t_pack) / 1000.0
 
 	# ── Output buffers ────────────────────────────────────────────────────────
 	var pos_bytes   := PackedByteArray(); pos_bytes.resize(vert_count * vec4_size); pos_bytes.fill(0)
 	var color_bytes := PackedByteArray(); color_bytes.resize(vert_count * vec4_size); color_bytes.fill(0)
 
 	# ── Create RD buffers ─────────────────────────────────────────────────────
+	var t_bufs := Time.get_ticks_usec()
 	var buf_pos    := _rd.storage_buffer_create(pos_bytes.size(),   pos_bytes)
 	var buf_color  := _rd.storage_buffer_create(color_bytes.size(), color_bytes)
 	var buf_centers := _rd.storage_buffer_create(center_bytes.size(), center_bytes)
@@ -373,6 +442,8 @@ func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array
 	var buf_river   := _rd.storage_buffer_create(river_bytes.size(),  river_bytes)
 	var buf_bank    := _rd.storage_buffer_create(bank_bytes.size(),   bank_bytes)
 	var buf_settings := _rd.storage_buffer_create(settings_bytes.size(), settings_bytes)
+	if debug_perf:
+		_dbg_chunk_steps["  rd_buffer_create"] = float(Time.get_ticks_usec() - t_bufs) / 1000.0
 
 	# ── Uniform set ──────────────────────────────────────────────────────────
 	var uniforms: Array[RDUniform] = []
@@ -432,12 +503,19 @@ func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array
 	_rd.compute_list_set_push_constant(cl, pc, pc.size())
 	_rd.compute_list_dispatch(cl, groups, groups, 1)
 	_rd.compute_list_end()
+	var t_gpu := Time.get_ticks_usec()
 	_rd.submit()
 	_rd.sync()
+	if debug_perf:
+		_dbg_chunk_steps["  submit+sync [groups=%dx%d  verts=%d]" % [groups, groups, verts]] = \
+				float(Time.get_ticks_usec() - t_gpu) / 1000.0
 
 	# ── Read back ─────────────────────────────────────────────────────────────
+	var t_rb := Time.get_ticks_usec()
 	var pos_result   := _rd.buffer_get_data(buf_pos)
 	var color_result := _rd.buffer_get_data(buf_color)
+	if debug_perf:
+		_dbg_chunk_steps["  buffer_readback"] = float(Time.get_ticks_usec() - t_rb) / 1000.0
 
 	# ── Free RD resources ─────────────────────────────────────────────────────
 	_rd.free_rid(uniform_set)
@@ -450,7 +528,12 @@ func _build_chunk_mesh_gpu(chunk: Vector2i, origin: Vector2i, all_centers: Array
 	_rd.free_rid(buf_settings)
 
 	# ── Assemble ArrayMesh ────────────────────────────────────────────────────
-	return _assemble_mesh(pos_result, color_result, verts, vertex_step)
+	var t_asm := Time.get_ticks_usec()
+	var assembled := _assemble_mesh(pos_result, color_result, verts, vertex_step)
+	if debug_perf:
+		_dbg_chunk_steps["  assemble_mesh [verts=%d  cc=%d]" % [verts, cfg.catmull_clark_subdivisions]] = \
+				float(Time.get_ticks_usec() - t_asm) / 1000.0
+	return assembled
 
 
 func _assemble_mesh(pos_data: PackedByteArray, color_data: PackedByteArray, verts: int, vertex_step: float) -> ArrayMesh:
@@ -475,14 +558,22 @@ func _build_mesh_from_grid(vertices: PackedVector3Array, colors: PackedColorArra
 	var current_step: float = vertex_step
 
 	var cc_subdivs: int = maxi(0, cfg.catmull_clark_subdivisions)
+	var t_cc := Time.get_ticks_usec()
 	for _i in cc_subdivs:
 		var cc := _catmull_clark_subdivide_grid(current_vertices, current_colors, current_verts)
 		current_vertices = cc["vertices"] as PackedVector3Array
 		current_colors = cc["colors"] as PackedColorArray
 		current_verts = cc["verts"] as int
 		current_step *= 0.5
+	if debug_perf and cc_subdivs > 0:
+		_dbg_chunk_steps["    catmull_clark x%d [out_verts=%d]" % [cc_subdivs, current_verts]] = \
+				float(Time.get_ticks_usec() - t_cc) / 1000.0
 
+	var t_norm := Time.get_ticks_usec()
 	var normals := _compute_smoothed_normals(current_vertices, current_verts, current_step)
+	if debug_perf:
+		_dbg_chunk_steps["    normals [verts=%d  radius=%d]" % [current_verts, cfg.normal_smoothing_radius]] = \
+				float(Time.get_ticks_usec() - t_norm) / 1000.0
 
 	var quads := current_verts - 1
 	var index_count := quads * quads * 6
@@ -1284,3 +1375,47 @@ func _apply_river_erosion_elev01(tile_coord: Vector2i, elev: float) -> float:
 		var bank_target := minf(eroded, cfg.threshold_beach + cfg.river_bank_carve_offset)
 		eroded = lerpf(eroded, bank_target, cfg.river_bank_carve_strength)
 	return eroded
+
+
+# ── Perf-debug helpers ────────────────────────────────────────────────────────
+
+func _dbg_acc_add(label: String, ms: float) -> void:
+	_dbg_acc[label] = _dbg_acc.get(label, 0.0) + ms
+
+
+func _dbg_print_chunk(chunk: Vector2i, total_ms: float, cache_hit: bool) -> void:
+	var slow_tag := "  *** SLOW ***" if total_ms >= debug_perf_slow_chunk_ms else ""
+	var lines := PackedStringArray()
+	lines.append("[WorldGen] chunk %s  total=%.1f ms%s" % [chunk, total_ms, slow_tag])
+	lines.append("  state: cache=%s  queue=%d  loaded=%d  river_tiles=%d  bank_tiles=%d  regions=%d" % [
+		"HIT" if cache_hit else "MISS",
+		load_queue.size(), loaded_chunks.size(),
+		river_tile_set.size(), river_bank_set.size(), region_data.size()
+	])
+	for label in _dbg_chunk_steps:
+		var ms: float = _dbg_chunk_steps[label]
+		var bar := ""
+		var filled := int(ms / 5.0)  # 1 char per 5 ms
+		for _i in mini(filled, 20):
+			bar += "█"
+		lines.append("  %-50s %6.1f ms  %s" % [label, ms, bar])
+	print("\n".join(lines))
+
+
+func _dbg_flush_summary() -> void:
+	if _dbg_acc.is_empty() and _dbg_chunks_built == 0:
+		return
+	var lines := PackedStringArray()
+	lines.append("═══ WorldGen 60-frame summary  (%d chunks built) ═══" % _dbg_chunks_built)
+	lines.append("  state: queue=%d  loaded=%d  river_tiles=%d  bank_tiles=%d  regions=%d" % [
+		load_queue.size(), loaded_chunks.size(),
+		river_tile_set.size(), river_bank_set.size(), region_data.size()
+	])
+	for label in _dbg_acc:
+		lines.append("  %-52s %8.1f ms total  avg=%.1f ms" % [
+			label, _dbg_acc[label],
+			_dbg_acc[label] / maxf(1.0, float(_dbg_chunks_built))
+		])
+	print("\n".join(lines))
+	_dbg_acc.clear()
+	_dbg_chunks_built = 0
