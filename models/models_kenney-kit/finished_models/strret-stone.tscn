@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://c4kfyrdkwbrta"]
-
-[ext_resource type="PackedScene" uid="uid://drn43rdyoy1q5" path="res://models/FBX format/path_stoneCircle.fbx" id="1_3iutx"]
-
-[node name="StrretStone" type="Node2D" unique_id=1460789697]
-
-[node name="path_stoneCircle" parent="." unique_id=1616053049 instance=ExtResource("1_3iutx")]
