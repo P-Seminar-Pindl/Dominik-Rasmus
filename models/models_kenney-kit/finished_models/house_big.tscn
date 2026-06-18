@@ -18,7 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://03sedodaxoq7" path="res://models/FBX format/statue_head.fbx" id="16_5mhbl"]
 [ext_resource type="PackedScene" uid="uid://ciwsujyxn6gty" path="res://models/FBX format/log_stackLarge.fbx" id="17_xuv2y"]
 
-[node name="HouseBig" type="Node2D" unique_id=943498646]
+[node name="HouseBig" type="Node3D" unique_id=943498646]
 
 [node name="wall-arch-top-detail" parent="." unique_id=853157 instance=ExtResource("1_scas7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00023508072, 1, 0)

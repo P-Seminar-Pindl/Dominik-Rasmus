@@ -4,11 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://fcb0k433xbjr"
-valid=false
+path="res://.godot/imported/stoneLarge.blend-476946fd72016e5650768694d418b1fe.scn"
 
 [deps]
 
 source_file="res://models/stoneLarge.blend"
+dest_files=["res://.godot/imported/stoneLarge.blend-476946fd72016e5650768694d418b1fe.scn"]
 
 [params]
 

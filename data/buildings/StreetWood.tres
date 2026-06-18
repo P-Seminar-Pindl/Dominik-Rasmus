@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://streetwood1" path="res://scripts/Templates/building_resource.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://streetwood2" path="res://models/models_kenney-kit/finished_models/street-wood.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("2")
+name = "Wooden Street"
+info_title = "Wooden Street"
+info_description = "A wooden road that connects buildings."
+footprint_size = Vector2i(1, 4)
+workforce = 0
+show_in_sidebar = true

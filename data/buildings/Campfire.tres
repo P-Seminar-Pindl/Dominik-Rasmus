@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://campfire1" path="res://scripts/Templates/building_resource.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://campfire2" path="res://models/models_kenney-kit/finished_models/campfire.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("2")
+name = "Campfire"
+info_title = "Campfire"
+info_description = "A small campfire decoration."
+footprint_size = Vector2i(1, 1)
+workforce = 0
+show_in_sidebar = true

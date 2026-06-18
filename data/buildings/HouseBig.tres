@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="HouseBuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://housebig1" path="res://scripts/Templates/house_building_resource.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://housebig2" path="res://models/models_kenney-kit/finished_models/house_big.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("2")
+population_capacity = 6
+name = "House Big"
+info_title = "Large House"
+info_description = "A bigger home for workers."
+footprint_size = Vector2i(4, 4)
+workforce = 4
+show_in_sidebar = true

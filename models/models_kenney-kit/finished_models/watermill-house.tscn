@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://b1ufehd1hq141" path="res://models/models_kenney-kit/roof-high-right.fbx" id="5_jgbwc"]
 [ext_resource type="PackedScene" uid="uid://bahafv80w547c" path="res://models/models_kenney-kit/roof-high.fbx" id="6_wgkcx"]
 
-[node name="WatermillHouse" type="Node2D" unique_id=37061799]
+[node name="WatermillHouse" type="Node3D" unique_id=37061799]
 
 [node name="wall-detail-horizontal" parent="." unique_id=1060321743 instance=ExtResource("1_2vk5b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)

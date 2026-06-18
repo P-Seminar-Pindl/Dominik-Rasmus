@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://by6rl22ggd8gu" path="res://models/FBX format/campfire_logs.fbx" id="4_b4ri7"]
 [ext_resource type="PackedScene" uid="uid://y7xdyh0unanb" path="res://models/FBX format/log.fbx" id="5_x4f6e"]
 
-[node name="Campfire" type="Node2D" unique_id=1746497979]
+[node name="Campfire" type="Node3D" unique_id=1746497979]
 
 [node name="campfire_bricks" parent="." unique_id=1119378685 instance=ExtResource("1_hnvjf")]
 
