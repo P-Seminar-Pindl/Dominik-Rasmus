@@ -19,6 +19,14 @@ const COLOR_SAND:      Color = Color(0.85, 0.80, 0.55, 1)
 const COLOR_RIVER:     Color = Color(0.10, 0.45, 0.90, 1)
 const COLOR_HEADWATER: Color = Color(0.18, 0.56, 0.66, 1)
 
+const PROP_SCENE_GRASS_LARGE: PackedScene = preload("res://models/FBX format/grass_large.fbx")
+const PROP_SCENE_GRASS_LEAFS: PackedScene = preload("res://models/FBX format/grass_leafs.fbx")
+const PROP_SCENE_TREE_OAK: PackedScene = preload("res://models/FBX format/tree_oak.fbx")
+const PROP_SCENE_TREE_CONE: PackedScene = preload("res://models/FBX format/tree_cone.fbx")
+const PROP_SCENE_TREE_THIN: PackedScene = preload("res://models/FBX format/tree_thin.fbx")
+const PROP_SCENE_TREE_TALL: PackedScene = preload("res://models/FBX format/tree_tall.fbx")
+const PROP_SCENE_BUSH: PackedScene = preload("res://models/FBX format/plant_bush.fbx")
+
 # ── CPU noise (used only for river tracing / region generation) ───────────────
 var elev_noise:   FastNoiseLite = FastNoiseLite.new()
 var warp_noise:   FastNoiseLite = FastNoiseLite.new()
@@ -828,6 +836,56 @@ func _get_biome(temp: float, humid: float, elev: float) -> BiomeResource:
 			return biome
 	return null
 
+func _make_prop_entry(scene: PackedScene, density: float, scale_min: float = 0.8, scale_max: float = 1.2, y_offset: float = 0.0, random_rotation: bool = true) -> PropEntry:
+	var entry := PropEntry.new()
+	entry.scene = scene
+	entry.density = density
+	entry.scale_min = scale_min
+	entry.scale_max = scale_max
+	entry.y_offset = y_offset
+	entry.random_rotation = random_rotation
+	return entry
+
+func _default_green_props_for_biome(biome_name: String) -> Array[PropEntry]:
+	match biome_name:
+		"Forest":
+			return [
+				_make_prop_entry(PROP_SCENE_GRASS_LARGE, 0.35, 0.8, 1.4),
+				_make_prop_entry(PROP_SCENE_GRASS_LEAFS, 0.45, 0.8, 1.3),
+				_make_prop_entry(PROP_SCENE_BUSH, 0.15, 0.9, 1.2),
+				_make_prop_entry(PROP_SCENE_TREE_OAK, 0.10, 1.0, 1.5),
+				_make_prop_entry(PROP_SCENE_TREE_TALL, 0.08, 1.0, 1.5)
+			]
+		"Taiga", "Boreal":
+			return [
+				_make_prop_entry(PROP_SCENE_GRASS_LARGE, 0.25, 0.8, 1.3),
+				_make_prop_entry(PROP_SCENE_TREE_CONE, 0.14, 1.0, 1.4),
+				_make_prop_entry(PROP_SCENE_TREE_THIN, 0.08, 1.0, 1.4),
+				_make_prop_entry(PROP_SCENE_BUSH, 0.08, 0.8, 1.1)
+			]
+		"Jungle", "Rainforest":
+			return [
+				_make_prop_entry(PROP_SCENE_GRASS_LARGE, 0.45, 0.8, 1.3),
+				_make_prop_entry(PROP_SCENE_GRASS_LEAFS, 0.45, 0.8, 1.4),
+				_make_prop_entry(PROP_SCENE_BUSH, 0.18, 0.9, 1.3),
+				_make_prop_entry(PROP_SCENE_TREE_TALL, 0.12, 1.1, 1.7),
+				_make_prop_entry(PROP_SCENE_TREE_OAK, 0.08, 1.0, 1.4)
+			]
+		"Wetland", "Shrubland":
+			return [
+				_make_prop_entry(PROP_SCENE_GRASS_LARGE, 0.45, 0.8, 1.2),
+				_make_prop_entry(PROP_SCENE_GRASS_LEAFS, 0.35, 0.8, 1.2),
+				_make_prop_entry(PROP_SCENE_BUSH, 0.20, 0.9, 1.1)
+			]
+		"Steppe":
+			return [
+				_make_prop_entry(PROP_SCENE_GRASS_LARGE, 0.50, 0.8, 1.2),
+				_make_prop_entry(PROP_SCENE_GRASS_LEAFS, 0.35, 0.8, 1.2),
+				_make_prop_entry(PROP_SCENE_BUSH, 0.10, 0.9, 1.1)
+			]
+		_:
+			return []
+
 
 func _spawn_props_for_chunk(
 		chunk: Vector2i,
@@ -858,12 +916,18 @@ func _spawn_props_for_chunk(
 				temp = clampf(temp - cfg.highland_temp_cooling, 0.0, 1.0)
 
 			var biome: BiomeResource = _get_biome(temp, humid, elev01)
-			if biome == null or biome.props.is_empty():
+			if biome == null:
+				continue
+
+			var biome_props: Array[PropEntry] = biome.props
+			if biome_props.is_empty():
+				biome_props = _default_green_props_for_biome(biome.name)
+			if biome_props.is_empty():
 				continue
 
 			var height: float = _height_from_elev01(elev01)
 
-			for entry: PropEntry in biome.props:
+			for entry: PropEntry in biome_props:
 				if entry.scene == null:
 					continue
 				if rng.randf() >= entry.density:
