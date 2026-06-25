@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cksn8yjjr2lci" path="res://models/models_kenney-kit/roof-high-window.fbx" id="6_aaslx"]
 [ext_resource type="PackedScene" uid="uid://dalo0oi2efuct" path="res://models/models_kenney-kit/roof-high-flat.fbx" id="7_1vrl4"]
 
-[node name="HouseSmall2" type="Node2D" unique_id=1977664479]
+[node name="HouseSmall2" type="Node3D" unique_id=1977664479]
 
 [node name="wall-wood-corner" parent="." unique_id=1604913343 instance=ExtResource("1_d130w")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
