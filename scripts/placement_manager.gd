@@ -17,7 +17,7 @@ const GRID_Y_OFFSET := 0.06
 
 @onready var _world_gen:    Node3D        = get_node("../World")
 @onready var _camera:       Camera3D      = get_node("../Camera3D")
-@onready var _btn_container: VBoxContainer = $BuildingUI/Panel/VBox
+@onready var _btn_container: VBoxContainer = $BuildingUI/Panel/Scroll/VBox
 @onready var _status_label:  Label         = $BuildingUI/StatusLabel
 
 var available_buildings: Array[BuildingResource] = []

@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ProductionBuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://bc18ds8vike8c" path="res://scripts/Templates/production_building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="2"]
+[ext_resource type="PackedScene" path="res://models/models_kenney-kit/finished_models/house-small.tscn" id="3"]
+
+[sub_resource type="Resource" id="Output_wood"]
+script = ExtResource("2")
+item = "Wood"
+amount = 1
+
+[sub_resource type="Resource" id="Storage_wood"]
+script = ExtResource("2")
+item = "Wood"
+amount = 10
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("2")
+item = "Gold"
+amount = 10
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("3")
+output = Array[ExtResource("2")]([SubResource("Output_wood")])
+production_time = 15.0
+storage_slots = Array[ExtResource("2")]([SubResource("Storage_wood")])
+name = "Lumberjack's Hut"
+info_title = "Lumberjack's Hut"
+info_description = "Fells trees for wood. Must be built in a forest."
+footprint_size = Vector2i(2, 2)
+workforce = 1
+costs = Array[ExtResource("2")]([SubResource("Cost_gold")])
+allowed_tiles = Array[String](["Forest", "Taiga", "Boreal", "Jungle", "Rainforest"])
+show_in_sidebar = true

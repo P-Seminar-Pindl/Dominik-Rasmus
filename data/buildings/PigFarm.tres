@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="ProductionBuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://bc18ds8vike8c" path="res://scripts/Templates/production_building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="2"]
+[ext_resource type="PackedScene" path="res://models/models_kenney-kit/finished_models/farm.tscn" id="3"]
+
+[sub_resource type="Resource" id="Output_pigs"]
+script = ExtResource("2")
+item = "Pigs"
+amount = 1
+
+[sub_resource type="Resource" id="Storage_pigs"]
+script = ExtResource("2")
+item = "Pigs"
+amount = 10
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("2")
+item = "Gold"
+amount = 10
+
+[sub_resource type="Resource" id="Cost_planks"]
+script = ExtResource("2")
+item = "Planks"
+amount = 2
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("3")
+output = Array[ExtResource("2")]([SubResource("Output_pigs")])
+production_time = 60.0
+storage_slots = Array[ExtResource("2")]([SubResource("Storage_pigs")])
+name = "Pig Farm"
+info_title = "Pig Farm"
+info_description = "Raises pigs for sausages and tallow."
+footprint_size = Vector2i(3, 4)
+workforce = 3
+costs = Array[ExtResource("2")]([SubResource("Cost_gold"), SubResource("Cost_planks")])
+allowed_tiles = Array[String](["Grass", "Savanna", "Savanna_hot", "Steppe", "Shrubland"])
+show_in_sidebar = true

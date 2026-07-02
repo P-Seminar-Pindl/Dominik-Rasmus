@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="ProductionBuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://bc18ds8vike8c" path="res://scripts/Templates/production_building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="2"]
+[ext_resource type="PackedScene" path="res://models/models_kenney-kit/finished_models/house_3.tscn" id="3"]
+
+[sub_resource type="Resource" id="Input_pigs"]
+script = ExtResource("2")
+item = "Pigs"
+amount = 1
+
+[sub_resource type="Resource" id="Output_tallow"]
+script = ExtResource("2")
+item = "Tallow"
+amount = 1
+
+[sub_resource type="Resource" id="Storage_tallow"]
+script = ExtResource("2")
+item = "Tallow"
+amount = 10
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("2")
+item = "Gold"
+amount = 10
+
+[sub_resource type="Resource" id="Cost_planks"]
+script = ExtResource("2")
+item = "Planks"
+amount = 4
+
+[sub_resource type="Resource" id="Cost_bricks"]
+script = ExtResource("2")
+item = "Bricks"
+amount = 5
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("3")
+input = Array[ExtResource("2")]([SubResource("Input_pigs")])
+output = Array[ExtResource("2")]([SubResource("Output_tallow")])
+production_time = 60.0
+storage_slots = Array[ExtResource("2")]([SubResource("Storage_tallow")])
+name = "Rendering Works"
+info_title = "Rendering Works"
+info_description = "Renders pigs into tallow for soap making."
+footprint_size = Vector2i(2, 3)
+workforce = 4
+costs = Array[ExtResource("2")]([SubResource("Cost_gold"), SubResource("Cost_planks"), SubResource("Cost_bricks")])
+show_in_sidebar = true

@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="ProductionBuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://bc18ds8vike8c" path="res://scripts/Templates/production_building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="2"]
+[ext_resource type="PackedScene" path="res://models/models_kenney-kit/finished_models/house-small2.tscn" id="3"]
+
+[sub_resource type="Resource" id="Output_fish"]
+script = ExtResource("2")
+item = "Fish"
+amount = 1
+
+[sub_resource type="Resource" id="Storage_fish"]
+script = ExtResource("2")
+item = "Fish"
+amount = 10
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("2")
+item = "Gold"
+amount = 10
+
+[sub_resource type="Resource" id="Cost_planks"]
+script = ExtResource("2")
+item = "Planks"
+amount = 2
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("3")
+output = Array[ExtResource("2")]([SubResource("Output_fish")])
+production_time = 30.0
+storage_slots = Array[ExtResource("2")]([SubResource("Storage_fish")])
+name = "Fishery"
+info_title = "Fishery"
+info_description = "Catches fish. Must be built on the coast."
+footprint_size = Vector2i(3, 3)
+workforce = 3
+costs = Array[ExtResource("2")]([SubResource("Cost_gold"), SubResource("Cost_planks")])
+required_adjacent_tiles = Array[String](["Water"])
+show_in_sidebar = true

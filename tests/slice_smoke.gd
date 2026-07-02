@@ -152,6 +152,62 @@ func _ready() -> void:
 	_check(not is_instance_valid(pm._grid_mesh) or pm._grid_mesh.is_queued_for_deletion(),
 			"grid overlay removed on cancel")
 
+	# 12. Anno chain: Sawmill consumes Wood → produces Planks
+	ResourceManager.add("Gold", 500)
+	var sawmill := _find_building(pm, "Sawmill")
+	var brewery := _find_building(pm, "Brewery")
+	_check(sawmill != null and brewery != null, "anno chain buildings present")
+	if sawmill == null or brewery == null:
+		_finish()
+		return
+
+	pm.remove_building(base)      # windmill A — frees workers + the spot by the warehouse
+	pm.remove_building(b_anchor)  # windmill B
+	var saw_anchor := base + Vector2i(1, 0)
+	pm._place_building(saw_anchor, sawmill)
+	_check(pm.placed_buildings.has(saw_anchor), "sawmill placed")
+	var data_saw: Dictionary = pm.placed_buildings[saw_anchor]
+	_check(data_saw.get("warehouse_distance", -1) == 0,
+			"sawmill connected at distance 0 (got %d)" % data_saw.get("warehouse_distance", -1))
+	var wood_before: int = ResourceManager.get_amount("Wood")
+	planks_before = ResourceManager.get_amount("Planks")
+	Global._process(0.1)
+	_check(data_saw.get("prod_state", "") == "producing", "sawmill producing with wood available")
+	Global._process(sawmill.production_time + 0.1)
+	_check(ResourceManager.get_amount("Wood") == wood_before - 1,
+			"sawmill consumed 1 Wood (%d → %d)" % [wood_before, ResourceManager.get_amount("Wood")])
+	_check(ResourceManager.get_amount("Planks") == planks_before + 1,
+			"sawmill delivered 1 Planks (%d → %d)" % [planks_before, ResourceManager.get_amount("Planks")])
+
+	# 13. Two-input recipe: Brewery consumes Malt + Hops → Beer
+	ResourceManager.add("Planks", 50)  # cottages + brewery build costs
+	for i in range(4):
+		pm._place_building(cot_anchor + Vector2i(2 + i * 2, 0), cottage)
+	ResourceManager.add("Malt", 2)
+	ResourceManager.add("Hops", 2)
+	var brew_anchor := base + Vector2i(6, 0)
+	pm._place_building(brew_anchor, brewery)
+	_check(pm.placed_buildings.has(brew_anchor), "brewery placed")
+	if not pm.placed_buildings.has(brew_anchor):
+		_finish()
+		return
+	var data_brew: Dictionary = pm.placed_buildings[brew_anchor]
+	_check(data_brew.get("warehouse_distance", -1) == 0,
+			"brewery connected at distance 0 (got %d)" % data_brew.get("warehouse_distance", -1))
+	Global._process(0.1)
+	_check(data_brew.get("workers_assigned", 0) == brewery.workforce,
+			"brewery staffed %d/%d" % [data_brew.get("workers_assigned", 0), brewery.workforce])
+	_check(data_brew.get("prod_state", "") == "producing", "brewery producing with both inputs")
+	var malt_before: int = ResourceManager.get_amount("Malt")
+	var hops_before: int = ResourceManager.get_amount("Hops")
+	var beer_before: int = ResourceManager.get_amount("Beer")
+	Global._process(brewery.production_time + 0.1)
+	_check(ResourceManager.get_amount("Malt") == malt_before - 1
+			and ResourceManager.get_amount("Hops") == hops_before - 1,
+			"brewery consumed 1 Malt + 1 Hops")
+	_check(ResourceManager.get_amount("Beer") == beer_before + 1,
+			"brewery delivered 1 Beer (%d → %d)" % [beer_before, ResourceManager.get_amount("Beer")])
+
 	_finish()
 
 

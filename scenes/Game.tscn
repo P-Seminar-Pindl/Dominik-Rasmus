@@ -35,17 +35,23 @@ script = ExtResource("4_placement")
 offset_right = 150.0
 offset_bottom = 40.0
 
-[node name="VBox" type="VBoxContainer" parent="PlacementManager/BuildingUI/Panel" unique_id=405069783]
+[node name="Scroll" type="ScrollContainer" parent="PlacementManager/BuildingUI/Panel" unique_id=915263748]
+custom_minimum_size = Vector2(150, 620)
 layout_mode = 2
+horizontal_scroll_mode = 0
 
-[node name="Title" type="Label" parent="PlacementManager/BuildingUI/Panel/VBox" unique_id=506170894]
+[node name="VBox" type="VBoxContainer" parent="PlacementManager/BuildingUI/Panel/Scroll" unique_id=405069783]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="PlacementManager/BuildingUI/Panel/Scroll/VBox" unique_id=506170894]
 layout_mode = 2
 text = "Buildings"
 
 [node name="StatusLabel" type="Label" parent="PlacementManager/BuildingUI" unique_id=607281905]
-offset_top = 460.0
+offset_top = 660.0
 offset_right = 300.0
-offset_bottom = 480.0
+offset_bottom = 680.0
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=708392016]
 script = ExtResource("5_hud")
