@@ -126,11 +126,6 @@ func _init_compute() -> void:
 	if _rd == null:
 		push_error("TerrainGen: no RenderingDevice available (need Forward+ or Vulkan)")
 		return
-	var src := RDShaderFile.new()
-	src.parse_versions("""
-		#version 450
-		#define GODOT_GLSL
-	""")
 	var glsl_path := "res://shaders/terrain_gen.glsl"
 	var shader_file: RDShaderFile = load(glsl_path)
 	if shader_file == null:
