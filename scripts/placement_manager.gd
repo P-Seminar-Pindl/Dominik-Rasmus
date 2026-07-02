@@ -11,6 +11,9 @@ const BUILDING_DIR := "res://data/buildings/"
 const SLOPE_MAX    := 0.18  # max elev01 spread across footprint cells
 const NO_TILE      := Vector2i(-99999, -99999)
 const CLICK_MAX_DRAG := 8.0  # px of mouse travel before a click counts as a camera drag
+const FIT_MARGIN   := 0.92  # fraction of the footprint the model may fill
+const GRID_MARGIN  := 4     # tiles of grid drawn around the footprint while placing
+const GRID_Y_OFFSET := 0.06
 
 @onready var _world_gen:    Node3D        = get_node("../World")
 @onready var _camera:       Camera3D      = get_node("../Camera3D")
@@ -27,6 +30,9 @@ var _indicator_mat: StandardMaterial3D
 var _preview_valid: bool             = false
 var _rotation:      int              = 0  # 0..3, 90° steps around Y
 var _invalid_reason: String          = ""
+var _grid_mesh:     MeshInstance3D   = null
+var _grid_tile:     Vector2i         = NO_TILE
+var _grid_rot:      int              = -1
 var _lmb_press_pos: Vector2          = Vector2(-1, -1)
 var _rmb_press_pos: Vector2          = Vector2(-1, -1)
 var _buttons:       Dictionary       = {}  # BuildingResource → Button
@@ -100,8 +106,21 @@ func _select_building(res: BuildingResource) -> void:
 	# Scene preview wrapper
 	_preview_inst = Node3D.new()
 	add_child(_preview_inst)
-	_preview_inst.add_child(res.scene.instantiate())
+	_preview_inst.add_child(_instantiate_fitted(res))
 	_update_preview_orientation()
+
+	# Terrain-conforming tile grid around the cursor
+	_grid_mesh = MeshInstance3D.new()
+	_grid_mesh.mesh = ImmediateMesh.new()
+	var grid_mat := StandardMaterial3D.new()
+	grid_mat.albedo_color = Color(1.0, 1.0, 1.0, 0.28)
+	grid_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	grid_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_grid_mesh.material_override = grid_mat
+	_grid_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(_grid_mesh)
+	_grid_tile = NO_TILE
+	_grid_rot = -1
 
 	# Flat footprint indicator (PlaneMesh shows valid/invalid area)
 	var fp := _footprint_for_rotation(res.footprint_size, _rotation)
@@ -123,9 +142,53 @@ func _destroy_preview() -> void:
 		_preview_inst.queue_free()
 	if is_instance_valid(_preview_ind):
 		_preview_ind.queue_free()
+	if is_instance_valid(_grid_mesh):
+		_grid_mesh.queue_free()
 	_preview_inst  = null
 	_preview_ind   = null
+	_grid_mesh     = null
 	_indicator_mat = null
+
+
+# ── Model fitting ─────────────────────────────────────────────────────────────
+# The kenney models neither match their footprints nor share a common origin
+# (some are oversized, off-center, or sunk below y=0), so every instance is
+# uniformly scaled into its footprint, centered on X/Z, and grounded at Y=0.
+
+func _instantiate_fitted(res: BuildingResource) -> Node3D:
+	var inst: Node3D = res.scene.instantiate()
+	_fit_to_footprint(inst, res.footprint_size)
+	return inst
+
+
+static func _fit_to_footprint(inst: Node3D, fp: Vector2i) -> void:
+	var result := _merge_mesh_aabb(inst, inst.transform, AABB(), false)
+	if not result[1]:
+		return
+	var aabb: AABB = result[0]
+	if aabb.size.x < 0.001 or aabb.size.z < 0.001:
+		return
+	var s: float = minf(fp.x * FIT_MARGIN / aabb.size.x, fp.y * FIT_MARGIN / aabb.size.z)
+	var center := aabb.get_center()
+	var t := inst.transform
+	t.basis = t.basis.scaled(Vector3(s, s, s))
+	t.origin = t.origin * s - Vector3(center.x * s, aabb.position.y * s, center.z * s)
+	inst.transform = t
+
+
+# Merged AABB of all MeshInstance3D under `node`, expressed in the space
+# `base` maps into. Returns [AABB, found_any: bool].
+static func _merge_mesh_aabb(node: Node3D, base: Transform3D, aabb: AABB, has: bool) -> Array:
+	if node is MeshInstance3D and node.mesh != null:
+		var local: AABB = base * node.mesh.get_aabb()
+		aabb = local if not has else aabb.merge(local)
+		has = true
+	for child in node.get_children():
+		if child is Node3D:
+			var r := _merge_mesh_aabb(child, base * child.transform, aabb, has)
+			aabb = r[0]
+			has = r[1]
+	return [aabb, has]
 
 
 # ── Per-frame preview update ──────────────────────────────────────────────────
@@ -144,6 +207,7 @@ func _process(_delta: float) -> void:
 
 	_preview_inst.position = center
 	_preview_ind.position  = center + Vector3(0, 0.05, 0)
+	_update_grid_overlay(_current_tile, fp)
 	if _indicator_mat != null:
 		_indicator_mat.albedo_color = Color(0.3, 1.0, 0.3, 0.45) if _preview_valid \
 				else Color(1.0, 0.25, 0.25, 0.5)
@@ -245,6 +309,44 @@ func _update_preview_orientation() -> void:
 		_preview_inst.rotation_degrees = Vector3(0, _rotation * 90, 0)
 
 
+# ── Grid overlay ──────────────────────────────────────────────────────────────
+# Tile grid lines conforming to the terrain, drawn around the footprint while
+# a building is selected. Rebuilt only when the cursor tile or rotation changes.
+
+func _update_grid_overlay(anchor: Vector2i, fp: Vector2i) -> void:
+	if not is_instance_valid(_grid_mesh):
+		return
+	if _grid_tile == anchor and _grid_rot == _rotation:
+		return
+	_grid_tile = anchor
+	_grid_rot = _rotation
+
+	var x0 := anchor.x - GRID_MARGIN
+	var z0 := anchor.y - GRID_MARGIN
+	var nx := fp.x + GRID_MARGIN * 2
+	var nz := fp.y + GRID_MARGIN * 2
+
+	# Sample heights once per grid corner
+	var heights: PackedFloat32Array = []
+	heights.resize((nx + 1) * (nz + 1))
+	for ix in nx + 1:
+		for iz in nz + 1:
+			heights[ix * (nz + 1) + iz] = _world_gen.get_height_at(Vector2i(x0 + ix, z0 + iz)) + GRID_Y_OFFSET
+
+	var im := _grid_mesh.mesh as ImmediateMesh
+	im.clear_surfaces()
+	im.surface_begin(Mesh.PRIMITIVE_LINES)
+	for ix in nx + 1:
+		for iz in nz:
+			im.surface_add_vertex(Vector3(x0 + ix, heights[ix * (nz + 1) + iz], z0 + iz))
+			im.surface_add_vertex(Vector3(x0 + ix, heights[ix * (nz + 1) + iz + 1], z0 + iz + 1))
+	for iz in nz + 1:
+		for ix in nx:
+			im.surface_add_vertex(Vector3(x0 + ix, heights[ix * (nz + 1) + iz], z0 + iz))
+			im.surface_add_vertex(Vector3(x0 + ix + 1, heights[(ix + 1) * (nz + 1) + iz], z0 + iz))
+	im.surface_end()
+
+
 # ── Placement validation ──────────────────────────────────────────────────────
 
 func _can_place(anchor: Vector2i, fp: Vector2i, res: BuildingResource) -> bool:
@@ -314,7 +416,7 @@ func _place_building(anchor: Vector2i, res: BuildingResource) -> void:
 	var wrapper := Node3D.new()
 	wrapper.position = Vector3(anchor.x + fp.x * 0.5, h, anchor.y + fp.y * 0.5)
 	wrapper.rotation_degrees = Vector3(0, _rotation * 90, 0)
-	wrapper.add_child(res.scene.instantiate())
+	wrapper.add_child(_instantiate_fitted(res))
 	add_child(wrapper)
 
 	placed_buildings[anchor] = {"resource": res, "node": wrapper, "rotation": _rotation, "footprint": fp}

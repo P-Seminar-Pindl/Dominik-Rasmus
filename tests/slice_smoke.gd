@@ -69,8 +69,8 @@ func _ready() -> void:
 	_check(warehouse is StorageBuildingResource, "warehouse is StorageBuildingResource")
 
 	# Layout inside one flat 12x12 area:
-	#   windmill A (3x3) at +0,0 | warehouse (4x4) at +3,0 (touching A)
-	#   street (1x4) at +7,0 | windmill B (3x3) at +8,0 | cottage (2x2) at +0,5
+	#   windmill A (4x3) at +0,0 | warehouse (2x4) at +4,0 (touching A)
+	#   street (1x1) at +6,0 | windmill B (4x3) at +7,0 | cottage (1x2) at +0,5
 	var base := _find_area(pm, world, Vector2i(12, 12))
 	_check(base != NO_TILE, "found flat buildable 12x12 area at %s" % str(base))
 	if base == NO_TILE:
@@ -102,16 +102,16 @@ func _ready() -> void:
 	_check(data_a.get("prod_state", "") == "producing", "windmill A producing while disconnected")
 
 	# 5. Warehouse touching windmill A → connected at distance 0
-	var wh_anchor := base + Vector2i(3, 0)
+	var wh_anchor := base + Vector2i(4, 0)
 	pm._place_building(wh_anchor, warehouse)
 	_check(pm.placed_buildings.has(wh_anchor), "warehouse placed adjacent")
 	_check(data_a.get("warehouse_distance", -1) == 0,
 			"windmill A connected at distance 0 (got %d)" % data_a.get("warehouse_distance", -1))
 
 	# 6. Street bridges warehouse → windmill B (1 road hop)
-	var street_anchor := base + Vector2i(7, 0)
+	var street_anchor := base + Vector2i(6, 0)
 	pm._place_building(street_anchor, street)
-	var b_anchor := base + Vector2i(8, 0)
+	var b_anchor := base + Vector2i(7, 0)
 	pm._place_building(b_anchor, windmill)
 	_check(pm.placed_buildings.has(street_anchor) and pm.placed_buildings.has(b_anchor),
 			"street + windmill B placed")
@@ -140,6 +140,17 @@ func _ready() -> void:
 	# 10. Terrain-name query sanity
 	var tile_name: String = world.get_tile_name_at(base)
 	_check(tile_name != "" and tile_name != "Water", "tile name at base is land ('%s')" % tile_name)
+
+	# 11. Grid overlay appears while placing, disappears on cancel
+	pm._select_building(street)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_check(is_instance_valid(pm._grid_mesh), "grid overlay created while placing")
+	var grid_im := pm._grid_mesh.mesh as ImmediateMesh
+	_check(grid_im != null and grid_im.get_surface_count() > 0, "grid overlay has geometry")
+	pm._select_building(null)
+	_check(not is_instance_valid(pm._grid_mesh) or pm._grid_mesh.is_queued_for_deletion(),
+			"grid overlay removed on cancel")
 
 	_finish()
 
