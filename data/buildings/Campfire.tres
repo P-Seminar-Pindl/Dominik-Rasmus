@@ -2,6 +2,12 @@
 
 [ext_resource type="Script" uid="uid://campfire1" path="res://scripts/Templates/building_resource.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://campfire2" path="res://models/models_kenney-kit/finished_models/campfire.tscn" id="2"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="3"]
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("3")
+item = "Gold"
+amount = 5
 
 [resource]
 script = ExtResource("1")
@@ -11,4 +17,5 @@ info_title = "Campfire"
 info_description = "A small campfire decoration."
 footprint_size = Vector2i(1, 1)
 workforce = 0
+costs = Array[ExtResource("3")]([SubResource("Cost_gold")])
 show_in_sidebar = true

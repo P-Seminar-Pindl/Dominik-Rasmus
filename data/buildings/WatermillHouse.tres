@@ -2,6 +2,17 @@
 
 [ext_resource type="Script" uid="uid://watermill1" path="res://scripts/Templates/house_building_resource.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://watermill2" path="res://models/models_kenney-kit/finished_models/watermill-house.tscn" id="2"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="3"]
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("3")
+item = "Gold"
+amount = 30
+
+[sub_resource type="Resource" id="Cost_planks"]
+script = ExtResource("3")
+item = "Planks"
+amount = 15
 
 [resource]
 script = ExtResource("1")
@@ -9,7 +20,9 @@ scene = ExtResource("2")
 population_capacity = 5
 name = "Watermill House"
 info_title = "Watermill House"
-info_description = "A watermill building that adds character to the village."
+info_description = "A watermill home — must be built next to a river or the sea."
 footprint_size = Vector2i(4, 3)
 workforce = 2
+costs = Array[ExtResource("3")]([SubResource("Cost_gold"), SubResource("Cost_planks")])
+required_adjacent_tiles = Array[String](["River", "Water"])
 show_in_sidebar = true

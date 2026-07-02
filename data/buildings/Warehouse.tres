@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="StorageBuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://s1f26he0acif" path="res://scripts/Templates/storage_building_resource.gd" id="1"]
+[ext_resource type="PackedScene" path="res://models/models_kenney-kit/finished_models/house_big.tscn" id="2"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="3"]
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("3")
+item = "Gold"
+amount = 40
+
+[sub_resource type="Resource" id="Cost_planks"]
+script = ExtResource("3")
+item = "Planks"
+amount = 15
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("2")
+name = "Warehouse"
+info_title = "Warehouse"
+info_description = "Collects goods from production buildings connected by streets."
+footprint_size = Vector2i(4, 4)
+workforce = 0
+costs = Array[ExtResource("3")]([SubResource("Cost_gold"), SubResource("Cost_planks")])
+show_in_sidebar = true
