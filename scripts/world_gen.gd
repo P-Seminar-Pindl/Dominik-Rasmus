@@ -7,6 +7,11 @@ const DEFAULT_PROTO_CFG_PATH := "res://data/world_gen_default.tres"
 @export var cfg: WorldGenConfig = preload("res://data/world_gen_default.tres")
 @export var distribution_curve: Curve  # kept for hot-reload hash; not used by shader (shader uses FBM directly)
 @export var max_chunk_build_ms_per_frame: float = 120
+# The compute shader uses hash-based value noise and skips distribution_curve,
+# so its terrain does not match the CPU sampling that placement, props and
+# rivers rely on (get_height_at / get_elev01_at). Keep off until the shader
+# reproduces the CPU pipeline.
+@export var use_gpu_compute: bool = false
 
 @export_group("Performance Debug")
 @export var debug_perf: bool = false
@@ -122,15 +127,13 @@ func _build_shared_material() -> void:
 
 
 func _init_compute() -> void:
-	_rd = RenderingServer.get_rendering_device()
+	if not use_gpu_compute:
+		return  # CPU mesh builder is the source of truth for now
+	# Local device: submit()/sync() are not allowed on the main rendering device.
+	_rd = RenderingServer.create_local_rendering_device()
 	if _rd == null:
 		push_error("TerrainGen: no RenderingDevice available (need Forward+ or Vulkan)")
 		return
-	var src := RDShaderFile.new()
-	src.parse_versions("""
-		#version 450
-		#define GODOT_GLSL
-	""")
 	var glsl_path := "res://shaders/terrain_gen.glsl"
 	var shader_file: RDShaderFile = load(glsl_path)
 	if shader_file == null:
@@ -894,6 +897,8 @@ func _spawn_props_for_chunk(
 		climates: Array[Vector2]
 	) -> Node3D:
 	var root := Node3D.new()
+	if not cfg.props_enabled:
+		return root
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = cfg.seed ^ (chunk.x * 198491317) ^ (chunk.y * 6542989)
@@ -956,6 +961,24 @@ func get_height_at(tile: Vector2i) -> float:
 
 func get_elev01_at(tile: Vector2i) -> float:
 	return _sample_elev01(tile)
+
+
+# Returns the tile/biome name at this cell ("River", "Water", "Sand", or a
+# BiomeResource name like "Forest"). Empty string if no biome matches.
+func get_tile_name_at(tile: Vector2i) -> String:
+	if cfg.river_enabled and river_tile_set.has(tile):
+		return "River"
+	var elev := _sample_elev01(tile)
+	if elev < cfg.threshold_ocean:
+		return "Water"
+	if elev < cfg.threshold_beach:
+		return "Sand"
+	var temp := clampf(_fbm(temp_noise, tile.x, tile.y, cfg.temp_octaves) - elev * cfg.temp_altitude_drop, 0.0, 1.0)
+	var humid := _fbm(humid_noise, tile.x, tile.y, cfg.humid_octaves)
+	if elev >= cfg.threshold_lowland:
+		temp = clampf(temp - cfg.highland_temp_cooling, 0.0, 1.0)
+	var biome := _get_biome(temp, humid, elev)
+	return biome.name if biome != null else ""
 
 
 # ── CPU fallback mesh builder (used when compute unavailable) ─────────────────

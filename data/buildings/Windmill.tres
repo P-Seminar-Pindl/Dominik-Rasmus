@@ -14,6 +14,16 @@ script = ExtResource("2")
 item = "Planks"
 amount = 12
 
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("2")
+item = "Gold"
+amount = 30
+
+[sub_resource type="Resource" id="Cost_wood"]
+script = ExtResource("2")
+item = "Wood"
+amount = 10
+
 [resource]
 script = ExtResource("1")
 scene = ExtResource("3")
@@ -22,7 +32,8 @@ production_time = 8.0
 storage_slots = Array[ExtResource("2")]([SubResource("Storage_planks")])
 name = "Windmill"
 info_title = "Windmill"
-info_description = "Processes grain into flour."
-footprint_size = Vector2i(3, 3)
+info_description = "Saws timber into planks."
+footprint_size = Vector2i(4, 3)
 workforce = 2
+costs = Array[ExtResource("2")]([SubResource("Cost_gold"), SubResource("Cost_wood")])
 show_in_sidebar = true

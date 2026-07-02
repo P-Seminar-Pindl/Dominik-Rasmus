@@ -27,6 +27,12 @@ const ResourceAmount = preload("res://scripts/Templates/resource_amount.gd")
 @export var costs: Array[ResourceAmount] = []   # one-time build cost
 @export var upkeep: Array[ResourceAmount] = []  # recurring cost per tick
 
+@export_group("Terrain Rules")
+# Tile names every footprint cell must match; empty = any buildable land.
+@export var allowed_tiles: Array[String] = []
+# At least one tile bordering the footprint must match one of these; empty = no requirement.
+@export var required_adjacent_tiles: Array[String] = []
+
 
 func setup_mesh() -> void:
 	if not texture or not mesh:

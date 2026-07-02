@@ -1,7 +1,13 @@
-[gd_resource type="Resource" script_class="BuildingResource" format=3]
+[gd_resource type="Resource" script_class="RoadBuildingResource" format=3]
 
-[ext_resource type="Script" uid="uid://streetstone1" path="res://scripts/Templates/building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://xmxn0du72bou" path="res://scripts/Templates/road_building_resource.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://streetstone2" path="res://models/models_kenney-kit/finished_models/street-stone.tscn" id="2"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="3"]
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("3")
+item = "Gold"
+amount = 3
 
 [resource]
 script = ExtResource("1")
@@ -9,6 +15,7 @@ scene = ExtResource("2")
 name = "Stone Street"
 info_title = "Stone Street"
 info_description = "A stone road that connects buildings."
-footprint_size = Vector2i(1, 4)
+footprint_size = Vector2i(1, 1)
 workforce = 0
+costs = Array[ExtResource("3")]([SubResource("Cost_gold")])
 show_in_sidebar = true

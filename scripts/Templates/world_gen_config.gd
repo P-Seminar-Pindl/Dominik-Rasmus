@@ -88,6 +88,10 @@ const BiomeResource = preload("res://scripts/Templates/biome_resource.gd")
 @export_group("Biomes")
 @export var biomes: Array[BiomeResource] = []
 
+# ── Props ─────────────────────────────────────────────────────────────────────
+@export_group("Props")
+@export var props_enabled: bool = true
+
 # ── Region layer ──────────────────────────────────────────────────────────────
 @export_group("Region Layer")
 @export var region_size: int = 500

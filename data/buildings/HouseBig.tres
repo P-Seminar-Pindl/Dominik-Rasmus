@@ -2,6 +2,22 @@
 
 [ext_resource type="Script" uid="uid://housebig1" path="res://scripts/Templates/house_building_resource.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://housebig2" path="res://models/models_kenney-kit/finished_models/house_big.tscn" id="2"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="3"]
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("3")
+item = "Gold"
+amount = 35
+
+[sub_resource type="Resource" id="Cost_planks"]
+script = ExtResource("3")
+item = "Planks"
+amount = 20
+
+[sub_resource type="Resource" id="Cost_stone"]
+script = ExtResource("3")
+item = "Stone"
+amount = 5
 
 [resource]
 script = ExtResource("1")
@@ -10,6 +26,7 @@ population_capacity = 6
 name = "House Big"
 info_title = "Large House"
 info_description = "A bigger home for workers."
-footprint_size = Vector2i(4, 4)
+footprint_size = Vector2i(2, 4)
 workforce = 4
+costs = Array[ExtResource("3")]([SubResource("Cost_gold"), SubResource("Cost_planks"), SubResource("Cost_stone")])
 show_in_sidebar = true

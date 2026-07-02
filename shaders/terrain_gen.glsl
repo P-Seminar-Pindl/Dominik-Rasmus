@@ -125,7 +125,10 @@ float fbm(float x, float y, uint seed, int octaves) {
 		frequency *= 2.0;
 		amplitude *= 0.5;
 	}
-	return clamp(value, 0.0, 1.0);
+	// Match CPU _fbm: accumulate [-1,1] noise, remap once to [0,1] at the end.
+	// (A plain clamp zeroed the negative half → almost everything below the
+	// ocean threshold.)
+	return clamp((value + 1.0) * 0.5, 0.0, 1.0);
 }
 
 // ── Island sampling (mask + climate bias) ────────────────────────────────────
