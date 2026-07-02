@@ -2,6 +2,17 @@
 
 [ext_resource type="Script" uid="uid://b07b5fkhgbvax" path="res://scripts/Templates/house_building_resource.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://bf54k467flkx6" path="res://models/models_kenney-kit/finished_models/house-small.tscn" id="2"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="3"]
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("3")
+item = "Gold"
+amount = 10
+
+[sub_resource type="Resource" id="Cost_planks"]
+script = ExtResource("3")
+item = "Planks"
+amount = 5
 
 [resource]
 script = ExtResource("1")
@@ -10,6 +21,7 @@ population_capacity = 2
 name = "Cottage"
 info_title = "Cottage"
 info_description = "Small housing for workers."
-footprint_size = Vector2i(2, 2)
+footprint_size = Vector2i(1, 2)
 workforce = 1
+costs = Array[ExtResource("3")]([SubResource("Cost_gold"), SubResource("Cost_planks")])
 show_in_sidebar = true

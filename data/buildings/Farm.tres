@@ -14,6 +14,16 @@ script = ExtResource("2")
 item = "Food"
 amount = 15
 
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("2")
+item = "Gold"
+amount = 25
+
+[sub_resource type="Resource" id="Cost_planks"]
+script = ExtResource("2")
+item = "Planks"
+amount = 10
+
 [resource]
 script = ExtResource("1")
 scene = ExtResource("3")
@@ -25,4 +35,6 @@ info_title = "Farm"
 info_description = "Produces food for your settlement."
 footprint_size = Vector2i(3, 4)
 workforce = 2
+costs = Array[ExtResource("2")]([SubResource("Cost_gold"), SubResource("Cost_planks")])
+allowed_tiles = Array[String](["Grass", "Savanna", "Savanna_hot", "Steppe", "Shrubland"])
 show_in_sidebar = true
