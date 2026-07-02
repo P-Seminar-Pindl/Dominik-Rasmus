@@ -897,6 +897,8 @@ func _spawn_props_for_chunk(
 		climates: Array[Vector2]
 	) -> Node3D:
 	var root := Node3D.new()
+	if not cfg.props_enabled:
+		return root
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = cfg.seed ^ (chunk.x * 198491317) ^ (chunk.y * 6542989)
