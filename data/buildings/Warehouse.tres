@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="StorageBuildingResource" format=3]
 
 [ext_resource type="Script" uid="uid://s1f26he0acif" path="res://scripts/Templates/storage_building_resource.gd" id="1"]
-[ext_resource type="PackedScene" path="res://models/models_kenney-kit/finished_models/house_big.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://models/models_kenney-kit/finished_models/warehouse.tscn" id="2"]
 [ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="3"]
 
 [sub_resource type="Resource" id="Cost_gold"]
