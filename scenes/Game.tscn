@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cvqjs1iylgvd" path="res://scripts/camera.gd" id="2_camera"]
 [ext_resource type="Script" uid="uid://b3nk4pe1ubnba" path="res://scripts/visuals.gd" id="3_proto_visuals"]
 [ext_resource type="Script" uid="uid://br03ew6m4rps8" path="res://scripts/placement_manager.gd" id="4_placement"]
+[ext_resource type="Script" path="res://scripts/hud.gd" id="5_hud"]
 
 [sub_resource type="Curve" id="Curve_cpr0p"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.8184438, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -45,3 +46,6 @@ text = "Buildings"
 offset_top = 460.0
 offset_right = 300.0
 offset_bottom = 480.0
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=708392016]
+script = ExtResource("5_hud")
