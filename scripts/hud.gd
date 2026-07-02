@@ -3,10 +3,12 @@
 # info panel. All UI is built in code.
 extends CanvasLayer
 
-const RESOURCES := ["Gold", "Wood", "Planks", "Stone", "Food"]
+# Always shown; other goods (Anno-style chain products) appear once owned.
+const RESOURCES := ["Gold", "Wood", "Planks", "Stone", "Bricks", "Food"]
 const NO_TILE := Vector2i(-99999, -99999)
 
 var _labels: Dictionary = {}  # item → Label
+var _res_box: HBoxContainer
 var _worker_label: Label
 var _tier_label:   Label
 
@@ -49,15 +51,15 @@ func _build_top_bar() -> void:
 	panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	panel.offset_top = 6.0
-	var box := HBoxContainer.new()
-	box.add_theme_constant_override("separation", 20)
-	panel.add_child(box)
+	_res_box = HBoxContainer.new()
+	_res_box.add_theme_constant_override("separation", 20)
+	panel.add_child(_res_box)
 	for key in RESOURCES:
 		var label := Label.new()
-		box.add_child(label)
+		_res_box.add_child(label)
 		_labels[key] = label
 	_worker_label = Label.new()
-	box.add_child(_worker_label)
+	_res_box.add_child(_worker_label)
 	add_child(panel)
 
 
@@ -118,10 +120,24 @@ func _build_info_panel() -> void:
 # ── Refresh ───────────────────────────────────────────────────────────────────
 
 func _refresh_resources() -> void:
+	# Chain goods get a label the first time they show up in the stockpile.
+	var extras: Array = []
+	for key in ResourceManager.stockpile:
+		if not key in RESOURCES:
+			extras.append(key)
+	extras.sort()
+	for key in extras:
+		if not _labels.has(key):
+			var label := Label.new()
+			_res_box.add_child(label)
+			_res_box.move_child(_worker_label, -1)
+			_labels[key] = label
+
 	for key in _labels:
 		var amount: int = ResourceManager.get_amount(key)
 		_labels[key].text = "%s: %d" % [key, amount]
 		_labels[key].modulate = Color(1.0, 0.4, 0.4) if amount == 0 else Color.WHITE
+		_labels[key].visible = key in RESOURCES or amount > 0
 
 
 func _refresh_workers() -> void:
