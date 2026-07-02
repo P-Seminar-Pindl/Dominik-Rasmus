@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://215gnpl2lykb"]
+
+[ext_resource type="PackedScene" uid="uid://bhpxqwei8brmf" path="res://models/models_kenney-kit/cart-high.fbx" id="1_2ww7r"]
+
+[node name="Cart" type="Node3D" unique_id=583482533]
+
+[node name="cart-high" parent="." unique_id=1149161956 instance=ExtResource("1_2ww7r")]
