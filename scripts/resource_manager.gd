@@ -12,6 +12,7 @@ var stockpile: Dictionary = {
 	"Planks": 40,
 	"Stone":  20,
 	"Food":   20,
+	"Bricks": 30,  # bootstrap for the Anno-style brick-cost buildings
 }
 
 # Worker pool — capacity comes from houses, usage from production buildings.

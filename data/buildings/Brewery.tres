@@ -1,0 +1,55 @@
+[gd_resource type="Resource" script_class="ProductionBuildingResource" format=3]
+
+[ext_resource type="Script" uid="uid://bc18ds8vike8c" path="res://scripts/Templates/production_building_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://d3f61ltdphp1g" path="res://scripts/Templates/resource_amount.gd" id="2"]
+[ext_resource type="PackedScene" path="res://models/models_kenney-kit/finished_models/house_big.tscn" id="3"]
+
+[sub_resource type="Resource" id="Input_malt"]
+script = ExtResource("2")
+item = "Malt"
+amount = 1
+
+[sub_resource type="Resource" id="Input_hops"]
+script = ExtResource("2")
+item = "Hops"
+amount = 1
+
+[sub_resource type="Resource" id="Output_beer"]
+script = ExtResource("2")
+item = "Beer"
+amount = 1
+
+[sub_resource type="Resource" id="Storage_beer"]
+script = ExtResource("2")
+item = "Beer"
+amount = 10
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("2")
+item = "Gold"
+amount = 50
+
+[sub_resource type="Resource" id="Cost_planks"]
+script = ExtResource("2")
+item = "Planks"
+amount = 4
+
+[sub_resource type="Resource" id="Cost_bricks"]
+script = ExtResource("2")
+item = "Bricks"
+amount = 5
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("3")
+input = Array[ExtResource("2")]([SubResource("Input_malt"), SubResource("Input_hops")])
+output = Array[ExtResource("2")]([SubResource("Output_beer")])
+production_time = 60.0
+storage_slots = Array[ExtResource("2")]([SubResource("Storage_beer")])
+name = "Brewery"
+info_title = "Brewery"
+info_description = "Brews malt and hops into beer."
+footprint_size = Vector2i(3, 3)
+workforce = 8
+costs = Array[ExtResource("2")]([SubResource("Cost_gold"), SubResource("Cost_planks"), SubResource("Cost_bricks")])
+show_in_sidebar = true
