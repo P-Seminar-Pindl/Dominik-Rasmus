@@ -958,6 +958,24 @@ func get_elev01_at(tile: Vector2i) -> float:
 	return _sample_elev01(tile)
 
 
+# Returns the tile/biome name at this cell ("River", "Water", "Sand", or a
+# BiomeResource name like "Forest"). Empty string if no biome matches.
+func get_tile_name_at(tile: Vector2i) -> String:
+	if cfg.river_enabled and river_tile_set.has(tile):
+		return "River"
+	var elev := _sample_elev01(tile)
+	if elev < cfg.threshold_ocean:
+		return "Water"
+	if elev < cfg.threshold_beach:
+		return "Sand"
+	var temp := clampf(_fbm(temp_noise, tile.x, tile.y, cfg.temp_octaves) - elev * cfg.temp_altitude_drop, 0.0, 1.0)
+	var humid := _fbm(humid_noise, tile.x, tile.y, cfg.humid_octaves)
+	if elev >= cfg.threshold_lowland:
+		temp = clampf(temp - cfg.highland_temp_cooling, 0.0, 1.0)
+	var biome := _get_biome(temp, humid, elev)
+	return biome.name if biome != null else ""
+
+
 # ── CPU fallback mesh builder (used when compute unavailable) ─────────────────
 
 func _build_chunk_mesh_cpu(_chunk: Vector2i, origin: Vector2i, all_centers: Array[Vector2]) -> ArrayMesh:

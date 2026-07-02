@@ -1,10 +1,16 @@
 # placement_manager.gd
 # Standalone building placement for the mesh prototype.
-# Owns its own occupancy state — no autoload dependencies.
+# Owns the occupancy state; economy/production lives in the Global autoload.
 extends Node3D
+
+signal building_placed(anchor: Vector2i, resource: BuildingResource)
+signal building_removed(anchor: Vector2i)
+signal building_clicked(anchor: Vector2i)
 
 const BUILDING_DIR := "res://data/buildings/"
 const SLOPE_MAX    := 0.18  # max elev01 spread across footprint cells
+const NO_TILE      := Vector2i(-99999, -99999)
+const CLICK_MAX_DRAG := 8.0  # px of mouse travel before a click counts as a camera drag
 
 @onready var _world_gen:    Node3D        = get_node("../World")
 @onready var _camera:       Camera3D      = get_node("../Camera3D")
@@ -20,14 +26,19 @@ var _preview_ind:   MeshInstance3D   = null  # flat footprint indicator
 var _indicator_mat: StandardMaterial3D
 var _preview_valid: bool             = false
 var _rotation:      int              = 0  # 0..3, 90° steps around Y
+var _invalid_reason: String          = ""
+var _lmb_press_pos: Vector2          = Vector2(-1, -1)
+var _rmb_press_pos: Vector2          = Vector2(-1, -1)
+var _buttons:       Dictionary       = {}  # BuildingResource → Button
 
-var placed_buildings: Dictionary = {}  # Vector2i anchor → {resource, node}
+var placed_buildings: Dictionary = {}  # Vector2i anchor → {resource, node, rotation, footprint}
 var cell_to_anchor:   Dictionary = {}  # Vector2i cell   → Vector2i anchor
 
 
 func _ready() -> void:
 	_load_buildings()
 	_build_ui()
+	Global.register_placement_manager(self)
 
 
 # ── Asset loading ─────────────────────────────────────────────────────────────
@@ -52,10 +63,27 @@ func _load_buildings() -> void:
 func _build_ui() -> void:
 	for res in available_buildings:
 		var btn := Button.new()
-		btn.text = res.name
+		btn.text = _button_text(res)
 		btn.custom_minimum_size = Vector2(130, 26)
 		btn.pressed.connect(_select_building.bind(res))
 		_btn_container.add_child(btn)
+		_buttons[res] = btn
+	ResourceManager.resources_changed.connect(_refresh_button_states)
+	_refresh_button_states()
+
+
+func _button_text(res: BuildingResource) -> String:
+	var parts := PackedStringArray()
+	for cost in res.costs:
+		parts.append("%s %d" % [cost.item, cost.amount])
+	if parts.is_empty():
+		return res.name
+	return res.name + "\n" + "  ".join(parts)
+
+
+func _refresh_button_states() -> void:
+	for res in _buttons:
+		_buttons[res].disabled = not ResourceManager.can_afford(res.costs)
 
 
 # ── Selection ─────────────────────────────────────────────────────────────────
@@ -108,15 +136,24 @@ func _process(_delta: float) -> void:
 
 	var mouse_pos  := get_viewport().get_mouse_position()
 	_current_tile   = _tile_under_cursor(mouse_pos)
-	_preview_valid  = _can_place(_current_tile, _footprint_for_rotation(_selected_res.footprint_size, _rotation))
-
 	var fp := _footprint_for_rotation(_selected_res.footprint_size, _rotation)
+	_preview_valid  = _can_place(_current_tile, fp, _selected_res)
+
 	var h  = _world_gen.get_height_at(_current_tile)
 	var center := Vector3(_current_tile.x + fp.x * 0.5, h, _current_tile.y + fp.y * 0.5)
 
 	_preview_inst.position = center
 	_preview_ind.position  = center + Vector3(0, 0.05, 0)
+	if _indicator_mat != null:
+		_indicator_mat.albedo_color = Color(0.3, 1.0, 0.3, 0.45) if _preview_valid \
+				else Color(1.0, 0.25, 0.25, 0.5)
+	if _preview_valid:
+		_status_label.text = "Placing: " + _selected_res.name + "   [A/D] rotate   [RMB] cancel"
+	else:
+		_status_label.text = "Placing: " + _selected_res.name + " — " + _invalid_reason
 	_update_preview_orientation()
+
+
 func _input(event: InputEvent) -> void:
 	if _selected_res != null and event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_A:
@@ -125,17 +162,39 @@ func _input(event: InputEvent) -> void:
 			_rotate_selection(1)
 		return
 
-	if not (event is InputEventMouseButton) or not event.pressed:
+	if not (event is InputEventMouseButton):
 		return
 
-	if event.button_index == MOUSE_BUTTON_LEFT and _selected_res != null:
-		if _preview_valid:
-			_place_building(_current_tile, _selected_res)
-		get_viewport().set_input_as_handled()  # always consume; prevents orbit drag
+	if event.button_index == MOUSE_BUTTON_LEFT:
+		if _selected_res != null:
+			if event.pressed:
+				if _preview_valid:
+					_place_building(_current_tile, _selected_res)
+				get_viewport().set_input_as_handled()  # always consume; prevents orbit drag
+		elif event.pressed:
+			_lmb_press_pos = event.position
+		elif _lmb_press_pos != Vector2(-1, -1):
+			# Click (not a camera drag) on a placed building → inspect it
+			if event.position.distance_to(_lmb_press_pos) <= CLICK_MAX_DRAG:
+				var anchor := _anchor_under_cursor(event.position)
+				if anchor != NO_TILE:
+					building_clicked.emit(anchor)
+			_lmb_press_pos = Vector2(-1, -1)
 
-	elif event.button_index == MOUSE_BUTTON_RIGHT and _selected_res != null:
-		_select_building(null)
-		get_viewport().set_input_as_handled()
+	elif event.button_index == MOUSE_BUTTON_RIGHT:
+		if _selected_res != null:
+			if event.pressed:
+				_select_building(null)
+				get_viewport().set_input_as_handled()
+		elif event.pressed:
+			_rmb_press_pos = event.position
+		elif _rmb_press_pos != Vector2(-1, -1):
+			# Click (not a camera pan) on a placed building → demolish it
+			if event.position.distance_to(_rmb_press_pos) <= CLICK_MAX_DRAG:
+				var anchor := _anchor_under_cursor(event.position)
+				if anchor != NO_TILE:
+					remove_building(anchor)
+			_rmb_press_pos = Vector2(-1, -1)
 
 
 # ── Raycasting ────────────────────────────────────────────────────────────────
@@ -158,6 +217,11 @@ func _tile_under_cursor(screen_pos: Vector2) -> Vector2i:
 		return tile0
 	var hit1 = ray_origin + ray_dir * t1
 	return Vector2i(floori(hit1.x), floori(hit1.z))
+
+
+func _anchor_under_cursor(screen_pos: Vector2) -> Vector2i:
+	var tile := _tile_under_cursor(screen_pos)
+	return cell_to_anchor.get(tile, NO_TILE)
 
 
 # ── Rotation helpers ──────────────────────────────────────────────────────────
@@ -183,43 +247,68 @@ func _update_preview_orientation() -> void:
 
 # ── Placement validation ──────────────────────────────────────────────────────
 
-func _can_place(anchor: Vector2i, fp: Vector2i) -> bool:
+func _can_place(anchor: Vector2i, fp: Vector2i, res: BuildingResource) -> bool:
+	_invalid_reason = ""
+	if res != null and not ResourceManager.can_afford(res.costs):
+		_invalid_reason = "Not enough resources"
+		return false
 	var elev_lo := INF
 	var elev_hi := -INF
 	for dx in range(fp.x):
 		for dz in range(fp.y):
 			var cell := anchor + Vector2i(dx, dz)
 			if cell_to_anchor.has(cell):
+				_invalid_reason = "Space occupied"
 				return false
 			var e = _world_gen.get_elev01_at(cell)
 			if e < _world_gen.cfg.threshold_ocean:
+				_invalid_reason = "Invalid terrain"
 				return false
 			if _world_gen.river_tile_set.has(cell):
+				_invalid_reason = "Invalid terrain"
+				return false
+			if res != null and not res.allowed_tiles.is_empty() \
+					and not (_world_gen.get_tile_name_at(cell) in res.allowed_tiles):
+				_invalid_reason = "Needs: " + ", ".join(res.allowed_tiles)
 				return false
 			elev_lo = minf(elev_lo, e)
 			elev_hi = maxf(elev_hi, e)
-	return (elev_hi - elev_lo) <= SLOPE_MAX
+	if (elev_hi - elev_lo) > SLOPE_MAX:
+		_invalid_reason = "Too steep"
+		return false
+	if res != null and not res.required_adjacent_tiles.is_empty():
+		var found := false
+		for cell in _border_cells(anchor, fp):
+			if _world_gen.get_tile_name_at(cell) in res.required_adjacent_tiles:
+				found = true
+				break
+		if not found:
+			_invalid_reason = "Must border: " + ", ".join(res.required_adjacent_tiles)
+			return false
+	return true
 
-func _first_occupied_cell(anchor: Vector2i, fp: Vector2i) -> Vector2i:
+
+# Cells in the one-tile ring around the footprint (4-neighborhood edges).
+func _border_cells(anchor: Vector2i, fp: Vector2i) -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
 	for dx in range(fp.x):
-		for dz in range(fp.y):
-			var cell := anchor + Vector2i(dx, dz)
-			if cell_to_anchor.has(cell):
-				return cell
-	return Vector2i(-99999, -99999)
+		cells.append(anchor + Vector2i(dx, -1))
+		cells.append(anchor + Vector2i(dx, fp.y))
+	for dz in range(fp.y):
+		cells.append(anchor + Vector2i(-1, dz))
+		cells.append(anchor + Vector2i(fp.x, dz))
+	return cells
 
 
 # ── Placement ─────────────────────────────────────────────────────────────────
 
 func _place_building(anchor: Vector2i, res: BuildingResource) -> void:
 	var fp := _footprint_for_rotation(res.footprint_size, _rotation)
-	if not _can_place(anchor, fp):
-		var collision := _first_occupied_cell(anchor, fp)
-		if collision != Vector2i(-99999, -99999):
-			_status_label.text = "Cannot place " + res.name + ": Space occupied"
-		else:
-			_status_label.text = "Cannot place " + res.name + ": Invalid terrain"
+	if not _can_place(anchor, fp, res):
+		_status_label.text = "Cannot place " + res.name + ": " + _invalid_reason
 		return
+
+	ResourceManager.pay(res.costs)
 
 	var h  = _world_gen.get_height_at(anchor)
 	var wrapper := Node3D.new()
@@ -228,7 +317,26 @@ func _place_building(anchor: Vector2i, res: BuildingResource) -> void:
 	wrapper.add_child(res.scene.instantiate())
 	add_child(wrapper)
 
-	placed_buildings[anchor] = {"resource": res, "node": wrapper, "rotation": _rotation}
+	placed_buildings[anchor] = {"resource": res, "node": wrapper, "rotation": _rotation, "footprint": fp}
 	for dx in range(fp.x):
 		for dz in range(fp.y):
 			cell_to_anchor[anchor + Vector2i(dx, dz)] = anchor
+
+	building_placed.emit(anchor, res)
+
+
+func remove_building(anchor: Vector2i) -> void:
+	if not placed_buildings.has(anchor):
+		return
+	var data: Dictionary = placed_buildings[anchor]
+	var res: BuildingResource = data["resource"]
+	if is_instance_valid(data["node"]):
+		data["node"].queue_free()
+	var fp: Vector2i = data.get("footprint", res.footprint_size)
+	for dx in range(fp.x):
+		for dz in range(fp.y):
+			cell_to_anchor.erase(anchor + Vector2i(dx, dz))
+	placed_buildings.erase(anchor)
+	ResourceManager.refund(res.costs, 0.5)
+	_status_label.text = "Demolished " + res.name + " (50% refund)"
+	building_removed.emit(anchor)
