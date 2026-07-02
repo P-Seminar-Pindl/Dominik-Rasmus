@@ -7,6 +7,11 @@ const DEFAULT_PROTO_CFG_PATH := "res://data/world_gen_default.tres"
 @export var cfg: WorldGenConfig = preload("res://data/world_gen_default.tres")
 @export var distribution_curve: Curve  # kept for hot-reload hash; not used by shader (shader uses FBM directly)
 @export var max_chunk_build_ms_per_frame: float = 120
+# The compute shader uses hash-based value noise and skips distribution_curve,
+# so its terrain does not match the CPU sampling that placement, props and
+# rivers rely on (get_height_at / get_elev01_at). Keep off until the shader
+# reproduces the CPU pipeline.
+@export var use_gpu_compute: bool = false
 
 @export_group("Performance Debug")
 @export var debug_perf: bool = false
@@ -122,7 +127,10 @@ func _build_shared_material() -> void:
 
 
 func _init_compute() -> void:
-	_rd = RenderingServer.get_rendering_device()
+	if not use_gpu_compute:
+		return  # CPU mesh builder is the source of truth for now
+	# Local device: submit()/sync() are not allowed on the main rendering device.
+	_rd = RenderingServer.create_local_rendering_device()
 	if _rd == null:
 		push_error("TerrainGen: no RenderingDevice available (need Forward+ or Vulkan)")
 		return
