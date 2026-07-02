@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BuildingResource" format=3]
+
+[ext_resource type="Script" path="res://scripts/Templates/building_resource.gd" id="1"]
+[ext_resource type="PackedScene" path="res://models/models_kenney-kit/finished_models/stall.tscn" id="2"]
+[ext_resource type="Script" path="res://scripts/Templates/resource_amount.gd" id="3"]
+
+[sub_resource type="Resource" id="Cost_gold"]
+script = ExtResource("3")
+item = "Gold"
+amount = 20
+
+[resource]
+script = ExtResource("1")
+scene = ExtResource("2")
+name = "Stall"
+info_title = "Stall"
+info_description = "A market stall for decoration and trading."
+footprint_size = Vector2i(2, 2)
+costs = Array[ExtResource("3")]([SubResource("Cost_gold")])
+show_in_sidebar = true
